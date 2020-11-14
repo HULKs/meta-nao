@@ -1,0 +1,16 @@
+[Unit]
+Description=Aldebaran LoLA
+After=hal.service
+Requires=hal.service
+
+[Service]
+Type=simple
+LimitRTPRIO=36
+Restart=on-failure
+ExecStart=/opt/aldebaran/bin/lola
+TimeoutStartSec=30
+User=nao
+Group=hal
+
+[Install]
+WantedBy=default.target

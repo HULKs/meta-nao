@@ -1,0 +1,5 @@
+# ignore extracted binaries
+aldebaran-binaries/aldebaran_binaries.tar.gz
+
+# ignore opn files placed here for extraction
+*.opn

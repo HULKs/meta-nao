@@ -1,0 +1,14 @@
+[Unit]
+Description=data-skeleton prepares /data
+DefaultDependencies=no
+After=data.mount
+Before=home-nao.mount
+Requires=data.mount
+
+[Service]
+Type=oneshot
+ExecStart=/bin/mkdir -p /data/home/nao /data/.work-home-nao /data/.image
+ExecStart=/bin/chown nao:nao /data/home/nao /data/.image
+
+[Install]
+RequiredBy=home-nao.mount

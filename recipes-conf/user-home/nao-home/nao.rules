@@ -1,0 +1,11 @@
+polkit.addRule(function(action, subject) {
+	if ((action.id == "org.freedesktop.hostname1.set-static-hostname" ||
+	     action.id == "org.freedesktop.hostname1.set-hostname" ||
+	     action.id == "org.freedesktop.systemd1.manage-units" ||
+	     action.id == "org.freedesktop.login1.reboot" ||
+	     action.id == "org.freedesktop.login1.power-off") &&
+	    subject.isInGroup ("nao")) {
+		    return polkit.Result.YES;
+	    }
+});
+

@@ -1,0 +1,15 @@
+[Unit]
+Description=Aldebaran HAL
+After=syslog.target
+
+[Service]
+Type=notify
+LimitRTPRIO=36
+Restart=on-failure
+ExecStart=/opt/aldebaran/bin/hal
+TimeoutStartSec=30
+User=nao
+Group=hal
+
+[Install]
+WantedBy=default.target

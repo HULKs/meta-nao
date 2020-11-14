@@ -1,0 +1,3 @@
+# Head Intel x86 Congatec QA-3 CPU cgos
+KERNEL=="cgos", GROUP="hal", MODE="0660"
+

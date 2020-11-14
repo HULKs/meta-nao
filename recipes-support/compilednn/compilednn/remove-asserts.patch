@@ -1,0 +1,35 @@
+diff --git a/3rdParty/B-Human/Platform/BHAssert.h b/3rdParty/B-Human/Platform/BHAssert.h
+index 5cb94e9..6961578 100644
+--- a/3rdParty/B-Human/Platform/BHAssert.h
++++ b/3rdParty/B-Human/Platform/BHAssert.h
+@@ -8,9 +8,13 @@
+ #pragma once
+ 
+ #undef ASSERT
++#define ASSERT(cond) ((void)0)
+ #undef FAIL
++#define FAIL(text) ((void)0)
+ #undef VERIFY
++#define VERIFY(cond) ((void)(cond))
+ 
++#if 0
+ #include <string>
+ #include <sstream>
+ 
+@@ -80,3 +84,4 @@ public:
+ #else
+ #define VERIFY(cond) ((void)((cond) ? 0 : (Assert::print(__FILE__, __LINE__, "VERIFY(%s) failed", #cond), Assert::abort(), 0)))
+ #endif
++#endif
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6588dc2..3234930 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -156,7 +156,6 @@ add_library(CompiledNN
+     3rdParty/asmjit/src/asmjit/x86/x86rapass.cpp
+     3rdParty/asmjit/src/asmjit/x86/x86rapass_p.h
+ 
+-    3rdParty/B-Human/Platform/BHAssert.cpp
+     3rdParty/B-Human/Platform/BHAssert.h
+     3rdParty/B-Human/Tools/Math/BHMath.h
+     3rdParty/B-Human/Tools/Math/NeumaierSum.h

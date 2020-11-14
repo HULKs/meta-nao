@@ -1,0 +1,21 @@
+From f304cc71e424d0079edf228e74085eae4c6df9ad Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
+Date: Fri, 29 Jan 2021 22:45:24 +0100
+Subject: [PATCH] Pass project version to CompiledNN library target
+
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3234930..3f1845b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -206,6 +206,7 @@ target_link_libraries(CompiledNN PUBLIC
+ )
+ set_target_properties(CompiledNN PROPERTIES
+     PUBLIC_HEADER "Src/CompiledNN/CompiledNN.h;Src/CompiledNN/Model.h;Src/CompiledNN/SimpleNN.h;Src/CompiledNN/Tensor.h"
++    VERSION ${PROJECT_VERSION}
+ )
+ 
+ find_package(HDF5 REQUIRED)

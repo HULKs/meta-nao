@@ -1,0 +1,10 @@
+[Unit]
+Description=alfand is responsible for the fan control.
+After=local-fs.target systemd-modules-load.service
+
+[Service]
+ExecStart=/opt/aldebaran/bin/alfand -c /opt/aldebaran/etc/alfand.conf
+
+[Install]
+WantedBy=multi-user.target
+

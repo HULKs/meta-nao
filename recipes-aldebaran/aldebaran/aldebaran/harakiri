@@ -1,0 +1,8 @@
+#!/bin/sh
+
+case "$1" in
+    poweroff|halt)
+        /opt/aldebaran/bin/chest-harakiri ;;
+    reboot)
+        /opt/aldebaran/bin/chest-harakiri -r;;
+esac

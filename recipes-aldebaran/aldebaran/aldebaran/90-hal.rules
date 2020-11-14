@@ -1,0 +1,9 @@
+# Body
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="ffff", MODE="0660", GROUP="hal"
+
+# Head NaoV6 - i2c bus
+KERNEL=="i2c-*", ATTRS{name}=="SBRE USB-I2C on port ?.*", TAG+="systemd", \
+  SYMLINK+="i2c-head i2csbre", MODE="0660", GROUP="hal", \
+  OPTIONS+="link_priority=2", RUN+="/opt/aldebaran/bin/reset-cameras toggle"
+
+

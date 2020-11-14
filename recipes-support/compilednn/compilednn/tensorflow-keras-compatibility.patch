@@ -1,0 +1,470 @@
+diff --git a/Src/CompiledNN/Model.cpp b/Src/CompiledNN/Model.cpp
+index 63e1276..7da2456 100644
+--- a/Src/CompiledNN/Model.cpp
++++ b/Src/CompiledNN/Model.cpp
+@@ -318,11 +318,6 @@ namespace NeuralNetwork
+     return result;
+   }
+ 
+-  unsigned long makeVersion(unsigned char major, unsigned char minor, unsigned char patchlevel)
+-  {
+-    return (major << 24) | (minor << 16) | (patchlevel << 8);
+-  }
+-
+   ActivationFunctionId parseActivation(const std::string& activation)
+   {
+     if(activation == "linear")
+@@ -369,7 +364,7 @@ namespace NeuralNetwork
+     return InterpolationMethod::nearest;
+   }
+ 
+-  std::unique_ptr<Layer> parseInputLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseInputLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* batchInputShape = getRecordEntry<SimpleMap::Array>(config, "batch_input_shape");
+     const std::string dtype = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "dtype"));
+@@ -406,7 +401,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseDenseLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseDenseLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+ #ifndef NDEBUG
+     const unsigned int units = getLiteral<unsigned int>(getRecordEntry<SimpleMap::Literal>(config, "units"));
+@@ -437,7 +432,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseActivationLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseActivationLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const std::string activation = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "activation"));
+ 
+@@ -446,14 +441,14 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseDropoutLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseDropoutLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     return std::make_unique<DropoutLayer>();
+   }
+ 
+-  std::unique_ptr<Layer> parseFlattenLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseFlattenLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+-    if(kerasVersion >= makeVersion(2, 1, 6))
++    if(kerasVersion >= KerasVersion(2, 1, 6))
+     {
+       const std::string dataFormat = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "data_format"));
+       if(dataFormat != "channels_last")
+@@ -463,7 +458,7 @@ namespace NeuralNetwork
+     return std::make_unique<FlattenLayer>();
+   }
+ 
+-  std::unique_ptr<Layer> parseReshapeLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseReshapeLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* targetShape = getRecordEntry<SimpleMap::Array>(config, "target_shape");
+     ASSERT(!targetShape->empty());
+@@ -488,7 +483,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+ #ifndef NDEBUG
+     const unsigned int filters = getLiteral<unsigned int>(getRecordEntry<SimpleMap::Literal>(config, "filters"));
+@@ -548,7 +543,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseSeparableConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseSeparableConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+ #ifndef NDEBUG
+     const unsigned int filters = getLiteral<unsigned int>(getRecordEntry<SimpleMap::Literal>(config, "filters"));
+@@ -620,7 +615,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseDepthwiseConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseDepthwiseConv2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+ #ifndef NDEBUG
+     const SimpleMap::Array* kernelSize = getRecordEntry<SimpleMap::Array>(config, "kernel_size");
+@@ -682,7 +677,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseCropping2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseCropping2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* cropping = getRecordEntry<SimpleMap::Array>(config, "cropping");
+     const std::string dataFormat = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "data_format"));
+@@ -707,11 +702,11 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseUpSampling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseUpSampling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* size = getRecordEntry<SimpleMap::Array>(config, "size");
+     const std::string dataFormat = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "data_format"));
+-    const std::string interpolation = kerasVersion >= makeVersion(2, 3, 0) ? getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "interpolation")) : std::string();
++    const std::string interpolation = kerasVersion >= KerasVersion(2, 3, 0) ? getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "interpolation")) : std::string();
+ 
+     if(dataFormat != "channels_last")
+       FAIL("Data formats other than channels last are not supported.");
+@@ -728,7 +723,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseZeroPadding2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseZeroPadding2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* padding = getRecordEntry<SimpleMap::Array>(config, "padding");
+     const std::string dataFormat = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "data_format"));
+@@ -753,7 +748,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parsePooling2DLayer(const SimpleMap::Record* config, PoolingMethod method, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parsePooling2DLayer(const SimpleMap::Record* config, PoolingMethod method,const KerasVersion &kerasVersion)
+   {
+     const SimpleMap::Array* poolSize = getRecordEntry<SimpleMap::Array>(config, "pool_size");
+     const std::string padding = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "padding"));
+@@ -783,17 +778,17 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseMaxPooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseMaxPooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     return parsePooling2DLayer(config, PoolingMethod::max, kerasVersion);
+   }
+ 
+-  std::unique_ptr<Layer> parseAveragePooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseAveragePooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     return parsePooling2DLayer(config, PoolingMethod::average, kerasVersion);
+   }
+ 
+-  std::unique_ptr<Layer> parseGlobalPooling2DLayer(const SimpleMap::Record* config, PoolingMethod method, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseGlobalPooling2DLayer(const SimpleMap::Record* config, PoolingMethod method, const KerasVersion &kerasVersion)
+   {
+     const std::string dataFormat = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "data_format"));
+ 
+@@ -805,53 +800,53 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseGlobalMaxPooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseGlobalMaxPooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     return parseGlobalPooling2DLayer(config, PoolingMethod::max, kerasVersion);
+   }
+ 
+-  std::unique_ptr<Layer> parseGlobalAveragePooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseGlobalAveragePooling2DLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     return parseGlobalPooling2DLayer(config, PoolingMethod::average, kerasVersion);
+   }
+ 
+-  std::unique_ptr<Layer> parseAddLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseAddLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&,const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<AddLayer> layer = std::make_unique<AddLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseSubtractLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseSubtractLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<SubtractLayer> layer = std::make_unique<SubtractLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseMultiplyLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseMultiplyLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<MultiplyLayer> layer = std::make_unique<MultiplyLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseAverageLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseAverageLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<AverageLayer> layer = std::make_unique<AverageLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseMaximumLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseMaximumLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<MaximumLayer> layer = std::make_unique<MaximumLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseMinimumLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseMinimumLayer(const SimpleMap::Record*, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     std::unique_ptr<MinimumLayer> layer = std::make_unique<MinimumLayer>();
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseConcatenateLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseConcatenateLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const int axis = getLiteral<int>(getRecordEntry<SimpleMap::Literal>(config, "axis"));
+     ASSERT(axis != 0);
+@@ -861,7 +856,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseLeakyReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseLeakyReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const float alpha = getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "alpha"));
+     ASSERT(alpha >= 0.f);
+@@ -871,7 +866,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseEluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseEluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const float alpha = getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "alpha"));
+ 
+@@ -880,7 +875,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseThresholdedReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseThresholdedReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const float theta = getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "theta"));
+     ASSERT(theta >= 0.f);
+@@ -890,7 +885,7 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseSoftmaxLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseSoftmaxLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const int axis = getLiteral<int>(getRecordEntry<SimpleMap::Literal>(config, "axis"));
+     ASSERT(axis != 0);
+@@ -900,13 +895,13 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseReluLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType&, const KerasVersion &kerasVersion)
+   {
+     const float maxValue = getLiteral<std::string>(getRecordEntry<SimpleMap::Literal>(config, "max_value")) == "None"
+                            ? std::numeric_limits<float>::max()
+                            : getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "max_value"));
+-    const float negativeSlope = kerasVersion >= makeVersion(2, 2, 3) ? getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "negative_slope")) : 0.f;
+-    const float threshold = kerasVersion >= makeVersion(2, 2, 3) ? getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "threshold")) : 0.f;
++    const float negativeSlope = kerasVersion >= KerasVersion(2, 2, 3) ? getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "negative_slope")) : 0.f;
++    const float threshold = kerasVersion >= KerasVersion(2, 2, 3) ? getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "threshold")) : 0.f;
+ 
+     std::unique_ptr<ReluLayer> layer = std::make_unique<ReluLayer>();
+     layer->maxValue = maxValue;
+@@ -915,9 +910,12 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  std::unique_ptr<Layer> parseBatchNormalizationLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, unsigned long kerasVersion)
++  std::unique_ptr<Layer> parseBatchNormalizationLayer(const SimpleMap::Record* config, const Model::GetWeights2FuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+-    const int axis = getLiteral<int>(getRecordEntry<SimpleMap::Literal>(config, "axis"));
++    if(kerasVersion.isTensorflow_) {
++      ASSERT(getRecordEntry<SimpleMap::Array>(config, "axis")->size() == 1);
++    }
++    const int axis = kerasVersion.isTensorflow_ ? getLiteral<float>(getArrayEntry<SimpleMap::Literal>(getRecordEntry<SimpleMap::Array>(config, "axis"), 0)) : getLiteral<int>(getRecordEntry<SimpleMap::Literal>(config, "axis"));
+     const float epsilon = getLiteral<float>(getRecordEntry<SimpleMap::Literal>(config, "epsilon"));
+     const bool center = getLiteral<bool>(getRecordEntry<SimpleMap::Literal>(config, "center"));
+     const bool scale = getLiteral<bool>(getRecordEntry<SimpleMap::Literal>(config, "scale"));
+@@ -959,14 +957,14 @@ namespace NeuralNetwork
+     return layer;
+   }
+ 
+-  void Model::parseJSONModel(In& stream, const std::string& fileName, const GetWeightsFuncType& getWeights, unsigned long kerasVersion)
++  void Model::parseJSONModel(In& stream, const std::string& fileName, const GetWeightsFuncType& getWeights, const KerasVersion &kerasVersion)
+   {
+     // This function uses the following convention:
+     // ASSERTs are used if the model is invalid (i.e. has not been exported correctly or with an incompatible version of keras).
+     // FAILs are used if the model is valid, but uses a feature that is currently not supported.
+     // Have fun eliminating all the FAILs ;-)
+ 
+-    using ParseLayerFuncType = std::unique_ptr<Layer>(*)(const SimpleMap::Record*, const GetWeights2FuncType&, unsigned long);
++    using ParseLayerFuncType = std::unique_ptr<Layer>(*)(const SimpleMap::Record*, const GetWeights2FuncType&, const KerasVersion &);
+     std::unordered_map<std::string, ParseLayerFuncType> layerParsers;
+     // Input
+     layerParsers.emplace("InputLayer", &parseInputLayer);
+@@ -979,7 +977,7 @@ namespace NeuralNetwork
+     // Convolutional layers
+     layerParsers.emplace("Conv2D", &parseConv2DLayer);
+     layerParsers.emplace("SeparableConv2D", &parseSeparableConv2DLayer);
+-    if(kerasVersion >= makeVersion(2, 1, 5))
++    if(kerasVersion >= KerasVersion(2, 1, 5))
+       layerParsers.emplace("DepthwiseConv2D", &parseDepthwiseConv2DLayer);
+     layerParsers.emplace("Cropping2D", &parseCropping2DLayer);
+     layerParsers.emplace("UpSampling2D", &parseUpSampling2DLayer);
+@@ -991,21 +989,21 @@ namespace NeuralNetwork
+     layerParsers.emplace("GlobalAveragePooling2D", &parseGlobalAveragePooling2DLayer);
+     // Merge layers
+     layerParsers.emplace("Add", &parseAddLayer);
+-    if(kerasVersion >= makeVersion(2, 0, 7))
++    if(kerasVersion >= KerasVersion(2, 0, 7))
+       layerParsers.emplace("Subtract", &parseSubtractLayer);
+     layerParsers.emplace("Multiply", &parseMultiplyLayer);
+     layerParsers.emplace("Average", &parseAverageLayer);
+     layerParsers.emplace("Maximum", &parseMaximumLayer);
+-    if(kerasVersion >= makeVersion(2, 0, 9))
++    if(kerasVersion >= KerasVersion(2, 0, 9))
+       layerParsers.emplace("Minimum", &parseMinimumLayer);
+     layerParsers.emplace("Concatenate", &parseConcatenateLayer);
+     // Advanced Activation layers
+     layerParsers.emplace("LeakyReLU", &parseLeakyReluLayer);
+     layerParsers.emplace("ELU", &parseEluLayer);
+     layerParsers.emplace("ThresholdedReLU", &parseThresholdedReluLayer);
+-    if(kerasVersion >= makeVersion(2, 1, 3))
++    if(kerasVersion >= KerasVersion(2, 1, 3))
+       layerParsers.emplace("Softmax", &parseSoftmaxLayer);
+-    if(kerasVersion >= makeVersion(2, 2, 0))
++    if(kerasVersion >= KerasVersion(2, 2, 0))
+       layerParsers.emplace("ReLU", &parseReluLayer);
+     // Normalization layers
+     layerParsers.emplace("BatchNormalization", &parseBatchNormalizationLayer);
+@@ -1019,7 +1017,7 @@ namespace NeuralNetwork
+     // Sequential models are different from the general case and much simpler.
+     if(className == "Sequential")
+     {
+-      const SimpleMap::Array* config = kerasVersion < makeVersion(2, 2, 3) ? getRecordEntry<SimpleMap::Array>(root, "config")
++      const SimpleMap::Array* config = kerasVersion < KerasVersion(2, 2, 3) ? getRecordEntry<SimpleMap::Array>(root, "config")
+                                                                            : getRecordEntry<SimpleMap::Array>(getRecordEntry<SimpleMap::Record>(root, "config"), "layers");
+       ASSERT(!config->empty());
+       for(const SimpleMap::Value* value : *config)
+@@ -1276,7 +1274,7 @@ namespace NeuralNetwork
+     ASSERT(floatDatatype >= 0);
+ 
+     // Determine the Keras version from which this model was saved.
+-    unsigned long kerasVersion = 0;
++    KerasVersion kerasVersion;
+     {
+       hid_t kerasVersionAttribute = H5Aopen(rootGroup, "keras_version", H5P_DEFAULT);
+       ASSERT(kerasVersionAttribute >= 0);
+@@ -1300,13 +1298,7 @@ namespace NeuralNetwork
+       char* kerasVersionString = nullptr;
+       VERIFY(H5Aread(kerasVersionAttribute, destinationDatatype, &kerasVersionString) >= 0);
+ 
+-      char* str = kerasVersionString;
+-      kerasVersion = std::strtoul(str, &str, 10) << 24;
+-      ASSERT(*str == '.');
+-      kerasVersion |= std::strtoul(str + 1, &str, 10) << 16;
+-      ASSERT(*str == '.');
+-      kerasVersion |= std::strtoul(str + 1, &str, 10) << 8;
+-      ASSERT(*str == '\0' || *str == '-');
++      kerasVersion = KerasVersion(kerasVersionString);
+ 
+       H5Dvlen_reclaim(destinationDatatype, kerasVersionAttributeDataspace, H5P_DEFAULT, &kerasVersionString);
+ 
+@@ -1316,7 +1308,7 @@ namespace NeuralNetwork
+     }
+ 
+     // Keras 1.x was very different. Keras 3.x is not existing yet.
+-    if(kerasVersion < makeVersion(2, 0, 0) || kerasVersion >= makeVersion(3, 0, 0))
++    if(kerasVersion < KerasVersion(2, 0, 0) || kerasVersion >= KerasVersion(3, 0, 0))
+       FAIL("Only Keras 2 models are supported.");
+ 
+     hid_t modelConfigAttribute = H5Aopen(rootGroup, "model_config", H5P_DEFAULT);
+diff --git a/Src/CompiledNN/Model.h b/Src/CompiledNN/Model.h
+index 824b619..742734b 100644
+--- a/Src/CompiledNN/Model.h
++++ b/Src/CompiledNN/Model.h
+@@ -13,6 +13,7 @@
+ #include <memory>
+ #include <string>
+ #include <vector>
++#include <regex>
+ 
+ class In;
+ 
+@@ -100,6 +101,64 @@ namespace NeuralNetwork
+   protected:
+     Layer(const LayerType type) : type(type) {}
+   };
++  
++  struct KerasVersion
++  {
++    unsigned long major_ = 0;
++    unsigned long minor_ = 0;
++    unsigned long patch_ = 0;
++    bool isTensorflow_ = false;
++    
++    KerasVersion() = default;
++    KerasVersion(const KerasVersion &other) : major_(other.major_), minor_(other.minor_), patch_(other.patch_), isTensorflow_(other.isTensorflow_) {}
++    KerasVersion &operator=(const KerasVersion &other) {
++      if(&other != this) {
++        major_ = other.major_;
++        minor_ = other.minor_;
++        patch_ = other.patch_;
++        isTensorflow_ = other.isTensorflow_;
++      }
++      return *this;
++    }
++    KerasVersion(unsigned long major, unsigned long minor, unsigned long patch, bool isTensorflow = false) : major_(major), minor_(minor), patch_(patch), isTensorflow_(isTensorflow) {}
++    KerasVersion(const std::string &versionString) {
++      try {
++        std::regex re("(\\d+)\\.(\\d+)\\.(\\d+)(-tf)?");
++        std::smatch match;
++        if(std::regex_match(versionString, match, re)) {
++          major_ = std::stoi(match[1]);
++          minor_ = std::stoi(match[2]);
++          patch_ = std::stoi(match[3]);
++          isTensorflow_ = !match[4].str().empty();
++        }
++      } catch(const std::regex_error&) {
++        // do nothing
++      } catch(const std::invalid_argument&) {
++        // do nothing
++      } catch(const std::out_of_range&) {
++        // do nothing
++      }
++    }
++    
++    inline bool operator<(const KerasVersion &other) const {
++      return major_ < other.major_ || (major_ == other.major_ && minor_ < other.minor_) || (major_ == other.major_ && minor_ == other.minor_ && patch_ < other.patch_);
++    }
++    inline bool operator>(const KerasVersion &other) const {
++      return major_ > other.major_ || (major_ == other.major_ && minor_ > other.minor_) || (major_ == other.major_ && minor_ == other.minor_ && patch_ > other.patch_);
++    }
++    inline bool operator==(const KerasVersion &other) const {
++      return major_ == other.major_ && minor_ == other.minor_ && patch_ == other.patch_;
++    }
++    inline bool operator!=(const KerasVersion &other) const {
++      return !operator==(other);
++    }
++    inline bool operator<=(const KerasVersion &other) const {
++      return operator<(other) || operator==(other);
++    }
++    inline bool operator>=(const KerasVersion &other) const {
++      return operator>(other) || operator==(other);
++    }
++  };
+ 
+   /**
+    * A struct that describes a neural network model.
+@@ -120,7 +179,7 @@ namespace NeuralNetwork
+     /**
+      * Parses a model from a JSON description.
+      */
+-    void parseJSONModel(In& stream, const std::string& fileName, const GetWeightsFuncType& getWeights, unsigned long kerasVersion);
++    void parseJSONModel(In& stream, const std::string& fileName, const GetWeightsFuncType& getWeights, const KerasVersion &kerasVersion);
+ 
+   public:
+     Model() = default;
