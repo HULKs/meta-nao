@@ -23,6 +23,7 @@ git clone git@github.com:hulks/meta-nao worktree/meta-nao
 
 ```
 cd meta-nao/recipes-aldebaran/aldebaran/
+mkdir -p aldebaran-binaries
 ./extract_binaries.sh -o aldebaran-binaries/aldebaran_binaries.tar.gz nao-x86-firmware-249_20190503_203829_robocupper.opn
 ```
 
