@@ -15,9 +15,9 @@ deltask do_package_write_rpm
 
 OPN_SOURCE_IMAGE = "nao-image"
 OPN_SOURCE_FSTYPE = "ext3"
-OPN_FILE = "${OPN_SOURCE_IMAGE}-${MACHINE}-${DATETIME}.opn"
+OPN_FILE = "${OPN_SOURCE_IMAGE}-${DISTRO}-${DISTRO_VERSION}-${DATETIME}.opn"
 OPN_FILE[vardepsexclude] = "DATETIME"
-OPN_LINK_FILE = "${OPN_SOURCE_IMAGE}-${MACHINE}.opn"
+OPN_LINK_FILE = "${OPN_SOURCE_IMAGE}-${DISTRO}-${DISTRO_VERSION}.opn"
 
 DEPENDS += "coreutils-native pigz-native"
 
