@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
 KBRANCH = "v5.4.70-rt40"
 SRC_URI = " \
-           git://git@github.com/NaoDevils/NaoKernel.git;protocol=ssh;nocheckout=1;name=machine;branch=${KBRANCH}; \
+           git://git@github.com/NaoDevils/NaoKernel.git;protocol=https;nocheckout=1;name=machine;branch=${KBRANCH}; \
            file://defconfig \
            file://cmdline \
 	  "
