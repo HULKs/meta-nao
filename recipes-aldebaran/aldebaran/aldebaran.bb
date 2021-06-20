@@ -15,9 +15,7 @@ SRC_URI = " \
            file://aldebaran_path.sh \
            file://90-cgos.rules \
            file://90-hal.rules \
-           file://hal \
            file://hal.service \
-           file://lola \
            file://lola.service \
           "
 
@@ -37,10 +35,6 @@ do_install() {
   install -m 0644 ${WORKDIR}/hal.service ${D}${systemd_unitdir}/system
   install -m 0644 ${WORKDIR}/lola.service ${D}${systemd_unitdir}/system
 
-  install -d ${D}${bindir}
-  install -m 755 ${WORKDIR}/hal ${D}${bindir}
-  install -m 755 ${WORKDIR}/lola ${D}${bindir}
-
   install -d ${D}/${sysconfdir}/tmpfiles.d/
   install -m 0644 ${WORKDIR}/00-hal-log.conf ${D}/${sysconfdir}/tmpfiles.d/
 
@@ -57,8 +51,6 @@ FILES_${PN} = "\
                 ${sysconfdir}/tmpfiles.d/ \
                 ${sysconfdir}/security/limits.d \
                 ${sysconfdir}/profile.d/ \
-                ${bindir}/hal \
-                ${bindir}/lola \
               "
 
 NATIVE_SYSTEMD_SUPPORT = "1"
