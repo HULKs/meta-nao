@@ -47,6 +47,8 @@ CORE_IMAGE_EXTRA_INSTALL += "\
 
 # enable ssh
 IMAGE_FEATURES += "ssh-server-openssh"
+# enable package management
+IMAGE_FEATURES += "package-management"
 
 # prepare the data skeleton and nao user
 IMAGE_INSTALL += "data-partition nao-home"
