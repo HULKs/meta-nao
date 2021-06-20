@@ -1,0 +1,10 @@
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 60cc30c..2ce39b8 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -12,4 +12,4 @@ BBFILE_PRIORITY_congatec = "7"
+ LAYERDEPENDS_congatec = "intel"
+ 
+ LAYERVERSION_congatec = "7"
+-LAYERSERIES_COMPAT_congatec = "dunfell"
++LAYERSERIES_COMPAT_congatec = "hardknott"

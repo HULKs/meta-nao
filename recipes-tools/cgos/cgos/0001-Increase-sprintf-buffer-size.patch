@@ -1,0 +1,22 @@
+From edbf2833f5b430b3e9804669ab755ef8f6c8eb2a Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
+Date: Fri, 18 Jun 2021 19:15:36 +0200
+Subject: [PATCH] Increase sprintf buffer size
+
+---
+ CgosDump/CgosRprt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CgosDump/CgosRprt.c b/CgosDump/CgosRprt.c
+index c167ac3..410ad2a 100755
+--- a/CgosDump/CgosRprt.c
++++ b/CgosDump/CgosRprt.c
+@@ -19,7 +19,7 @@
+   
+ //***************************************************************************
+ 
+-char buf[512];
++char buf[1024];
+ 
+ //***************************************************************************
+ 

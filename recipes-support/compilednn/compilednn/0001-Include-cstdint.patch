@@ -1,0 +1,21 @@
+From bad196a2c1a8ba19805249b159ecef14602def6c Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
+Date: Fri, 18 Jun 2021 19:53:04 +0200
+Subject: [PATCH] Include cstdint
+
+---
+ Src/CompiledNN/Tensor.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Src/CompiledNN/Tensor.h b/Src/CompiledNN/Tensor.h
+index 2d6f1e9..889b7bb 100644
+--- a/Src/CompiledNN/Tensor.h
++++ b/Src/CompiledNN/Tensor.h
+@@ -14,6 +14,7 @@
+ #include <numeric>
+ #include <type_traits>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace NeuralNetwork
+ {

@@ -13,6 +13,7 @@ SRC_URI = "git://github.com/bhuman/CompiledNN.git;protocol=https \
            file://0001-Pass-project-version-to-CompiledNN-library-target.patch \
            file://remove-asserts.patch \
            file://tensorflow-keras-compatibility.patch \
+           file://0001-Include-cstdint.patch \
            "
 
 SRCREV = "8ed33a8d976367bfe7a62f506ba6215256a5b26c"
