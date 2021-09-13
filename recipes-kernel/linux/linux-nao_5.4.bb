@@ -32,7 +32,7 @@ SRCREV_machine = "2f8f53592324a23901b85ec426f5864babadc8af"
 
 PV = "${LINUX_VERSION}"
 
-COMPATIBLE_MACHINE = "(intel-corei7-64|intel-core2-32|congatec-qa3-64)"
+COMPATIBLE_MACHINE = "nao-v6"
 
 do_install_append() {
   ln -s bzImage-${KERNEL_VERSION_NAME} ${D}/boot/vmlinuz.efi

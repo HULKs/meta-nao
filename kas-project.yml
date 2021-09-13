@@ -1,7 +1,7 @@
 header:
     version: 10
 
-machine: congatec-qa3-64
+machine: nao-v6
 distro: nao-multilib
 target: nao-image
 defaults:
