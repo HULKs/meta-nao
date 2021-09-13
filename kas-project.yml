@@ -2,8 +2,8 @@ header:
     version: 10
 
 machine: congatec-qa3-64
-distro: Nao-OS
-target: nao-opn
+distro: nao-multilib
+target: nao-image
 defaults:
     repos:
         refspec: hardknott
