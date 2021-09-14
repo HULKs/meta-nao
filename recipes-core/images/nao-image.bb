@@ -13,7 +13,6 @@ IMAGE_ROOTFS_EXTRA_SPACE_append = "${@bb.utils.contains("DISTRO_FEATURES", "syst
 
 DESCRIPTION = "A small image just capable of allowing a device to boot plus a \
 real-time test suite and tools appropriate for real-time use."
-DEPENDS += "linux-nao"
 
 # for realtime tests, hardware latency detector
 IMAGE_INSTALL += "rt-tests hwlatdetect"
