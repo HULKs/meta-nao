@@ -18,7 +18,8 @@ CONVERSION_CMD_opn() {
   out="${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type}.opn"
 	oks="${OKS_FULL_PATH}"
 
+  truncate -s %1024 "${in}"
   mkopn $in $oks $out
 }
 
-CONVERSION_DEPENDS_opn = "python3-opn-tools-native"
+CONVERSION_DEPENDS_opn = "coreutils-native python3-opn-tools-native"
