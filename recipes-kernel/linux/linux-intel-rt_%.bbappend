@@ -2,8 +2,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "\
   file://0001-NAO-patches-softbank-congatec.patch file://0002-cgos-32-bit-softbank.patch \
-  file://defconfig \
   file://cmdline \
+  file://fragment.cfg \
   "
 
 PROVIDES += "cgos-mod"
