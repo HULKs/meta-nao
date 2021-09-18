@@ -42,6 +42,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
                              rsync \
                              polkit \
                              less \
+                             iwd \
                              "
 
 # enable ssh
