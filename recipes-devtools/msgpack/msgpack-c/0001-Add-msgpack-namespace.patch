@@ -1,0 +1,22 @@
+From d81c5f135ffdc3ff3299af7c033cbdacecf97197 Mon Sep 17 00:00:00 2001
+From: Hendrik <git@h3ndrk.de>
+Date: Sun, 6 Jun 2021 17:00:47 +0200
+Subject: [PATCH] Add msgpack:: namespace
+
+---
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e16d63b8..04867737 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -432,6 +432,8 @@ CONFIGURE_PACKAGE_CONFIG_FILE (msgpack-config.cmake.in
+ INSTALL (EXPORT msgpack-targets
+     FILE
+         msgpack-targets.cmake
++    NAMESPACE
++        "msgpack::"
+     DESTINATION
+         "${CMAKE_INSTALL_CMAKEDIR}"
+ )
