@@ -6,7 +6,7 @@ distro: nao-multilib
 target: nao-image
 defaults:
     repos:
-        refspec: hardknott
+        refspec: honister
 local_conf_header:
     meta-nao: |
         PACKAGE_CLASSES ?= "package_rpm"
@@ -26,7 +26,7 @@ repos:
         patches:
             001-congatec-hardknott-support:
                 repo: "meta-nao"
-                path: "patches/001-congatec-hardknott-support.patch"
+                path: "patches/001-congatec-honister-support.patch"
     meta-intel:
         url: "https://git.yoctoproject.org/git/meta-intel"
     meta-clang:
