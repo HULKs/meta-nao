@@ -1,0 +1,1843 @@
+From a1611a185f96804da256a51dfe2dc6b9e9567252 Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
+Date: Sun, 5 Dec 2021 18:41:44 +0100
+Subject: [PATCH 2/2] congatec new override syntax
+
+---
+ README                                        |    6 +-
+ README.SPI                                    |    2 +-
+ conf/machine/include/congatec-common-64.inc   |   12 +-
+ local.conf.sample                             |   12 +-
+ recipes-examples/cgos-demo-i2c/README         |    2 +-
+ .../cgos-demo-i2c/cgos-demo-i2c_1.0.bb        |    2 +-
+ recipes-kernel/linux/linux-intel_%.bbappend   |   28 +-
+ .../low-speed-spidev/low-speed-spidev.bb      |    4 +-
+ recipes-kernel/spidev-test/spidev-test.bb     |    2 +-
+ .../linux-firmware/linux-firmware_%.bbappend  |    6 +-
+ recipes-network/lte-connect/lte-connect.bb    |    2 +-
+ recipes-tools/cg-approval/cg-approval.bb      |    6 +-
+ recipes-tools/cgos/cgos-mod_1.03.025.bb       |    6 +-
+ recipes-tools/cgos/cgos_1.03.025.bb           |   10 +-
+ recipes-tools/cgspi-test/cgspi-test_0.2.bb    |    2 +-
+ recipes-tools/cgspi-test/files/SPI_V0.c       | 1436 ++++++++---------
+ recipes-tools/cgutil/cgutil_1.5.6.bb          |    6 +-
+ 17 files changed, 772 insertions(+), 772 deletions(-)
+
+diff --git a/README b/README
+index 890022a..2169b1f 100644
+--- a/README
++++ b/README
+@@ -361,7 +361,7 @@ your custom image.
+   Include the cg-approval recipe in your image :
+   - edit ~/build/conf/local.conf :
+       a. enable systemd :
+-        DISTRO_FEATURES_append = " systemd"
++        DISTRO_FEATURES:append = " systemd"
+         VIRTUAL-RUNTIME_init_manager = "systemd"
+         DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+         VIRTUAL-RUNTIME_initscripts = ""
+@@ -370,7 +370,7 @@ your custom image.
+         NETWORK_MANAGER ?= "networkmanager"
+ 
+       c. add the cg-approval recipe :
+-        IMAGE_INSTALL_append = " cg-approval"
++        IMAGE_INSTALL:append = " cg-approval"
+ 
+ 8.2 Target Access
+   You can access the target via HDMI, serial port or SSH connection.
+@@ -438,7 +438,7 @@ searches all available I2C buses and displays the detected devices in a table.
+ 
+   To include the application in your project, open the conf/local.conf and add 
+ this line :
+-    IMAGE_INSTALL_append = " cgos-demo-i2c"
++    IMAGE_INSTALL:append = " cgos-demo-i2c"
+ 
+   [Note: You can also include the cgos-demo-i2c in your own image recipe. 
+ Detail instructions can be found in the Yocto Project Reference Manual [1].]
+diff --git a/README.SPI b/README.SPI
+index d63ca84..139d7b6 100644
+--- a/README.SPI
++++ b/README.SPI
+@@ -30,7 +30,7 @@ This document explains SPI use on Apollo Lake platform in Yocto.
+   First we are expecting you download the latest Yocto and included congatec x86 BSP [2]. Next, include following configuration in your project:
+ 
+   conf/local.conf
+-    IMAGE_INSTALL_append += " kernel-modules low-speed-spidev spidev-test cgspi-test"
++    IMAGE_INSTALL:append += " kernel-modules low-speed-spidev spidev-test cgspi-test"
+ 
+   [Note: Pay attention to the different naming conventions of cgspi-test versus cgspi_test and spidev-test versus spidev_test. This is caused by Yocto naming conventions. spidev-test and cgspi-test represents Yocto recipes but cgspi_test and spidev_test are resulting binaries.]
+ 
+diff --git a/conf/machine/include/congatec-common-64.inc b/conf/machine/include/congatec-common-64.inc
+index 6a4ff39..83790a9 100644
+--- a/conf/machine/include/congatec-common-64.inc
++++ b/conf/machine/include/congatec-common-64.inc
+@@ -13,12 +13,12 @@ MACHINE_HWCODECS ?= "intel-vaapi-driver gstreamer1.0-vaapi"
+ MACHINE_EXTRA_RRECOMMENDS += "linux-firmware "
+ 
+ # Enable optional dpdk:
+-COMPATIBLE_MACHINE_pn-dpdk = "intel-corei7-64"
++COMPATIBLE_MACHINE:pn-dpdk = "intel-corei7-64"
+ 
+ # Enable optional QAT items:
+-COMPATIBLE_MACHINE_pn-qat16 = "intel-corei7-64"
+-COMPATIBLE_MACHINE_pn-qat17 = "intel-corei7-64"
+-COMPATIBLE_MACHINE_pn-zlib-qat = "intel-corei7-64"
++COMPATIBLE_MACHINE:pn-qat16 = "intel-corei7-64"
++COMPATIBLE_MACHINE:pn-qat17 = "intel-corei7-64"
++COMPATIBLE_MACHINE:pn-zlib-qat = "intel-corei7-64"
+ 
+ XSERVER ?= "${XSERVER_X86_BASE} \
+             ${XSERVER_X86_EXT} \
+@@ -35,6 +35,6 @@ SERIAL_CONSOLES = "115200;ttyS0 115200;ttyS1"
+ APPEND += "rootwait console=ttyS0,115200 console=tty0"
+ 
+ IMAGE_FSTYPES += " wic hddimg"
+-IMAGE_INSTALL_append = " cgos"
++IMAGE_INSTALL:append = " cgos"
+ WKS_FILE ?= "${@bb.utils.contains_any("EFI_PROVIDER", "systemd-boot", "systemd-bootdisk-microcode.wks.in", "grub-bootdisk-microcode.wks.in", d)}"
+-WKS_FILE_DEPENDS_append = " intel-microcode"
++WKS_FILE_DEPENDS:append = " intel-microcode"
+diff --git a/local.conf.sample b/local.conf.sample
+index 2d2fe11..31c8c0e 100644
+--- a/local.conf.sample
++++ b/local.conf.sample
+@@ -171,7 +171,7 @@ USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+ # run tests against any SDK that are built. To enable this uncomment these lines.
+ # See classes/test{image,sdk}.bbclass for further details.
+ #IMAGE_CLASSES += "testimage testsdk"
+-#TESTIMAGE_AUTO_qemuall = "1"
++#TESTIMAGE_AUTO:qemuall = "1"
+ 
+ #
+ # Interactive shell configuration
+@@ -247,14 +247,14 @@ BB_DISKMON_DIRS ??= "\
+ #
+ # By default native qemu will build with a builtin VNC server where graphical output can be
+ # seen. The line below enables the SDL UI frontend too.
+-PACKAGECONFIG_append_pn-qemu-system-native = " sdl"
++PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
+ # By default libsdl2-native will be built, if you want to use your host's libSDL instead of 
+ # the minimal libsdl built by libsdl2-native then uncomment the ASSUME_PROVIDED line below.
+ #ASSUME_PROVIDED += "libsdl2-native"
+ 
+ # You can also enable the Gtk UI frontend, which takes somewhat longer to build, but adds
+ # a handy set of menus for controlling the emulator.
+-#PACKAGECONFIG_append_pn-qemu-system-native = " gtk+"
++#PACKAGECONFIG:append:pn-qemu-system-native = " gtk+"
+ 
+ #
+ # Hash Equivalence
+@@ -282,7 +282,7 @@ PARALLEL_MAKE ?= "-j 8"
+ 
+ LICENSE_FLAGS_WHITELIST = "commercial"
+ 
+-DISTRO_FEATURES_append = " systemd"
++DISTRO_FEATURES:append = " systemd"
+ VIRTUAL-RUNTIME_init_manager = "systemd"
+ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
+ VIRTUAL-RUNTIME_initscripts = ""
+@@ -291,6 +291,6 @@ NETWORK_MANAGER ?= "networkmanager"
+ 
+ #
+ # congatec BSP approval setup
+-#IMAGE_INSTALL_append = " cg-approval"
+-#IMAGE_INSTALL_append = " kernel-modules low-speed-spidev spidev-test cgspi-test"
++#IMAGE_INSTALL:append = " cg-approval"
++#IMAGE_INSTALL:append = " kernel-modules low-speed-spidev spidev-test cgspi-test"
+ 
+diff --git a/recipes-examples/cgos-demo-i2c/README b/recipes-examples/cgos-demo-i2c/README
+index 25b171f..972cb38 100644
+--- a/recipes-examples/cgos-demo-i2c/README
++++ b/recipes-examples/cgos-demo-i2c/README
+@@ -1,3 +1,3 @@
+ Use
+ Add following line to your local.conf configuration file :
+-  IMAGE_INSTALL_append = " CGOSDemo-I2C"
++  IMAGE_INSTALL:append = " CGOSDemo-I2C"
+diff --git a/recipes-examples/cgos-demo-i2c/cgos-demo-i2c_1.0.bb b/recipes-examples/cgos-demo-i2c/cgos-demo-i2c_1.0.bb
+index 52c0b36..3383866 100644
+--- a/recipes-examples/cgos-demo-i2c/cgos-demo-i2c_1.0.bb
++++ b/recipes-examples/cgos-demo-i2c/cgos-demo-i2c_1.0.bb
+@@ -5,7 +5,7 @@ LICENSE = "GPLv2"
+ LIC_FILES_CHKSUM = "file://${WORKDIR}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
+ PR = "r2"
+ DEPENDS = " cgos"
+-RDEPENDS_cgos-demo-i2c = " cgos"
++RDEPENDS:cgos-demo-i2c = " cgos"
+ 
+ SRC_URI = "file://CGOSDemo-I2C-1.0.tar.bz2 \
+            file://COPYING \
+diff --git a/recipes-kernel/linux/linux-intel_%.bbappend b/recipes-kernel/linux/linux-intel_%.bbappend
+index a4f8388..aa9bba7 100644
+--- a/recipes-kernel/linux/linux-intel_%.bbappend
++++ b/recipes-kernel/linux/linux-intel_%.bbappend
+@@ -1,20 +1,20 @@
+-FILESEXTRAPATHS_prepend := "${THISDIR}/linux-intel:"
+-SRC_URI_append = " file://eth_igb.cfg"
+-SRC_URI_append = " file://ehci.cfg"
+-SRC_URI_append = " file://hd-audio.cfg"
+-SRC_URI_append = " file://me936-001.patch"
+-SRC_URI_append = " file://me936-002.patch"
+-SRC_URI_append = " file://me936.cfg"
+-SRC_URI_append = " file://ble-ar3012.cfg"
+-SRC_URI_append = " file://ath10k.cfg"
++FILESEXTRAPATHS:prepend := "${THISDIR}/linux-intel:"
++SRC_URI:append = " file://eth_igb.cfg"
++SRC_URI:append = " file://ehci.cfg"
++SRC_URI:append = " file://hd-audio.cfg"
++SRC_URI:append = " file://me936-001.patch"
++SRC_URI:append = " file://me936-002.patch"
++SRC_URI:append = " file://me936.cfg"
++SRC_URI:append = " file://ble-ar3012.cfg"
++SRC_URI:append = " file://ath10k.cfg"
+ 
+ # B7AC
+-SRC_URI_append = " file://x2apic.cfg"
+-SRC_URI_append = " file://ixgbe.cfg"
+-SRC_URI_append = " file://cg-uart.patch"
++SRC_URI:append = " file://x2apic.cfg"
++SRC_URI:append = " file://ixgbe.cfg"
++SRC_URI:append = " file://cg-uart.patch"
+ 
+ # APL - SPI
+-SRC_URI_append = " file://apl-spi-001.cfg"
++SRC_URI:append = " file://apl-spi-001.cfg"
+ 
+ # JCWL ethernet
+-SRC_URI_append = " file://igc.cfg"
++SRC_URI:append = " file://igc.cfg"
+diff --git a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
+index 4705683..4e3bac9 100644
+--- a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
++++ b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
+@@ -16,10 +16,10 @@ SRC_URI =   "file://low-speed-spidev.c \
+             file://low-speed-spidev.conf \
+             "
+ 
+-FILES_${PN} += "/etc/modprobe.d/low-speed-spidev.conf"
++FILES:${PN} += "/etc/modprobe.d/low-speed-spidev.conf"
+ 
+ # Configuring to start on boot low-speed-spidev
+-do_install_append () {
++do_install:append () {
+   install -m 0655 low-speed-spidev.conf ${D}/etc/modprobe.d/
+ }
+ 
+diff --git a/recipes-kernel/spidev-test/spidev-test.bb b/recipes-kernel/spidev-test/spidev-test.bb
+index c697b82..d7ef55c 100644
+--- a/recipes-kernel/spidev-test/spidev-test.bb
++++ b/recipes-kernel/spidev-test/spidev-test.bb
+@@ -12,7 +12,7 @@ SRC_URI += "file://spidev_test.c \
+             file://001-device-name.patch \
+ "
+ 
+-FILES_${PN} += "${bindir}/spidev_test"
++FILES:${PN} += "${bindir}/spidev_test"
+ 
+ TARGET_CC_ARCH += "${LDFLAGS}"
+ 
+diff --git a/recipes-network/linux-firmware/linux-firmware_%.bbappend b/recipes-network/linux-firmware/linux-firmware_%.bbappend
+index d010cc0..bf23d06 100644
+--- a/recipes-network/linux-firmware/linux-firmware_%.bbappend
++++ b/recipes-network/linux-firmware/linux-firmware_%.bbappend
+@@ -1,7 +1,7 @@
+ #Intel wifi 7260 firmware version 17
+ PACKAGES =+ "${PN}-iwlwifi-7260-17 "
+-LICENSE_${PN}-iwlwifi-7260-17    = "Firmware-iwlwifi_firmware"
++LICENSE:${PN}-iwlwifi-7260-17    = "Firmware-iwlwifi_firmware"
+ 
+-FILES_${PN}-iwlwifi-7260-17 = "/lib/firmware/iwlwifi-7260-17.ucode"
++FILES:${PN}-iwlwifi-7260-17 = "/lib/firmware/iwlwifi-7260-17.ucode"
+ 
+-RDEPENDS_${PN}-iwlwifi-7260-17    = "${PN}-iwlwifi-license"
++RDEPENDS:${PN}-iwlwifi-7260-17    = "${PN}-iwlwifi-license"
+diff --git a/recipes-network/lte-connect/lte-connect.bb b/recipes-network/lte-connect/lte-connect.bb
+index 3866a11..3c3e2a2 100644
+--- a/recipes-network/lte-connect/lte-connect.bb
++++ b/recipes-network/lte-connect/lte-connect.bb
+@@ -4,7 +4,7 @@ SECTION = "console/network"
+ LICENSE = "MIT"
+ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+ PR = "r3"
+-RDEPENDS_lte-connect = " bash"
++RDEPENDS:lte-connect = " bash"
+ 
+ SRC_URI = "file://lte-connect.sh"
+ 
+diff --git a/recipes-tools/cg-approval/cg-approval.bb b/recipes-tools/cg-approval/cg-approval.bb
+index d796477..862b012 100644
+--- a/recipes-tools/cg-approval/cg-approval.bb
++++ b/recipes-tools/cg-approval/cg-approval.bb
+@@ -5,12 +5,12 @@ LICENSE = "GPLv2"
+ LIC_FILES_CHKSUM = "file://${WORKDIR}/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
+ 
+ PR = "r6"
+-ALLOW_EMPTY_${PN} = "1"
++ALLOW_EMPTY:${PN} = "1"
+ 
+ SRC_URI = "file://COPYING \
+ "
+ 
+-RRECOMMENDS_${PN} = " systemd cgutil alsa-utils setserial pciutils \
++RRECOMMENDS:${PN} = " systemd cgutil alsa-utils setserial pciutils \
+   systemd-compat-units ethtool dropbear util-linux kernel-modules \
+   linux-firmware-iwlwifi-7260-17 linux-firmware-ath10k linux-firmware-ar3k \
+   iw crda wpa-supplicant tcpdump iperf3 \
+@@ -24,7 +24,7 @@ RRECOMMENDS_${PN} = " systemd cgutil alsa-utils setserial pciutils \
+ python () {
+   if not bb.utils.contains ('DISTRO_FEATURES', 'systemd', True, False, d):
+     bb.warn("add to local.conf:")
+-    bb.warn("DISTRO_FEATURES_append = \" systemd\"")
++    bb.warn("DISTRO_FEATURES:append = \" systemd\"")
+     bb.warn("VIRTUAL-RUNTIME_init_manager = \"systemd\"")
+     bb.warn("DISTRO_FEATURES_BACKFILL_CONSIDERED = \"sysvinit\"")
+     bb.warn("VIRTUAL-RUNTIME_initscripts = \"\"")
+diff --git a/recipes-tools/cgos/cgos-mod_1.03.025.bb b/recipes-tools/cgos/cgos-mod_1.03.025.bb
+index c4d2901..499ae56 100644
+--- a/recipes-tools/cgos/cgos-mod_1.03.025.bb
++++ b/recipes-tools/cgos/cgos-mod_1.03.025.bb
+@@ -26,17 +26,17 @@ MODULES_MODULE_SYMVERS_LOCATION = "CgosDrv/Lx"
+ MODULE_NAME = "cgosdrv"
+ MAKE_TARGETS = "mod"
+ MODULES_INSTALL_TARGET = "install_mod"
+-PKG_${PN} = "kernel-module-${MODULE_NAME}"
++PKG:${PN} = "kernel-module-${MODULE_NAME}"
+ PARALLEL_MAKE = ""
+ MACHINE_EXTRA_RRECOMMENDS += "kernel-module-${MODULE_NAME}"
+ 
+-module_do_install_append() {
++module_do_install:append() {
+     install -d ${D}${nonarch_base_libdir}/udev/rules.d
+     install -d ${D}${libdir}/modules-load.d
+     cp ${S}/99-cgos.rules ${D}${nonarch_base_libdir}/udev/rules.d/99-cgos.rules
+     cp ${S}/cgos.conf ${D}${libdir}/modules-load.d/cgos.conf
+ }
+ 
+-FILES_${PN} += "${libdir}/modules-load.d/cgos.conf \
++FILES:${PN} += "${libdir}/modules-load.d/cgos.conf \
+                 ${nonarch_base_libdir}/udev/rules.d/99-cgos.rules \
+ "
+diff --git a/recipes-tools/cgos/cgos_1.03.025.bb b/recipes-tools/cgos/cgos_1.03.025.bb
+index de21dec..91d1e9c 100644
+--- a/recipes-tools/cgos/cgos_1.03.025.bb
++++ b/recipes-tools/cgos/cgos_1.03.025.bb
+@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE = "congatec-(qa3|tca4|tca5|b7ac|tsco|tcwl)-64"
+ PR = "3"
+ 
+ DEPENDS = " cgos-mod"
+-RDEPENDS_${PN} = " cgos-mod"
++RDEPENDS:${PN} = " cgos-mod"
+ 
+ SRC_URI = "file://cgoslx-x64-1.03.025.tar.gz \
+            file://cgoslx-x64-1.03.025.patch \
+@@ -20,16 +20,16 @@ SRC_URI = "file://cgoslx-x64-1.03.025.tar.gz \
+ PACKAGES = "${PN} ${PN}-dev ${PN}-dbg"
+ PROVIDES = "${PACKAGES}"
+ 
+-FILES_${PN} += "${bindir}/cgosdump \
++FILES:${PN} += "${bindir}/cgosdump \
+                 ${bindir}/cgosmon \
+                 ${libdir}/libcgos.so \
+                "
+ 
+-FILES_${PN}-dev += " ${includedir}/Cgos.h \
++FILES:${PN}-dev += " ${includedir}/Cgos.h \
+                      ${libdir}/libcgos.so \
+                    "
+ 
+-FILES_${PN}-dbg += " ${libdir}/.debug/* \
++FILES:${PN}-dbg += " ${libdir}/.debug/* \
+                      ${bindir}/.debug/* \
+                    "
+ 
+@@ -50,4 +50,4 @@ do_install() {
+ 
+ PARALLEL_MAKE = ""
+ 
+-INSANE_SKIP_${PN} = "ldflags"
++INSANE_SKIP:${PN} = "ldflags"
+diff --git a/recipes-tools/cgspi-test/cgspi-test_0.2.bb b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
+index c3c9136..6f986ef 100644
+--- a/recipes-tools/cgspi-test/cgspi-test_0.2.bb
++++ b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
+@@ -11,7 +11,7 @@ PROVIDES = "cgspi-test"
+ S = "${WORKDIR}"
+ SRC_URI += "file://SPI_V0.c"
+ 
+-FILES_${PN} += "${bindir}/cgspi_test"
++FILES:${PN} += "${bindir}/cgspi_test"
+ 
+ TARGET_CC_ARCH += "${LDFLAGS}"
+ 
+diff --git a/recipes-tools/cgspi-test/files/SPI_V0.c b/recipes-tools/cgspi-test/files/SPI_V0.c
+index 8f6c013..307df67 100755
+--- a/recipes-tools/cgspi-test/files/SPI_V0.c
++++ b/recipes-tools/cgspi-test/files/SPI_V0.c
+@@ -1,718 +1,718 @@
+-/*
+----SPI Test Software(SA50)---
+-
+--> Intended for the SPI Test Modul:(P:\MISC\SPI Test Modul)
+--> Written for one usable CS-line (SA50)
+-
+--> The dedicated SPI-Device must be selected manually via jumper:
+-		-> connect the corresponding CS-line of the device to general CS-line of the SA50(X2:2)
+-	
+-	1: I/O Port-Expander (MCP23S17)
+-			-Port A -> set as output with two led´s on bit 0,7
+-			-Port B -> set as input with PU´s, reads state of the connected DIP-Switch
+-			
+-			Note: Reset value of IOCON.BANK=0 -> Register addr. to change IOCON.BANK to 1 is 0x0A at startup
+-			
+-	2: Environmental Sensor (BME 280)
+-			-Temperature measurement is implemented
+-			-Burst temperature read can be started:
+-				-> to read the temperature a defined number of times
+-								-or-
+-				-> to perform a enless temperature read
+-			
+-	3: QSPI-Flash (W25Q64FW) 
+-			-Due to SA50 limitations: only standart 4-wire SPI is supported
+-			-Seperate byte read/write
+-			-Sector erasement
+-			
+-	4: RTC (DS3234)
+-			-24h-Mode
+-			-RTC time can be set to system time if necessary
+-*/
+-
+-
+-#include <stdint.h>
+-#include <unistd.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <getopt.h>
+-#include <fcntl.h>
+-#include <time.h>
+-#include <sys/ioctl.h>
+-#include <linux/ioctl.h>
+-#include <sys/stat.h>
+-#include <linux/types.h>
+-#include <linux/spi/spidev.h>
+-
+-#define max_temp_read 10000											// Max. valid number of counted temp. reads
+-
+-/*-------------------------------------------Global variables--------------------------------------------*/
+-
+-static const char *device = "/dev/spidev1.0"; 						// Spi device node: SPI-Bus->1, CS->0
+-static uint32_t mode=0x00;											// Standard SPI-Mode : 0
+-static uint8_t bits = 8; 											// Bits per word: 8
+-static uint32_t speed = 1000000;  									// Spi standard transfer speed: 1Mhz
+-static uint16_t delay = 0; 											// No SPI delay time
+-
+-int ret;															// ioctl return value for error handling
+-int fd;																// SPI device node file descriptor
+-
+-uint8_t devices_present=0;  										// Represents which spi device is selected
+-
+-uint8_t rx_buf[10]; 												// General MISO-buffer
+-
+-uint8_t debug_tx_buf [10];  										// Debug TX-buffer
+-uint8_t debug_rx_buf [10];											// Debug RX-buffer
+-
+-/*------------------------------------------------------------------------------------------------------*/
+- 
+-//---------------------------------------------------------------------------
+-// Name         : BcdtoDecimal
+-// Description  : Converts 1 byte from BCD to Decimal
+-// Input        : uint8_t bcdByte 	= BCD byte to convert
+-// Output       : uint8_t 			= Converted byte in decimal
+-//---------------------------------------------------------------------------
+-uint8_t BcdtoDecimal (uint8_t bcdByte){
+-  return (((bcdByte & 0xF0) >> 4) * 10) + (bcdByte & 0x0F);			// BCD to Decimal conversion
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : DecimaltoBcd
+-// Description  : Converts 1 byte from Decimal to BCD
+-// Input        : uint8_t decimalByte 	= Decimal byte to convert
+-// Output       : uint8_t 				= Converted byte in BCD
+-//---------------------------------------------------------------------------
+-uint8_t DecimaltoBcd (uint8_t decimalByte){
+-  return (((decimalByte / 10) << 4) | (decimalByte % 10));			// Decimal to BCD conversion
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : mdelay
+-// Description  : Function that causes a 160ms delay
+-// Input        : void
+-// Output       : void
+-//---------------------------------------------------------------------------
+-void mdelay(){
+-	uint32_t c; 
+-	for (c = 0;c < 0x2FFFFFF;c++){}									// Delay counter
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : SPItransfer
+-// Description  : Transfer/Receive Date over the the SPI-Bus
+-// Input        : int len 					= Length of data to be transferred in bytes
+-//				: uint8_t const *t_tx_buf 	= Data to be transferred (MOSI)
+-//				: uint8_t const *t_rx_buf 	= Received data over MISO
+-// Output       : void					
+-//---------------------------------------------------------------------------
+-void SPItransfer(int len, uint8_t const *t_tx_buf, uint8_t const *t_rx_buf){          
+-	
+-	struct spi_ioc_transfer ts = 									// Spi transfer/config struct
+-	{
+-		.tx_buf = (unsigned long)t_tx_buf,
+-		.rx_buf = (unsigned long)t_rx_buf,
+-		.len = len,
+-		.delay_usecs = delay,
+-		.speed_hz = speed,
+-		.bits_per_word = bits,
+-	};
+-	
+-	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &ts) ;						// Send/receive data
+-		if(ret < 1)													// Check for errors in data transfer
+-		{
+-			perror("SPI-TX/RX Error"); 								
+-			exit(1);
+-		}
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : expander_init
+-// Description  : Initialises the I/O Port-Expander
+-// Input        : void
+-// Output       : void					
+-//---------------------------------------------------------------------------
+-void expander_init(){
+-	
+-	if(!devices_present)
+-	{
+-		uint8_t tx_buf1[] = {
+-		0x40,0x0A,0xBC,													// Port A Bank=1, SEQOP=1, DISSLW=1
+-		0x40,0x00,0x00,													// Port A direction -> output
+-		0x40,0x10,0xFF,													// Port B direction -> input
+-		0x40,0x02,0x00,													// Port A disable interrupt
+-		0x40,0x12,0x00,													// Port B disable interrupt
+-		0x40,0x06,0x00,													// Port A pullup disabled
+-		0x40,0x16,0xFF													// Port B pullup enabled
+-		};
+-		
+-		uint8_t tx_buf2[3] = {0x41,0x05,0x00};							
+-				
+-		uint8_t i;
+-		uint8_t *buf;
+-		
+-		
+-		buf = tx_buf1;
+-		
+-		for(i=0;i<7;i++)												
+-		{
+-			SPItransfer(3,buf,debug_rx_buf);							// Send init. buffer
+-			buf += 3;	
+-		}
+-		
+-		SPItransfer(3,tx_buf2,rx_buf);
+-		
+-			if(rx_buf[2]!=0xBC) return;									// Read back first init. to check for device presence
+-		
+-		speed = 1000000;
+-		devices_present = 1;											// Set device presence
+-	}
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : expander_get_DIP_state
+-// Description  : Gets the DIP-Swicht state (state of Port B) of the Port-Expander
+-// Input        : void
+-// Output       : uint8_t rx_buf[2]			= Status byte of Port B (DIP-Switch)
+-//--------------------------------------------------------------------------- 
+-uint8_t expander_get_DIP_state(){
+-	
+-	uint8_t tx_buf1[3] = {0x41,0x19,0x00};								// Port B status register state 
+-	
+-	SPItransfer(3,tx_buf1,rx_buf);
+-	
+-	return rx_buf[2];												
+-		
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : expander_set_portA
+-// Description  : Sets the state of Port A(Led´s on Bit0/7) of the Port-Expander
+-// Input        : uint8_t *port_A_state 	= State that will be written to Port A
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void expander_set_portA(uint8_t *port_A_state){
+-	uint8_t tx_buf1[3]={0x40,0x09,*port_A_state};						// Port A modify output latch
+-	uint8_t tx_buf2[3]={0x40,0x0A,*port_A_state};						// Port A write to pins
+-	
+-	SPItransfer(3,tx_buf1,debug_rx_buf);
+-	SPItransfer(3,tx_buf2,debug_rx_buf);
+-	
+-	printf("Port A set to:%#x\n",*port_A_state);
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : bme280_init
+-// Description  : Sets the state of Port A(Led´s on Bit0/7) of the Port-Expander
+-// Input        : void
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void bme280_init(){
+-	
+-	if(!devices_present)
+-	{	
+-		uint8_t tx_buf1[] = {0x74,0x83}; 								// Normal Mode, Temp: x8 oversampling
+-		uint8_t tx_buf2[] = {0x75,0x6C}; 								// 250us standby,IIR filter coefficient: 8
+-		uint8_t tx_buf3[] = {0xD0,0x00}; 								// Device ID 
+-		
+-		SPItransfer(2,tx_buf3,rx_buf);
+-		
+-			if(rx_buf[1]!=0x60) return;									// Read back Device ID to check for device presence
+-		
+-		SPItransfer(2,tx_buf1,debug_rx_buf);
+-		SPItransfer(2,tx_buf2,debug_rx_buf);
+-		
+-		speed = 10000000;
+-		devices_present = 2;											// Set device presence
+-	}
+-}
+- 
+-//---------------------------------------------------------------------------
+-// Name         : bme280_get_temp
+-// Description  : Reads raw. temp. value of the BME 280 and calculates the finale value in °C
+-// Input        : void
+-// Output       : fload temp = Calculated temperature in °C
+-//---------------------------------------------------------------------------
+-float bme280_get_temp(){
+-	
+-	int32_t raw_temp;
+-	float temp;
+-	
+-	uint8_t temp_tx_buf[]={0xFA,0x00,0x00,0x00}; 						// Read raw temp. data 
+-	uint8_t temp_rx_buf[4];
+-	
+-	uint32_t calib_t1;
+-	int32_t calib_t2;
+-	int32_t calib_t3;
+-	
+-	uint8_t comp_tx_buf[]={0x88,0x00,0x00,0x00,0x00,0x00,0x00}; 		// Read raw temp. compensation data
+-	uint8_t comp_rx_buf[7];
+-	
+-	int32_t var1,var2,t_fine;
+-	
+-	
+-	SPItransfer(4,temp_tx_buf,temp_rx_buf);	
+-	SPItransfer(7,comp_tx_buf,comp_rx_buf);
+-
+-
+-	raw_temp = ((temp_rx_buf[3] >> 4) | (temp_rx_buf[2] << 4) | (temp_rx_buf[1] << 12)); 	// Build rew temp. and compensation variables
+-		
+-	calib_t1 = (comp_rx_buf[1] | (comp_rx_buf[2] << 8));
+-	calib_t2 = (comp_rx_buf[3] | (comp_rx_buf[4] << 8));
+-	calib_t3 = (comp_rx_buf[5] | (comp_rx_buf[6] << 8));
+-	
+-																							// Calculate finale temperature
+-	var1 = ((((raw_temp >> 3) - (calib_t1 << 1))) * (calib_t2)) >> 11;						
+-	var2 = (((((raw_temp >> 4) - (calib_t1)) *((raw_temp >> 4) - (calib_t1))) >> 12) * (calib_t3)) >> 14;
+-
+-	t_fine = var1 + var2;
+-	temp = ((t_fine * 5 + 128) >> 8)/100.0;
+-	
+-	
+-	//------Debug------
+-	//printf("%.2f \n", temp);
+-	//printf("%#x \n", raw_temp);
+-	//printf("%#x %#x %#x  \n", calib_t1,calib_t2,calib_t3);
+-
+-	return temp;
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : flash_init
+-// Description  : Initialises the QSPI-Flash
+-// Input        : void
+-// Output       : void
+-//---------------------------------------------------------------------------
+-void flash_init(){
+-	
+-	if(!devices_present)
+-	{
+-		uint8_t tx_buf1[] = {0x9F,0x00}; 								// Manufacturer ID
+-		uint8_t tx_buf2 = 0x06; 										// Enable write access
+-		
+-		SPItransfer(2,tx_buf1,rx_buf);
+-		
+-			if(rx_buf[1]!=0xEF) return;									// Read back Manufacturer ID to check for device presence
+-			
+-		SPItransfer(1,&tx_buf2,debug_rx_buf);
+-		
+-		speed = 5000000;
+-		devices_present = 3;											// Set device presence
+-	}
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : flash_get_byte
+-// Description  : Reads a byte of data from the QSPI-Flash with a 24-bit addr.
+-// Input        : uint32_t *read_addr 	= 24-bit addr. to read from the flash
+-// Output       : uint8_t rx_buf[4]		= Received data byte from the flash
+-//--------------------------------------------------------------------------- 
+-uint8_t flash_get_byte(uint32_t *read_addr){
+-	
+-	uint8_t tx_buf1[5];
+-	
+-	tx_buf1[0]= 0x03;													// Build 24-bit addr. for transfer buffer
+-	tx_buf1[1]= (uint8_t)((*read_addr & 0x00FF0000) >> 16);		
+-	tx_buf1[2]= (uint8_t)((*read_addr & 0x0000FF00) >> 8);
+-	tx_buf1[3]= (uint8_t)(*read_addr & 0x000000FF); 
+-	tx_buf1[4]= 0x00;
+-	
+-
+-	SPItransfer(5,tx_buf1,rx_buf);
+-	
+-	return rx_buf[4];
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : flash_write_byte
+-// Description  : Write a byte of data to the QSPI-Flash with a 24-bit addr.
+-// Input        : uint32_t *write_addr 	= 24-bit addr. write addr.
+-//				: uint8_t *payload		= Byte of data to write
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void flash_write_byte(uint32_t *write_addr,uint8_t *payload){
+-	
+-	uint8_t tx_buf1 = 0x06; 											// Enable write access
+-	uint8_t tx_buf2[5];
+-	
+-	tx_buf2[0]= 0x02;													// Build 24-bit addr. for transfer buffer
+-	tx_buf2[1]= (uint8_t)((*write_addr & 0x00FF0000) >> 16);
+-	tx_buf2[2]= (uint8_t)((*write_addr & 0x0000FF00) >> 8);
+-	tx_buf2[3]= (uint8_t)(*write_addr & 0x000000FF); 
+-	tx_buf2[4]= *payload;
+-	
+-	
+-	SPItransfer(1,&tx_buf1,debug_rx_buf);
+-	SPItransfer(5,tx_buf2,debug_rx_buf);	
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : flash_erase_sector
+-// Description  : Erases a certain sector (4KB) of the flash
+-// Input        : uint32_t *erase_addr 	= 24-bit addr. to erase the sector
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void flash_erase_sector(uint32_t *erase_addr){
+-	
+-	uint8_t tx_buf1 = 0x06; 											// Enable write access
+-	uint8_t tx_buf2[4];
+-	
+-	tx_buf2[0]= 0x20;
+-	tx_buf2[1]= (uint8_t)((*erase_addr & 0x00FF0000) >> 16);
+-	tx_buf2[2]= (uint8_t)((*erase_addr & 0x0000FF00) >> 8);
+-	tx_buf2[3]= (uint8_t)(*erase_addr & 0x000000FF); 
+-	
+-	
+-	SPItransfer(1,&tx_buf1,debug_rx_buf);
+-	SPItransfer(4,tx_buf2,debug_rx_buf);	
+-	
+-	printf("Sector %#x erased \n",*erase_addr);
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : rtc_init
+-// Description  : Initialises the RTC
+-// Input        : void
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+- void rtc_init(){
+-		
+-	if(!devices_present)
+-	{
+-		mode = 0x01;														
+-		ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 						// Set SPI-Mode to 1					
+-			if (ret < 0)												// Check for errors
+-			  {
+-				  perror("Error: Set SPI-Mod to 1 for RTC");
+-				  exit(1);
+-			  }
+-		
+-
+-		uint8_t tx_buf1[] = {0x0E,0x00}; 								// Read Control/Status register 1
+-		uint8_t tx_buf2[] = {0x8F,0x08}; 								// Disable 32kHz output if Vcc < Vbat
+-			
+-			
+-		SPItransfer(2,tx_buf1,rx_buf);
+-		
+-			if(rx_buf[1]!=0x1C) 										// Read Control/Status register 1 to check for device presence
+-			{
+-				
+-				mode = 0x00;														
+-				ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 				// Set SPI-Mode back to 0					
+-					
+-					if (ret < 0)										// Check for errors
+-					  {
+-						  perror("Error: Set SPI-Mod to 0 after RTC init");
+-						  exit(1);
+-					  }
+-				
+-				return;	
+-			}								
+-			
+-		
+-		SPItransfer(2,tx_buf2,debug_rx_buf);							
+-		
+-		speed = 4000000;												
+-		devices_present = 4;											// Set device presence
+-	}
+- }
+- 
+-//---------------------------------------------------------------------------
+-// Name         : bme280_print
+-// Description  : Displays the temperature of the Enviromental Sebsir and allows a user defined burst read
+-// Input        : void
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void bme280_print(){
+-	
+-	char inputchar;
+-	
+-	printf("------------------------BME 280 selected------------------\n");	
+-	
+-	printf("BME 280 Init done\n");
+-	mdelay();																		// Delay for temp. measurement
+-	printf("Temp:%.2f °C \n",bme280_get_temp());									// Print temperature in °C with 2 decimal places
+-	
+-	printf("Start temperature burst read?\n");								
+-	printf("y/n?\n");
+-	
+-	while(1)
+-	{	
+-		inputchar = getchar();
+-		
+-		if(inputchar == 'n') 														// User input = n -> No burst read ->exit
+-		{
+-			printf("----------------------------------------------------------\n");	
+-			return;
+-		}
+-			else if(inputchar == 'y')												// User input = y -> Burst read
+-				{
+-					uint32_t i,inputint;
+-										
+-					printf("How often?\n");											
+-					
+-					printf("Input count between 1 and %d or other to trigger endless temp. read mode\n",max_temp_read);	
+-					scanf ("%d",&inputint);
+-						
+-					if(inputint >0 && inputint <= max_temp_read)					// User input = defined count between 0 and max_temp_reads	
+-					{
+-						for(i=0;i<inputint;i++)										// Loop temperature read for defined count
+-						{
+-							printf("Temp(%d):%.2f °C \n",i+1,bme280_get_temp());
+-							mdelay();	
+-						}
+-						
+-						printf("Done!\n");
+-						printf("----------------------------------------------------------\n");	
+-						return;
+-					}	
+-																						
+-																					// User input = undefined count
+-					while(1)														// Enless temperature read loop
+-					{
+-						printf("Endless Temp. read  :%.2f °C    Exit with Strg+C\n",bme280_get_temp());		
+-						mdelay();	
+-					}
+-				}	
+-	}
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : flash_print
+-// Description  : Displays the determined data of the QSPI-Flash
+-// Input        : void
+-// Output       : void
+-//--------------------------------------------------------------------------- 
+-void flash_print(){
+-	
+-	uint32_t test_addr = 0x000000;												// Test 24-bit addr. for read/write
+-	uint8_t test_byte = 0x99;													// Test data byte to write/read
+-	
+-	printf("------------------------Flash selected--------------------\n");	
+-	
+-	printf("Flash Init done\n");
+-	flash_erase_sector(&test_addr);												// Erase flash sector
+-	mdelay();																	// Wait for complete erasement
+-	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read emty flash
+-	printf("Write %#x to 0x000000 \n",test_byte);								
+-	flash_write_byte(&test_addr,&test_byte);									// Write test byte
+-	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read back test byte
+-	flash_erase_sector(&test_addr);												// Wait for complete erasement
+-	mdelay();																	// Delay to erase data
+-	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read emty flash
+-	
+-	printf("----------------------------------------------------------\n");	
+-	
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : expander_print
+-// Description  : Displays the determined state of Port B and sets port A according to B
+-// Input        : void
+-// Output       : void
+-//---------------------------------------------------------------------------
+-void expander_print(){
+-	
+-	uint8_t DIP_state;
+-	
+-	printf("------------------------Port Expander selected------------\n");	
+-	
+-	printf("Expander Init done\n");
+-	
+-	DIP_state = expander_get_DIP_state();										// Read state of DIP-Switch
+-	printf("DIP-Switch status:%#x \n", DIP_state);
+-	
+-	expander_set_portA(&DIP_state);												// Set Led´s (Bit 0,7) corresponding to DIP-Switch state
+-	
+-	printf("----------------------------------------------------------\n");	
+-}
+-
+-//---------------------------------------------------------------------------
+-// Name         : rtc_print
+-// Description  : Displays(sets if necessary) the current RTC time
+-// Input        : void
+-// Output       : void
+-//---------------------------------------------------------------------------
+-void rtc_print(){
+-	
+-	uint8_t i,k;
+-	uint8_t *buf_tx,*buf_rx;
+-	char inputchar;
+-
+-	time_t sys_time;
+-	struct tm * timeinfo;											// Struct for system time
+-	
+-	time (&sys_time);
+-	timeinfo = localtime (&sys_time);
+-	
+-	uint8_t tx_set_time[] = {										// Array to write time to the RTC
+-	0x80,0x00,												
+-	0x81,0x00,													
+-	0x82,0x00,																									
+-	0x84,0x00,													
+-	0x85,0x00,												
+-	0x86,0x00																								
+-	};
+-	
+-	uint8_t tx_get_time[] = {										// Array to read time from the RTC
+-	0x00,0x00,												
+-	0x01,0x00,													
+-	0x02,0x00,																									
+-	0x04,0x00,													
+-	0x05,0x00,												
+-	0x06,0x00																								
+-	};
+-	
+-	uint8_t rx_get_time[12];										// Received RTC time buffer
+-	
+-	
+-	buf_tx = tx_get_time;
+-	buf_rx = rx_get_time;
+-	
+-	for(i=0;i<6;i++)												// Write to receiving time buffer
+-		{
+-			SPItransfer(2,buf_tx,buf_rx);							
+-			buf_tx += 2;
+-			buf_rx += 2;	
+-		}
+-				
+-			
+-	printf("------------------------RTC selected----------------------\n");	
+-		
+-	printf("RTC Init done\n");
+-	
+-	printf("Test Modul RTC time is:->%d:%d:%d - %d.%d.%d<-\n",BcdtoDecimal(rx_get_time[5]),BcdtoDecimal(rx_get_time[3])				// Read time from RTC
+-												,BcdtoDecimal(rx_get_time[1]),BcdtoDecimal(rx_get_time[7])
+-												,BcdtoDecimal((rx_get_time[9] & 0x7F)),BcdtoDecimal(rx_get_time[11])+2000);
+-
+-	printf("Set Modul RTC time to system time: ->%d:%d:%d - %d.%d.%d<- ?\n",timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec		// System time
+-															,timeinfo->tm_mday,timeinfo->tm_mon+1,timeinfo->tm_year+1900);
+-	
+-	printf("y/n?\n");																// User selection
+-	
+-	while(1)
+-	{	
+-		inputchar = getchar();
+-		
+-		if(inputchar == 'n') 														// User input = n -> Modul RTC time is not changed
+-		{
+-			printf("RTC is not set! \n");
+-			printf("----------------------------------------------------------\n");	
+-			return;
+-		}
+-			else if(inputchar == 'y')												// User input = y -> Set Modul RTC time to system time
+-				{
+-					
+-					time (&sys_time);												// Update system time
+-					timeinfo = localtime (&sys_time);								
+-						
+-					tx_set_time[1] = DecimaltoBcd(timeinfo->tm_sec);  				// Set transfer buffer to system time
+-					tx_set_time[3] = DecimaltoBcd(timeinfo->tm_min);				
+-					tx_set_time[5] = DecimaltoBcd(timeinfo->tm_hour);				
+-					tx_set_time[7] = DecimaltoBcd(timeinfo->tm_mday);				
+-					tx_set_time[9] = 0x7F & DecimaltoBcd(timeinfo->tm_mon + 1);		
+-					tx_set_time[11] = DecimaltoBcd(timeinfo->tm_year - 100);						
+-					
+-					
+-					buf_tx = tx_set_time;
+-	
+-					for(i=0;i<6;i++)												// Send transfer buffer
+-					{
+-						SPItransfer(2,buf_tx,debug_rx_buf);							
+-						buf_tx += 2;	
+-					}
+-					
+-					//Debug
+-					//printf("To RTC: %#x %#x %#x %#x %#x %#x \n",tx_set_time[5],tx_set_time[3],tx_set_time[1],tx_set_time[7],tx_set_time[9],tx_set_time[11]);
+-					
+-					printf("RTC setting done! \n");
+-					printf("----------------------------------------------------------\n");	
+-					return;
+-				}	
+-	}
+-}
+-
+-
+-int main(){
+-/*-------------------------------------SPI interface init.--------------------------------------*/
+-	
+-	fd = open(device, O_RDWR);													// Open SPI stream
+-	
+-	if (fd < 0) 																
+-	  {
+-		  perror("Error: Open Device");
+-		  exit(1);
+-	  }
+-	
+-	ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 									// Set SPI-Mode
+-		if (ret < 0)
+-		  {
+-			  perror("Error: Set SPI-Mode");
+-			  exit(1);
+-		  }
+-	
+-	ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits); 							// Set word length
+-		if (ret < 0)
+-		  { 
+-			  perror("Error: Set word length");
+-			  exit(1);
+-		  }
+-
+-	ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed); 							// Set transfer speed
+-		if (ret < 0)
+-		  {
+-			  perror("Error: Set transfer speed");
+-			  exit(1);
+-		  }
+-	
+-	ret = ioctl(fd, SPI_IOC_RD_MODE, &mode); 									// Read back SPI-Mode
+-		if (ret < 0)
+-		  {
+-			  perror("Error: Get SPI-Mode");
+-			  exit(1);
+-		  }
+-		  
+-	
+-	 ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits); 							// Read back word length
+-	  if (ret < 0)
+-		{
+-			perror("Error: Get word length");
+-			exit(1);
+-		}
+-
+-	  ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed); 						// Read back transfer speed
+-	  if (ret < 0)
+-		{
+-			perror("Error: Get transfer speed");
+-			exit(1);
+-		}
+-
+-	/*-----------------------------------------------------------------------------------------------*/
+-	
+-	rtc_init();																	// Device initialisation 
+-	expander_init();															// Only the selected device (CS-Jumper) will be initialized												
+-	bme280_init();																
+-	flash_init();
+-	
+-	printf("------------------------SPI-Config------------------------\n");		// Print SPI config information
+-	printf("SPI-Device.....: %s\n", device); 
+-	printf("SPI-Mode.......: %d\n", mode); 
+-	printf("Bits per word.....: %d\n", bits);  
+-	printf("Datarate: %d Hz (%d MHz)\n", speed, speed/1000000);
+-	
+-	
+-	switch(devices_present)														// Print data corresponding to the available spi device
+-	{
+-		case 1: expander_print(); break;
+-		case 2: bme280_print(); break;
+-		case 3: flash_print(); break;
+-		case 4: rtc_print(); break;
+-		
+-		default: printf("\nNo SPI-Device selected. Check CS-Jumper\n\n");	
+-	}
+-	
+-	close(fd);																	// Close SPI stream
+-	
+-	return ret;
+-}
+-
++/*
++---SPI Test Software(SA50)---
++
++-> Intended for the SPI Test Modul:(P:\MISC\SPI Test Modul)
++-> Written for one usable CS-line (SA50)
++
++-> The dedicated SPI-Device must be selected manually via jumper:
++		-> connect the corresponding CS-line of the device to general CS-line of the SA50(X2:2)
++	
++	1: I/O Port-Expander (MCP23S17)
++			-Port A -> set as output with two led´s on bit 0,7
++			-Port B -> set as input with PU´s, reads state of the connected DIP-Switch
++			
++			Note: Reset value of IOCON.BANK=0 -> Register addr. to change IOCON.BANK to 1 is 0x0A at startup
++			
++	2: Environmental Sensor (BME 280)
++			-Temperature measurement is implemented
++			-Burst temperature read can be started:
++				-> to read the temperature a defined number of times
++								-or-
++				-> to perform a enless temperature read
++			
++	3: QSPI-Flash (W25Q64FW) 
++			-Due to SA50 limitations: only standart 4-wire SPI is supported
++			-Seperate byte read/write
++			-Sector erasement
++			
++	4: RTC (DS3234)
++			-24h-Mode
++			-RTC time can be set to system time if necessary
++*/
++
++
++#include <stdint.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <getopt.h>
++#include <fcntl.h>
++#include <time.h>
++#include <sys/ioctl.h>
++#include <linux/ioctl.h>
++#include <sys/stat.h>
++#include <linux/types.h>
++#include <linux/spi/spidev.h>
++
++#define max_temp_read 10000											// Max. valid number of counted temp. reads
++
++/*-------------------------------------------Global variables--------------------------------------------*/
++
++static const char *device = "/dev/spidev1.0"; 						// Spi device node: SPI-Bus->1, CS->0
++static uint32_t mode=0x00;											// Standard SPI-Mode : 0
++static uint8_t bits = 8; 											// Bits per word: 8
++static uint32_t speed = 1000000;  									// Spi standard transfer speed: 1Mhz
++static uint16_t delay = 0; 											// No SPI delay time
++
++int ret;															// ioctl return value for error handling
++int fd;																// SPI device node file descriptor
++
++uint8_t devices_present=0;  										// Represents which spi device is selected
++
++uint8_t rx_buf[10]; 												// General MISO-buffer
++
++uint8_t debug_tx_buf [10];  										// Debug TX-buffer
++uint8_t debug_rx_buf [10];											// Debug RX-buffer
++
++/*------------------------------------------------------------------------------------------------------*/
++ 
++//---------------------------------------------------------------------------
++// Name         : BcdtoDecimal
++// Description  : Converts 1 byte from BCD to Decimal
++// Input        : uint8_t bcdByte 	= BCD byte to convert
++// Output       : uint8_t 			= Converted byte in decimal
++//---------------------------------------------------------------------------
++uint8_t BcdtoDecimal (uint8_t bcdByte){
++  return (((bcdByte & 0xF0) >> 4) * 10) + (bcdByte & 0x0F);			// BCD to Decimal conversion
++}
++
++//---------------------------------------------------------------------------
++// Name         : DecimaltoBcd
++// Description  : Converts 1 byte from Decimal to BCD
++// Input        : uint8_t decimalByte 	= Decimal byte to convert
++// Output       : uint8_t 				= Converted byte in BCD
++//---------------------------------------------------------------------------
++uint8_t DecimaltoBcd (uint8_t decimalByte){
++  return (((decimalByte / 10) << 4) | (decimalByte % 10));			// Decimal to BCD conversion
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : mdelay
++// Description  : Function that causes a 160ms delay
++// Input        : void
++// Output       : void
++//---------------------------------------------------------------------------
++void mdelay(){
++	uint32_t c; 
++	for (c = 0;c < 0x2FFFFFF;c++){}									// Delay counter
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : SPItransfer
++// Description  : Transfer/Receive Date over the the SPI-Bus
++// Input        : int len 					= Length of data to be transferred in bytes
++//				: uint8_t const *t_tx_buf 	= Data to be transferred (MOSI)
++//				: uint8_t const *t_rx_buf 	= Received data over MISO
++// Output       : void					
++//---------------------------------------------------------------------------
++void SPItransfer(int len, uint8_t const *t_tx_buf, uint8_t const *t_rx_buf){          
++	
++	struct spi_ioc_transfer ts = 									// Spi transfer/config struct
++	{
++		.tx_buf = (unsigned long)t_tx_buf,
++		.rx_buf = (unsigned long)t_rx_buf,
++		.len = len,
++		.delay_usecs = delay,
++		.speed_hz = speed,
++		.bits_per_word = bits,
++	};
++	
++	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &ts) ;						// Send/receive data
++		if(ret < 1)													// Check for errors in data transfer
++		{
++			perror("SPI-TX/RX Error"); 								
++			exit(1);
++		}
++}
++
++//---------------------------------------------------------------------------
++// Name         : expander_init
++// Description  : Initialises the I/O Port-Expander
++// Input        : void
++// Output       : void					
++//---------------------------------------------------------------------------
++void expander_init(){
++	
++	if(!devices_present)
++	{
++		uint8_t tx_buf1[] = {
++		0x40,0x0A,0xBC,													// Port A Bank=1, SEQOP=1, DISSLW=1
++		0x40,0x00,0x00,													// Port A direction -> output
++		0x40,0x10,0xFF,													// Port B direction -> input
++		0x40,0x02,0x00,													// Port A disable interrupt
++		0x40,0x12,0x00,													// Port B disable interrupt
++		0x40,0x06,0x00,													// Port A pullup disabled
++		0x40,0x16,0xFF													// Port B pullup enabled
++		};
++		
++		uint8_t tx_buf2[3] = {0x41,0x05,0x00};							
++				
++		uint8_t i;
++		uint8_t *buf;
++		
++		
++		buf = tx_buf1;
++		
++		for(i=0;i<7;i++)												
++		{
++			SPItransfer(3,buf,debug_rx_buf);							// Send init. buffer
++			buf += 3;	
++		}
++		
++		SPItransfer(3,tx_buf2,rx_buf);
++		
++			if(rx_buf[2]!=0xBC) return;									// Read back first init. to check for device presence
++		
++		speed = 1000000;
++		devices_present = 1;											// Set device presence
++	}
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : expander_get_DIP_state
++// Description  : Gets the DIP-Swicht state (state of Port B) of the Port-Expander
++// Input        : void
++// Output       : uint8_t rx_buf[2]			= Status byte of Port B (DIP-Switch)
++//--------------------------------------------------------------------------- 
++uint8_t expander_get_DIP_state(){
++	
++	uint8_t tx_buf1[3] = {0x41,0x19,0x00};								// Port B status register state 
++	
++	SPItransfer(3,tx_buf1,rx_buf);
++	
++	return rx_buf[2];												
++		
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : expander_set_portA
++// Description  : Sets the state of Port A(Led´s on Bit0/7) of the Port-Expander
++// Input        : uint8_t *port_A_state 	= State that will be written to Port A
++// Output       : void
++//--------------------------------------------------------------------------- 
++void expander_set_portA(uint8_t *port_A_state){
++	uint8_t tx_buf1[3]={0x40,0x09,*port_A_state};						// Port A modify output latch
++	uint8_t tx_buf2[3]={0x40,0x0A,*port_A_state};						// Port A write to pins
++	
++	SPItransfer(3,tx_buf1,debug_rx_buf);
++	SPItransfer(3,tx_buf2,debug_rx_buf);
++	
++	printf("Port A set to:%#x\n",*port_A_state);
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : bme280_init
++// Description  : Sets the state of Port A(Led´s on Bit0/7) of the Port-Expander
++// Input        : void
++// Output       : void
++//--------------------------------------------------------------------------- 
++void bme280_init(){
++	
++	if(!devices_present)
++	{	
++		uint8_t tx_buf1[] = {0x74,0x83}; 								// Normal Mode, Temp: x8 oversampling
++		uint8_t tx_buf2[] = {0x75,0x6C}; 								// 250us standby,IIR filter coefficient: 8
++		uint8_t tx_buf3[] = {0xD0,0x00}; 								// Device ID 
++		
++		SPItransfer(2,tx_buf3,rx_buf);
++		
++			if(rx_buf[1]!=0x60) return;									// Read back Device ID to check for device presence
++		
++		SPItransfer(2,tx_buf1,debug_rx_buf);
++		SPItransfer(2,tx_buf2,debug_rx_buf);
++		
++		speed = 10000000;
++		devices_present = 2;											// Set device presence
++	}
++}
++ 
++//---------------------------------------------------------------------------
++// Name         : bme280_get_temp
++// Description  : Reads raw. temp. value of the BME 280 and calculates the finale value in °C
++// Input        : void
++// Output       : fload temp = Calculated temperature in °C
++//---------------------------------------------------------------------------
++float bme280_get_temp(){
++	
++	int32_t raw_temp;
++	float temp;
++	
++	uint8_t temp_tx_buf[]={0xFA,0x00,0x00,0x00}; 						// Read raw temp. data 
++	uint8_t temp_rx_buf[4];
++	
++	uint32_t calib_t1;
++	int32_t calib_t2;
++	int32_t calib_t3;
++	
++	uint8_t comp_tx_buf[]={0x88,0x00,0x00,0x00,0x00,0x00,0x00}; 		// Read raw temp. compensation data
++	uint8_t comp_rx_buf[7];
++	
++	int32_t var1,var2,t_fine;
++	
++	
++	SPItransfer(4,temp_tx_buf,temp_rx_buf);	
++	SPItransfer(7,comp_tx_buf,comp_rx_buf);
++
++
++	raw_temp = ((temp_rx_buf[3] >> 4) | (temp_rx_buf[2] << 4) | (temp_rx_buf[1] << 12)); 	// Build rew temp. and compensation variables
++		
++	calib_t1 = (comp_rx_buf[1] | (comp_rx_buf[2] << 8));
++	calib_t2 = (comp_rx_buf[3] | (comp_rx_buf[4] << 8));
++	calib_t3 = (comp_rx_buf[5] | (comp_rx_buf[6] << 8));
++	
++																							// Calculate finale temperature
++	var1 = ((((raw_temp >> 3) - (calib_t1 << 1))) * (calib_t2)) >> 11;						
++	var2 = (((((raw_temp >> 4) - (calib_t1)) *((raw_temp >> 4) - (calib_t1))) >> 12) * (calib_t3)) >> 14;
++
++	t_fine = var1 + var2;
++	temp = ((t_fine * 5 + 128) >> 8)/100.0;
++	
++	
++	//------Debug------
++	//printf("%.2f \n", temp);
++	//printf("%#x \n", raw_temp);
++	//printf("%#x %#x %#x  \n", calib_t1,calib_t2,calib_t3);
++
++	return temp;
++}
++
++//---------------------------------------------------------------------------
++// Name         : flash_init
++// Description  : Initialises the QSPI-Flash
++// Input        : void
++// Output       : void
++//---------------------------------------------------------------------------
++void flash_init(){
++	
++	if(!devices_present)
++	{
++		uint8_t tx_buf1[] = {0x9F,0x00}; 								// Manufacturer ID
++		uint8_t tx_buf2 = 0x06; 										// Enable write access
++		
++		SPItransfer(2,tx_buf1,rx_buf);
++		
++			if(rx_buf[1]!=0xEF) return;									// Read back Manufacturer ID to check for device presence
++			
++		SPItransfer(1,&tx_buf2,debug_rx_buf);
++		
++		speed = 5000000;
++		devices_present = 3;											// Set device presence
++	}
++}
++
++//---------------------------------------------------------------------------
++// Name         : flash_get_byte
++// Description  : Reads a byte of data from the QSPI-Flash with a 24-bit addr.
++// Input        : uint32_t *read_addr 	= 24-bit addr. to read from the flash
++// Output       : uint8_t rx_buf[4]		= Received data byte from the flash
++//--------------------------------------------------------------------------- 
++uint8_t flash_get_byte(uint32_t *read_addr){
++	
++	uint8_t tx_buf1[5];
++	
++	tx_buf1[0]= 0x03;													// Build 24-bit addr. for transfer buffer
++	tx_buf1[1]= (uint8_t)((*read_addr & 0x00FF0000) >> 16);		
++	tx_buf1[2]= (uint8_t)((*read_addr & 0x0000FF00) >> 8);
++	tx_buf1[3]= (uint8_t)(*read_addr & 0x000000FF); 
++	tx_buf1[4]= 0x00;
++	
++
++	SPItransfer(5,tx_buf1,rx_buf);
++	
++	return rx_buf[4];
++}
++
++//---------------------------------------------------------------------------
++// Name         : flash_write_byte
++// Description  : Write a byte of data to the QSPI-Flash with a 24-bit addr.
++// Input        : uint32_t *write_addr 	= 24-bit addr. write addr.
++//				: uint8_t *payload		= Byte of data to write
++// Output       : void
++//--------------------------------------------------------------------------- 
++void flash_write_byte(uint32_t *write_addr,uint8_t *payload){
++	
++	uint8_t tx_buf1 = 0x06; 											// Enable write access
++	uint8_t tx_buf2[5];
++	
++	tx_buf2[0]= 0x02;													// Build 24-bit addr. for transfer buffer
++	tx_buf2[1]= (uint8_t)((*write_addr & 0x00FF0000) >> 16);
++	tx_buf2[2]= (uint8_t)((*write_addr & 0x0000FF00) >> 8);
++	tx_buf2[3]= (uint8_t)(*write_addr & 0x000000FF); 
++	tx_buf2[4]= *payload;
++	
++	
++	SPItransfer(1,&tx_buf1,debug_rx_buf);
++	SPItransfer(5,tx_buf2,debug_rx_buf);	
++}
++
++//---------------------------------------------------------------------------
++// Name         : flash_erase_sector
++// Description  : Erases a certain sector (4KB) of the flash
++// Input        : uint32_t *erase_addr 	= 24-bit addr. to erase the sector
++// Output       : void
++//--------------------------------------------------------------------------- 
++void flash_erase_sector(uint32_t *erase_addr){
++	
++	uint8_t tx_buf1 = 0x06; 											// Enable write access
++	uint8_t tx_buf2[4];
++	
++	tx_buf2[0]= 0x20;
++	tx_buf2[1]= (uint8_t)((*erase_addr & 0x00FF0000) >> 16);
++	tx_buf2[2]= (uint8_t)((*erase_addr & 0x0000FF00) >> 8);
++	tx_buf2[3]= (uint8_t)(*erase_addr & 0x000000FF); 
++	
++	
++	SPItransfer(1,&tx_buf1,debug_rx_buf);
++	SPItransfer(4,tx_buf2,debug_rx_buf);	
++	
++	printf("Sector %#x erased \n",*erase_addr);
++}
++
++//---------------------------------------------------------------------------
++// Name         : rtc_init
++// Description  : Initialises the RTC
++// Input        : void
++// Output       : void
++//--------------------------------------------------------------------------- 
++ void rtc_init(){
++		
++	if(!devices_present)
++	{
++		mode = 0x01;														
++		ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 						// Set SPI-Mode to 1					
++			if (ret < 0)												// Check for errors
++			  {
++				  perror("Error: Set SPI-Mod to 1 for RTC");
++				  exit(1);
++			  }
++		
++
++		uint8_t tx_buf1[] = {0x0E,0x00}; 								// Read Control/Status register 1
++		uint8_t tx_buf2[] = {0x8F,0x08}; 								// Disable 32kHz output if Vcc < Vbat
++			
++			
++		SPItransfer(2,tx_buf1,rx_buf);
++		
++			if(rx_buf[1]!=0x1C) 										// Read Control/Status register 1 to check for device presence
++			{
++				
++				mode = 0x00;														
++				ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 				// Set SPI-Mode back to 0					
++					
++					if (ret < 0)										// Check for errors
++					  {
++						  perror("Error: Set SPI-Mod to 0 after RTC init");
++						  exit(1);
++					  }
++				
++				return;	
++			}								
++			
++		
++		SPItransfer(2,tx_buf2,debug_rx_buf);							
++		
++		speed = 4000000;												
++		devices_present = 4;											// Set device presence
++	}
++ }
++ 
++//---------------------------------------------------------------------------
++// Name         : bme280_print
++// Description  : Displays the temperature of the Enviromental Sebsir and allows a user defined burst read
++// Input        : void
++// Output       : void
++//--------------------------------------------------------------------------- 
++void bme280_print(){
++	
++	char inputchar;
++	
++	printf("------------------------BME 280 selected------------------\n");	
++	
++	printf("BME 280 Init done\n");
++	mdelay();																		// Delay for temp. measurement
++	printf("Temp:%.2f °C \n",bme280_get_temp());									// Print temperature in °C with 2 decimal places
++	
++	printf("Start temperature burst read?\n");								
++	printf("y/n?\n");
++	
++	while(1)
++	{	
++		inputchar = getchar();
++		
++		if(inputchar == 'n') 														// User input = n -> No burst read ->exit
++		{
++			printf("----------------------------------------------------------\n");	
++			return;
++		}
++			else if(inputchar == 'y')												// User input = y -> Burst read
++				{
++					uint32_t i,inputint;
++										
++					printf("How often?\n");											
++					
++					printf("Input count between 1 and %d or other to trigger endless temp. read mode\n",max_temp_read);	
++					scanf ("%d",&inputint);
++						
++					if(inputint >0 && inputint <= max_temp_read)					// User input = defined count between 0 and max_temp_reads	
++					{
++						for(i=0;i<inputint;i++)										// Loop temperature read for defined count
++						{
++							printf("Temp(%d):%.2f °C \n",i+1,bme280_get_temp());
++							mdelay();	
++						}
++						
++						printf("Done!\n");
++						printf("----------------------------------------------------------\n");	
++						return;
++					}	
++																						
++																					// User input = undefined count
++					while(1)														// Enless temperature read loop
++					{
++						printf("Endless Temp. read  :%.2f °C    Exit with Strg+C\n",bme280_get_temp());		
++						mdelay();	
++					}
++				}	
++	}
++}
++
++//---------------------------------------------------------------------------
++// Name         : flash_print
++// Description  : Displays the determined data of the QSPI-Flash
++// Input        : void
++// Output       : void
++//--------------------------------------------------------------------------- 
++void flash_print(){
++	
++	uint32_t test_addr = 0x000000;												// Test 24-bit addr. for read/write
++	uint8_t test_byte = 0x99;													// Test data byte to write/read
++	
++	printf("------------------------Flash selected--------------------\n");	
++	
++	printf("Flash Init done\n");
++	flash_erase_sector(&test_addr);												// Erase flash sector
++	mdelay();																	// Wait for complete erasement
++	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read emty flash
++	printf("Write %#x to 0x000000 \n",test_byte);								
++	flash_write_byte(&test_addr,&test_byte);									// Write test byte
++	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read back test byte
++	flash_erase_sector(&test_addr);												// Wait for complete erasement
++	mdelay();																	// Delay to erase data
++	printf("-->Read byte at 0x000000:%#x \n",flash_get_byte(&test_addr));		// Read emty flash
++	
++	printf("----------------------------------------------------------\n");	
++	
++}
++
++//---------------------------------------------------------------------------
++// Name         : expander_print
++// Description  : Displays the determined state of Port B and sets port A according to B
++// Input        : void
++// Output       : void
++//---------------------------------------------------------------------------
++void expander_print(){
++	
++	uint8_t DIP_state;
++	
++	printf("------------------------Port Expander selected------------\n");	
++	
++	printf("Expander Init done\n");
++	
++	DIP_state = expander_get_DIP_state();										// Read state of DIP-Switch
++	printf("DIP-Switch status:%#x \n", DIP_state);
++	
++	expander_set_portA(&DIP_state);												// Set Led´s (Bit 0,7) corresponding to DIP-Switch state
++	
++	printf("----------------------------------------------------------\n");	
++}
++
++//---------------------------------------------------------------------------
++// Name         : rtc_print
++// Description  : Displays(sets if necessary) the current RTC time
++// Input        : void
++// Output       : void
++//---------------------------------------------------------------------------
++void rtc_print(){
++	
++	uint8_t i,k;
++	uint8_t *buf_tx,*buf_rx;
++	char inputchar;
++
++	time_t sys_time;
++	struct tm * timeinfo;											// Struct for system time
++	
++	time (&sys_time);
++	timeinfo = localtime (&sys_time);
++	
++	uint8_t tx_set_time[] = {										// Array to write time to the RTC
++	0x80,0x00,												
++	0x81,0x00,													
++	0x82,0x00,																									
++	0x84,0x00,													
++	0x85,0x00,												
++	0x86,0x00																								
++	};
++	
++	uint8_t tx_get_time[] = {										// Array to read time from the RTC
++	0x00,0x00,												
++	0x01,0x00,													
++	0x02,0x00,																									
++	0x04,0x00,													
++	0x05,0x00,												
++	0x06,0x00																								
++	};
++	
++	uint8_t rx_get_time[12];										// Received RTC time buffer
++	
++	
++	buf_tx = tx_get_time;
++	buf_rx = rx_get_time;
++	
++	for(i=0;i<6;i++)												// Write to receiving time buffer
++		{
++			SPItransfer(2,buf_tx,buf_rx);							
++			buf_tx += 2;
++			buf_rx += 2;	
++		}
++				
++			
++	printf("------------------------RTC selected----------------------\n");	
++		
++	printf("RTC Init done\n");
++	
++	printf("Test Modul RTC time is:->%d:%d:%d - %d.%d.%d<-\n",BcdtoDecimal(rx_get_time[5]),BcdtoDecimal(rx_get_time[3])				// Read time from RTC
++												,BcdtoDecimal(rx_get_time[1]),BcdtoDecimal(rx_get_time[7])
++												,BcdtoDecimal((rx_get_time[9] & 0x7F)),BcdtoDecimal(rx_get_time[11])+2000);
++
++	printf("Set Modul RTC time to system time: ->%d:%d:%d - %d.%d.%d<- ?\n",timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec		// System time
++															,timeinfo->tm_mday,timeinfo->tm_mon+1,timeinfo->tm_year+1900);
++	
++	printf("y/n?\n");																// User selection
++	
++	while(1)
++	{	
++		inputchar = getchar();
++		
++		if(inputchar == 'n') 														// User input = n -> Modul RTC time is not changed
++		{
++			printf("RTC is not set! \n");
++			printf("----------------------------------------------------------\n");	
++			return;
++		}
++			else if(inputchar == 'y')												// User input = y -> Set Modul RTC time to system time
++				{
++					
++					time (&sys_time);												// Update system time
++					timeinfo = localtime (&sys_time);								
++						
++					tx_set_time[1] = DecimaltoBcd(timeinfo->tm_sec);  				// Set transfer buffer to system time
++					tx_set_time[3] = DecimaltoBcd(timeinfo->tm_min);				
++					tx_set_time[5] = DecimaltoBcd(timeinfo->tm_hour);				
++					tx_set_time[7] = DecimaltoBcd(timeinfo->tm_mday);				
++					tx_set_time[9] = 0x7F & DecimaltoBcd(timeinfo->tm_mon + 1);		
++					tx_set_time[11] = DecimaltoBcd(timeinfo->tm_year - 100);						
++					
++					
++					buf_tx = tx_set_time;
++	
++					for(i=0;i<6;i++)												// Send transfer buffer
++					{
++						SPItransfer(2,buf_tx,debug_rx_buf);							
++						buf_tx += 2;	
++					}
++					
++					//Debug
++					//printf("To RTC: %#x %#x %#x %#x %#x %#x \n",tx_set_time[5],tx_set_time[3],tx_set_time[1],tx_set_time[7],tx_set_time[9],tx_set_time[11]);
++					
++					printf("RTC setting done! \n");
++					printf("----------------------------------------------------------\n");	
++					return;
++				}	
++	}
++}
++
++
++int main(){
++/*-------------------------------------SPI interface init.--------------------------------------*/
++	
++	fd = open(device, O_RDWR);													// Open SPI stream
++	
++	if (fd < 0) 																
++	  {
++		  perror("Error: Open Device");
++		  exit(1);
++	  }
++	
++	ret = ioctl(fd, SPI_IOC_WR_MODE, &mode); 									// Set SPI-Mode
++		if (ret < 0)
++		  {
++			  perror("Error: Set SPI-Mode");
++			  exit(1);
++		  }
++	
++	ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits); 							// Set word length
++		if (ret < 0)
++		  { 
++			  perror("Error: Set word length");
++			  exit(1);
++		  }
++
++	ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed); 							// Set transfer speed
++		if (ret < 0)
++		  {
++			  perror("Error: Set transfer speed");
++			  exit(1);
++		  }
++	
++	ret = ioctl(fd, SPI_IOC_RD_MODE, &mode); 									// Read back SPI-Mode
++		if (ret < 0)
++		  {
++			  perror("Error: Get SPI-Mode");
++			  exit(1);
++		  }
++		  
++	
++	 ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits); 							// Read back word length
++	  if (ret < 0)
++		{
++			perror("Error: Get word length");
++			exit(1);
++		}
++
++	  ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed); 						// Read back transfer speed
++	  if (ret < 0)
++		{
++			perror("Error: Get transfer speed");
++			exit(1);
++		}
++
++	/*-----------------------------------------------------------------------------------------------*/
++	
++	rtc_init();																	// Device initialisation 
++	expander_init();															// Only the selected device (CS-Jumper) will be initialized												
++	bme280_init();																
++	flash_init();
++	
++	printf("------------------------SPI-Config------------------------\n");		// Print SPI config information
++	printf("SPI-Device.....: %s\n", device); 
++	printf("SPI-Mode.......: %d\n", mode); 
++	printf("Bits per word.....: %d\n", bits);  
++	printf("Datarate: %d Hz (%d MHz)\n", speed, speed/1000000);
++	
++	
++	switch(devices_present)														// Print data corresponding to the available spi device
++	{
++		case 1: expander_print(); break;
++		case 2: bme280_print(); break;
++		case 3: flash_print(); break;
++		case 4: rtc_print(); break;
++		
++		default: printf("\nNo SPI-Device selected. Check CS-Jumper\n\n");	
++	}
++	
++	close(fd);																	// Close SPI stream
++	
++	return ret;
++}
++
+diff --git a/recipes-tools/cgutil/cgutil_1.5.6.bb b/recipes-tools/cgutil/cgutil_1.5.6.bb
+index 6410ea5..ee7c909 100644
+--- a/recipes-tools/cgutil/cgutil_1.5.6.bb
++++ b/recipes-tools/cgutil/cgutil_1.5.6.bb
+@@ -12,7 +12,7 @@ COMPATIBLE_MACHINE = "congatec-(qa3|tca4|tca5|b7ac|tsco|tcwl)-64"
+ PR = "r2"
+ 
+ DEPENDS = "cgos"
+-RDEPENDS_${PN} = " cgos"
++RDEPENDS:${PN} = " cgos"
+ 
+ SRC_URI = "file://cgutillx_1.5.6.tar \
+            file://cgutillx_1.5.6-build.patch \
+@@ -20,7 +20,7 @@ SRC_URI = "file://cgutillx_1.5.6.tar \
+            file://no-pie.patch \
+           "
+ 
+-FILES_${PN} += "${bindir}/cgutlcmd"
++FILES:${PN} += "${bindir}/cgutlcmd"
+ 
+ S = "${WORKDIR}/cgutillx"
+ 
+@@ -37,4 +37,4 @@ do_install() {
+ 
+ PARALLEL_MAKE = ""
+ 
+-INSANE_SKIP_${PN} = "ldflags"
++INSANE_SKIP:${PN} = "ldflags"
+-- 
+2.30.2
+
