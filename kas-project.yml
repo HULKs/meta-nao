@@ -11,7 +11,6 @@ local_conf_header:
     meta-nao: |
         PACKAGE_CLASSES ?= "package_rpm"
         CLANGSDK = "1"
-        CONF_VERSION = "1"
 repos:
     meta-nao:
     poky:
