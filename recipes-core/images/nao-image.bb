@@ -64,8 +64,6 @@ TOOLCHAIN_HOST_TASK += "nativesdk-cmake"
 
 inherit extrausers
 
-EXTRA_USERS_PARAMS = "usermod -s /bin/bash -P root root; \
+EXTRA_USERS_PARAMS = "usermod -s /bin/bash -p '\$6\$qK8Ij5Gvqbh.I4Zj\$URC76o65il5XzPodMBfz83RBpcnbFJ0dsWqdeaiayhoNnB.PEpSxFlupSv24iXkHlRhZk7auLAT7X0wS04mxh1' root; \
                       usermod -aG tty,uucp,audio,video,plugdev,systemd-journal nao; \
-                      usermod -P nao nao; \
-                      usermod -s /bin/bash nao; \
                      "

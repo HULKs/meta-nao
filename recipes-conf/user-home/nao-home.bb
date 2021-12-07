@@ -27,7 +27,15 @@ GROUPADD_PARAM:${PN} = "--system --gid 1001 nao; \
                         --system wheel; \
                         --gid 113 rt;"
 
-USERADD_PARAM:${PN} = "--gid nao --uid 1001 --skel /dev/null --create-home --home-dir /home/nao --groups hal,rt,wheel nao"
+USERADD_PARAM:${PN} = "--gid nao \
+                       --uid 1001 \
+                       --skel /dev/null \
+                       --create-home \
+                       --home-dir /home/nao \
+                       --groups hal,rt,wheel \
+                       -p '\$6\$BA6sX/h18zkV4QI\$.RRDKABOvIT2sZqRVbJGOTtxFS0mGjMU.As9vREHG38Z6KxzaojzjjFZ1LCw.xjBsTWxYQKnD.YNBncIq1xYT0' \
+                       -s /bin/bash \
+                       nao"
 
 FILES:${PN} = " \
                /home/nao/robocup.conf \
