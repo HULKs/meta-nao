@@ -22,14 +22,14 @@ inherit useradd
 
 USERADD_PACKAGES = "${PN}"
 
-GROUPADD_PARAM_${PN} = "--system --gid 1001 nao; \
+GROUPADD_PARAM:${PN} = "--system --gid 1001 nao; \
                         --system --gid 99 hal; \
                         --system wheel; \
                         --gid 113 rt;"
 
-USERADD_PARAM_${PN} = "--gid nao --uid 1001 --skel /dev/null --create-home --home-dir /home/nao --groups hal,rt,wheel nao"
+USERADD_PARAM:${PN} = "--gid nao --uid 1001 --skel /dev/null --create-home --home-dir /home/nao --groups hal,rt,wheel nao"
 
-FILES_${PN} = " \
+FILES:${PN} = " \
                /home/nao/robocup.conf \
                ${datadir}/polkit-1/rules.d/nao.rules \
               "

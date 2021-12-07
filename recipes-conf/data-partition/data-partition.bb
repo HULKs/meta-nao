@@ -12,7 +12,7 @@ do_install() {
     install -m 0644 ${WORKDIR}/data-skeleton.service ${D}${systemd_unitdir}/system/
 }
 
-FILES_${PN} = "\
+FILES:${PN} = "\
                ${systemd_unitdir}/system/data-format.service \
                ${systemd_unitdir}/system/data-skeleton.service \
               "
@@ -20,6 +20,6 @@ FILES_${PN} = "\
 # install services by default
 NATIVE_SYSTEMD_SUPPORT = "1"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "data-format.service data-skeleton.service"
+SYSTEMD_SERVICE:${PN} = "data-format.service data-skeleton.service"
 
 inherit systemd

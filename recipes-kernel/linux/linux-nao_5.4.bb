@@ -19,13 +19,13 @@ python () {
 }
 
 PROVIDES += "cgos-mod"
-RPROVIDES_${KERNEL_PACKAGE_NAME} += "cgos-mod"
+RPROVIDES:${KERNEL_PACKAGE_NAME} += "cgos-mod"
 
 DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
 DEPENDS += "openssl-native util-linux-native"
 
 LINUX_VERSION ?= "5.4.70"
-LINUX_VERSION_EXTENSION_append = "-nao"
+LINUX_VERSION_EXTENSION:append = "-nao"
 LINUX_KERNEL_TYPE = "preempt-rt"
 
 SRCREV_machine = "2f8f53592324a23901b85ec426f5864babadc8af"
@@ -34,11 +34,11 @@ PV = "${LINUX_VERSION}"
 
 COMPATIBLE_MACHINE = "nao-v6"
 
-do_install_append() {
+do_install:append() {
   ln -s bzImage-${KERNEL_VERSION_NAME} ${D}/boot/vmlinuz.efi
   install -m 0644 ${WORKDIR}/cmdline ${D}/boot/cmdline
 }
 
-FILES_${KERNEL_PACKAGE_NAME} += "/boot/vmlinuz.efi \
+FILES:${KERNEL_PACKAGE_NAME} += "/boot/vmlinuz.efi \
                                  /boot/cmdline \
                                 "

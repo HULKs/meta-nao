@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "\
   file://0001-NAO-patches-softbank-congatec.patch file://0002-cgos-32-bit-softbank.patch \
@@ -7,14 +7,14 @@ SRC_URI += "\
   "
 
 PROVIDES += "cgos-mod"
-RPROVIDES_${KERNEL_PACKAGE_NAME} += "cgos-mod"
+RPROVIDES:${KERNEL_PACKAGE_NAME} += "cgos-mod"
 
-do_install_append() {
+do_install:append() {
   ln -s bzImage-${KERNEL_VERSION_NAME} ${D}/boot/vmlinuz.efi
   install -m 0644 ${WORKDIR}/cmdline ${D}/boot/cmdline
 }
 
-FILES_${KERNEL_PACKAGE_NAME} += "\
+FILES:${KERNEL_PACKAGE_NAME} += "\
                                  /boot/vmlinuz.efi \
                                  /boot/cmdline \
                                 "

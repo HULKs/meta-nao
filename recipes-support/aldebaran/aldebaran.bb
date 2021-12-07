@@ -4,7 +4,7 @@
 SUMMARY = "Aldebaran flavoured NaoV6"
 LICENSE = "CLOSED"
 
-RDEPENDS_${PN} = "aldebaran-binaries"
+RDEPENDS:${PN} = "aldebaran-binaries"
 
 SRC_URI = " \
            file://harakiri \
@@ -45,7 +45,7 @@ do_install() {
   install -m 0644 ${WORKDIR}/aldebaran_path.sh ${D}${sysconfdir}/profile.d/
 }
 
-FILES_${PN} = "\
+FILES:${PN} = "\
                 ${nonarch_base_libdir}/systemd/system-shutdown \
                 ${sysconfdir}/udev/rules.d/ \
                 ${sysconfdir}/tmpfiles.d/ \
@@ -55,6 +55,6 @@ FILES_${PN} = "\
 
 NATIVE_SYSTEMD_SUPPORT = "1"
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "alfand.service hal.service lola.service"
+SYSTEMD_SERVICE:${PN} = "alfand.service hal.service lola.service"
 
 inherit systemd

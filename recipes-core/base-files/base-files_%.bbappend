@@ -1,8 +1,8 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://sbin_path.sh"
 
-do_install_append() {
+do_install:append() {
   install -d ${D}/data
   install -d ${D}/media/internal
 
