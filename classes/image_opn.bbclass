@@ -13,13 +13,5 @@ def oks_search(file, search_path):
           if searched:
               return searched
 
-CONVERSION_CMD_opn() {
-  in="${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type}"
-  out="${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type}.opn"
-	oks="${OKS_FULL_PATH}"
-
-  truncate -s %1024 "${in}"
-  mkopn $in $oks $out
-}
-
+CONVERSION_CMD:opn = "truncate -s %1024 ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type}; mkopn ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type} ${OKS_FULL_PATH} ${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.${type}.opn"
 CONVERSION_DEPENDS_opn = "coreutils-native python3-opn-tools-native"
