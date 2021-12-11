@@ -1,21 +1,22 @@
-From 8f8fe90bc779c94706c27be477220fe6997c14a4 Mon Sep 17 00:00:00 2001
+From 8adbfcd786a435f4f7fdc73972a9111c75ec3ea9 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
-Date: Wed, 8 Dec 2021 15:38:59 +0100
-Subject: [PATCH] Do not filter system calls for architecture native in udev
+Date: Sat, 11 Dec 2021 17:11:26 +0100
+Subject: [PATCH] SystemCallArchitecture is x86 and x86-64 for udev
 
 ---
- units/systemd-udevd.service.in | 1 -
- 1 file changed, 1 deletion(-)
+ units/systemd-udevd.service.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/units/systemd-udevd.service.in b/units/systemd-udevd.service.in
-index c146b0f7f8..db633688c3 100644
+index c146b0f7f8..4a5d495f62 100644
 --- a/units/systemd-udevd.service.in
 +++ b/units/systemd-udevd.service.in
-@@ -37,7 +37,6 @@ RestrictRealtime=yes
+@@ -37,7 +37,7 @@ RestrictRealtime=yes
  RestrictSUIDSGID=yes
  SystemCallFilter=@system-service @module @raw-io
  SystemCallErrorNumber=EPERM
 -SystemCallArchitectures=native
++SystemCallArchitectures=x86-64 x86
  LockPersonality=yes
  IPAddressDeny=any
  {{SERVICE_WATCHDOG}}
