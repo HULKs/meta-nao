@@ -272,10 +272,33 @@ cp $FILESYSTEM_DIR/usr/lib/libffi.so.6 $ALDEBARAN_LIB_DIR
 cp $FILESYSTEM_DIR/usr/lib/libpcre.so.1 $ALDEBARAN_LIB_DIR
 cp $FILESYSTEM_DIR/usr/lib/liblzma.so.5 $ALDEBARAN_LIB_DIR
 cp $FILESYSTEM_DIR/usr/lib/libmsgpackc.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/usr/lib/libtinyxml.so.2.6.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/usr/lib/libxml2.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/usr/lib/libcgos.so $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/usr/lib/libstdc++.so.6 $ALDEBARAN_LIB_DIR
 
 # system libraries
+cp $FILESYSTEM_DIR/lib/ld-linux.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libc.so.6 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libcap.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libdl.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libgcc_s.so.1 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libm.so.6 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libpthread.so.0 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libresolv.so.2 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/librt.so.1 $ALDEBARAN_LIB_DIR
 cp $FILESYSTEM_DIR/lib/libsystemd.so.0 $ALDEBARAN_LIB_DIR
+cp $FILESYSTEM_DIR/lib/libusb-1.0.so.0 $ALDEBARAN_LIB_DIR
 cp $FILESYSTEM_DIR/lib/libz.so.1 $ALDEBARAN_LIB_DIR
+
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/hal
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/lola
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/alfand
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/chest-harakiri
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/chest-mode
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/chest-version
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/fanspeed
+patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/flash-cx3
 
 echo "Done!"
 
@@ -288,7 +311,7 @@ if [ -z "$(ls -A $FILESYSTEM_DIR)" ]; then
     rm -r $FILESYSTEM_DIR
     echo "Done!"
 else
-    echo "Filsystem ( $FILESYSTEM_DIR ) dir is not empty!! skipping removal..."
+    echo "Filesystem ( $FILESYSTEM_DIR ) dir is not empty!! skipping removal..."
 fi
 
 echo "Compressing $FILES_DIR..."
