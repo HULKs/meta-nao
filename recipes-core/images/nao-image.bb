@@ -57,7 +57,7 @@ IMAGE_INSTALL += "data-partition nao-home"
 IMAGE_INSTALL += "nao-wifi-conf"
 
 # install aldebaran stuff
-IMAGE_INSTALL += "lib32-aldebaran"
+IMAGE_INSTALL += "aldebaran"
 
 # add cmake to the native sdk
 TOOLCHAIN_HOST_TASK += "nativesdk-cmake"

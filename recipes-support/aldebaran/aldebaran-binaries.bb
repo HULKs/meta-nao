@@ -6,7 +6,7 @@ LICENSE = "CLOSED"
 
 SRC_URI = "file://aldebaran_binaries.tar.gz"
 
-RDEPENDS:${PN} += "libusb1 libtinyxml libxml2 libcap cgos bash"
+RDEPENDS:${PN} += "bash"
 
 INHIBIT_PACKAGE_STRIP = "1"
 INHIBIT_SYSROOT_STRIP = "1"
@@ -36,6 +36,9 @@ do_install() {
   install -d ${D}/${ALDEBARAN_LIB_DIR}
   install -D ${WORKDIR}/aldebaran_files/opt/aldebaran/lib/* ${D}/${ALDEBARAN_LIB_DIR}
 }
+
+do_package_qa[noexec] = "1"
+EXCLUDE_FROM_SHLIBS = "1"
 
 FILES:${PN} += " \
     /opt/aldebaran/share/firmware/ \
