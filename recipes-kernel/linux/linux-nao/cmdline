@@ -1,1 +1,0 @@
-init=/sbin/init console=ttyS2,115200n8 noswap ro printk.time=1 net.ifnames=0 quiet rootwait
