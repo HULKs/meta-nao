@@ -53,12 +53,12 @@ If your container shell does not work as expected, you might have to set your `T
 6. Build a nao image. The Yocto project uses *BitBake* for task execution. Call the following build command from inside the *kas* container shell:
 
 ```
-bitbake nao-opn
+bitbake nao-image
 ```
 
 This generates and executes all necessary tasks and targets to construct a proper `.opn` file. This build phase might take several hours depending on the performance of your build machine and your internet connection. *BitBake* uses a very elaborated caching strategy to speed up following builds of targets. Thus small changes afterwards can only take a few minutes.
 
-7. Fetch and deploy the image. After *BitBake* ran all tasks up to `nao-opn` a new `.opn` file is generated in `worktree/build/tmp/deploy/images/congatec-qa3-64/nao-image-congatec-qa3-64-[...].opn`. To setup a flash stick run:
+7. Fetch and deploy the image. After *BitBake* ran all tasks up to `nao-opn` a new `.opn` file is generated in `worktree/build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-[...].ext3.gz.opn`. To setup a flash stick run:
 
 ```
 dd if=image_path.opn of=/dev/sdb bs=4M status=progress oflag=sync
@@ -100,7 +100,7 @@ This again takes several hours. On machines at HULKs this can take up to 4 hours
 
 3. Download and install the SDK
 
-After a successful build, the SDK is located at `worktree/build/tmp/deploy/sdk/Nao-OS-glibc-x86_64-nao-image-corei7-64-congatec-qa3-64-toolchain-0.2.sh`. To install the SDK run the script and follow the instructions. Afterwards you are able to source the build environment and use the respective cross compilers.
+After a successful build, the SDK is located at `worktree/build/tmp/deploy/sdk/HULKs-OS-toolchain-[...].sh`. To install the SDK run the script and follow the instructions. Afterwards you are able to source the build environment and use the respective cross compilers.
 
 
 ## Links and Resources
