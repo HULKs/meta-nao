@@ -2,12 +2,12 @@
 
 # Top camera
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04b4", ATTR{idProduct}=="00f3", ATTR{busnum}=="1", ATTR{devpath}=="1", \
-  RUN+="/opt/aldebaran/bin/flash-cx3 -p $attr{busnum}:$attr{devpath} -f /opt/aldebaran/share/firmware/CX3RDK_OV5640_USB3.img"
+  RUN+="/usr/bin/flash-cx3 -p $attr{busnum}:$attr{devpath} -f /opt/aldebaran/share/firmware/CX3RDK_OV5640_USB3.img"
 KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", KERNELS=="2-1:1.0", ATTR{index}=="0", TAG+="systemd", SYMLINK+="video-top"
 KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", KERNELS=="2-1:1.0", ATTR{index}=="1", TAG+="systemd", SYMLINK+="video-top-metadata"
 
 # Bottom camera
 ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04b4", ATTR{idProduct}=="00f3", ATTR{busnum}=="1", ATTR{devpath}=="2.2", \
-  RUN+="/opt/aldebaran/bin/flash-cx3 -p $attr{busnum}:$attr{devpath} -f /opt/aldebaran/share/firmware/CX3RDK_OV5640_USB2.img"
+  RUN+="/usr/bin/flash-cx3 -p $attr{busnum}:$attr{devpath} -f /opt/aldebaran/share/firmware/CX3RDK_OV5640_USB2.img"
 KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", KERNELS=="1-2.2:1.0", ATTR{index}=="0", TAG+="systemd", SYMLINK+="video-bottom"
 KERNEL=="video[0-9]*", SUBSYSTEM=="video4linux", KERNELS=="1-2.2:1.0", ATTR{index}=="1", TAG+="systemd", SYMLINK+="video-bottom-metadata"

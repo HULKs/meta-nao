@@ -129,7 +129,6 @@ cp $FILESYSTEM_DIR/opt/aldebaran/bin/alfand $ALDEBARAN_BIN_DIR
 cp $FILESYSTEM_DIR/opt/aldebaran/bin/chest-mode $ALDEBARAN_BIN_DIR
 cp $FILESYSTEM_DIR/opt/aldebaran/bin/chest-version $ALDEBARAN_BIN_DIR
 cp $FILESYSTEM_DIR/opt/aldebaran/bin/head_id $ALDEBARAN_BIN_DIR
-cp $FILESYSTEM_DIR/usr/bin/flash-cx3 $ALDEBARAN_BIN_DIR
 
 mkdir -p $ALDEBARAN_LIB_DIR
 # aldebaran libraries
@@ -298,7 +297,6 @@ patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/c
 patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/chest-mode
 patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/chest-version
 patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/fanspeed
-patchelf --set-interpreter /opt/aldebaran/lib/ld-linux.so.2 $ALDEBARAN_BIN_DIR/flash-cx3
 
 echo "Done!"
 

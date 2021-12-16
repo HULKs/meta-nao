@@ -1,10 +1,7 @@
-# Copyright (C) 2021 Maximilian Schmidt <maximilian.schmidt@tuhh.de>
-# Released under the MIT license (see COPYING.MIT for the terms)
-
 SUMMARY = "Aldebaran flavoured NaoV6"
 LICENSE = "CLOSED"
 
-RDEPENDS:${PN} = "aldebaran-binaries"
+RDEPENDS:${PN} = "aldebaran-binaries flash-cx3"
 
 SRC_URI = " \
            file://harakiri \
