@@ -19,15 +19,15 @@ Clone the *meta-nao* repository into some directory used for the Yocto build e.g
 git clone git@github.com:hulks/meta-nao worktree/meta-nao
 ```
 
-4. The Nao V6 uses *LoLA* and *HAL* for the communication with the chestboard. All these binaries and libraries necessary to operate the Nao properly are shipped with the `.opn` robocupper image and **not** included in this repository. To acquire the necessary binaries the `meta-nao/recipes-aldebaran/aldebaran/extract_binaries.sh` script is used. This script fetches all binaries from inside the robocupper image and collects them in an archive for the upcoming build phase. To generate the archive containing the aldebaran binaries run:
+4. The Nao V6 uses *LoLA* and *HAL* for the communication with the chestboard. All these binaries and libraries necessary to operate the Nao properly are shipped with the `.opn` robocupper image and **not** included in this repository. To acquire the necessary binaries the `meta-nao/recipes-support/aldebaran/extract_binaries.sh` script is used. This script fetches all binaries from inside the robocupper image and collects them in an archive for the upcoming build phase. To generate the archive containing the aldebaran binaries run:
 
 ```
-cd meta-nao/recipes-aldebaran/aldebaran/
+cd meta-nao/recipes-support/aldebaran/
 mkdir -p aldebaran-binaries
 ./extract_binaries.sh -o aldebaran-binaries/aldebaran_binaries.tar.gz nao-x86-firmware-249_20190503_203829_robocupper.opn
 ```
 
-The script references the original robocupper image shipped by softbank. Contact the RoboCup SPL TC to get this image.
+The script references the original robocupper image shipped by softbank. Contact the RoboCup SPL TC to get this image. If you get errors regarding `libguestfs` and `supermin`, try running `./extract_binaries.sh` with root permissions again.
 
 5. Execute *kas* from inside the `worktree` directory referencing the `kas-project.yml` to enter the build environment
 
