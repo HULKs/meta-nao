@@ -4,9 +4,6 @@ header:
 machine: nao-v6
 distro: nao-multilib
 target: nao-image
-defaults:
-    repos:
-        refspec: honister
 local_conf_header:
     meta-nao: |
         PACKAGE_CLASSES ?= "package_rpm"
@@ -15,13 +12,14 @@ repos:
     meta-nao:
     poky:
         url: "https://git.yoctoproject.org/git/poky"
+        refspec: 0a26008bfc80f66cfab3d90c65b3e53d8cf12b88
         layers:
             meta:
             meta-poky:
             meta-yocto-bsp:
     meta-congatec-x86:
         url: "https://git.congatec.com/x86/meta-congatec-x86"
-        refspec: dunfell
+        refspec: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
         patches:
             0001-congatec-hardknott-support:
                 repo: "meta-nao"
@@ -31,14 +29,15 @@ repos:
                 path: "patches/0002-congatec-new-override-syntax.patch"
     meta-intel:
         url: "https://git.yoctoproject.org/git/meta-intel"
+        refspec: 5a30dcefa54040dd05099549a56156a83263554c
     meta-clang:
         url: "https://github.com/kraj/meta-clang.git"
+        refspec: 088904d40231d9e099c2f5039cd3c2bc47d332d1
     meta-openembedded:
         url: "https://git.openembedded.org/meta-openembedded"
+        refspec: 0fb490a08ce30b47a5ccd2fdc3448b08e0d9e4e9
         layers:
             meta-oe:
             meta-multimedia:
             meta-networking:
             meta-python:
-
-
