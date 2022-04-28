@@ -1,7 +1,7 @@
 From 0933174053bf189140036cd271d8e70ca79a51d6 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
 Date: Sun, 5 Dec 2021 18:40:41 +0100
-Subject: [PATCH 1/2] congatec honister support
+Subject: [PATCH 1/2] congatec kirkstone support
 
 ---
  conf/layer.conf | 2 +-
@@ -16,7 +16,7 @@ index 60cc30c..fd2a5a2 100644
  
  LAYERVERSION_congatec = "7"
 -LAYERSERIES_COMPAT_congatec = "dunfell"
-+LAYERSERIES_COMPAT_congatec = "honister"
++LAYERSERIES_COMPAT_congatec = "kirkstone"
 -- 
 2.30.2
 
