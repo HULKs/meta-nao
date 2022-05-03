@@ -1,4 +1,4 @@
-From 9bcec84b01ac50c405bb8170601d54a63bf1253f Mon Sep 17 00:00:00 2001
+From 82566c3983a20b7706965075dbce6dd3211fd916 Mon Sep 17 00:00:00 2001
 From: Kas User <kas@example.com>
 Date: Mon, 13 Sep 2021 21:27:08 +0000
 Subject: [PATCH] cgos 32-bit (softbank)
