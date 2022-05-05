@@ -1,0 +1,22 @@
+From b9486eaaa3e4c66bfab7d383612babc9c63a6735 Mon Sep 17 00:00:00 2001
+From: Hendrik <git@h3ndrk.de>
+Date: Tue, 3 May 2022 16:55:10 +0200
+Subject: [PATCH] Use libusb context instead of NULL
+
+---
+ src/FX3Device.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/FX3Device.cpp b/src/FX3Device.cpp
+index 9b5a641..1dfa62d 100644
+--- a/src/FX3Device.cpp
++++ b/src/FX3Device.cpp
+@@ -58,7 +58,7 @@ FX3Device::FX3Device(std::uint8_t bus,
+ 	}
+ 
+ 	libusb_device** list;
+-	ssize_t numdev = libusb_get_device_list(NULL, &list);
++	ssize_t numdev = libusb_get_device_list(_context, &list);
+ 	if (numdev < 0) {
+ 		throw std::runtime_error("Library: Error in enumerating devices...");
+ 	}

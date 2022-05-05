@@ -7,7 +7,9 @@ LICENSE = "MPL-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9741c346eef56131163e13b9db1241b3"
 S = "${WORKDIR}/git/flash-cx3"
 
-SRC_URI = "git://gitlab.com/clemolgat-SBR/leopard-imaging.git;protocol=https"
+SRC_URI = "git://gitlab.com/clemolgat-SBR/leopard-imaging.git;protocol=https;branch=master \
+           file://0001-Use-libusb-context-instead-of-NULL.patch \
+           "
 
 DEPENDS = "libusb1"
 RDEPENDS:${PN} = "libusb1"
