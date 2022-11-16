@@ -1,14 +1,14 @@
-From 82566c3983a20b7706965075dbce6dd3211fd916 Mon Sep 17 00:00:00 2001
+From 2a7f46283db624091165a0383882c44f578d645b Mon Sep 17 00:00:00 2001
 From: Kas User <kas@example.com>
-Date: Mon, 13 Sep 2021 21:27:08 +0000
-Subject: [PATCH] cgos 32-bit (softbank)
+Date: Tue, 15 Nov 2022 19:33:29 +0000
+Subject: [PATCH] CGOS 32-bit
 
 ---
  drivers/cgosdrv/DrvLx.c | 63 ++++++++++++++++++++++++++++++++++-------
  1 file changed, 52 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/cgosdrv/DrvLx.c b/drivers/cgosdrv/DrvLx.c
-index 740ab859cfb6..087bdcc64cda 100644
+index 08d16cfc0e0d..ac8ad3fb8475 100644
 --- a/drivers/cgosdrv/DrvLx.c
 +++ b/drivers/cgosdrv/DrvLx.c
 @@ -38,6 +38,10 @@

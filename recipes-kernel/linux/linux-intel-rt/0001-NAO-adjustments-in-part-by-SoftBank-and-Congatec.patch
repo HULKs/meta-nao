@@ -1,7 +1,7 @@
-From add37d3f910226b16157f0611449e725c0552dd1 Mon Sep 17 00:00:00 2001
+From 7415699737a4eb4ede750e132637b8334af81c0d Mon Sep 17 00:00:00 2001
 From: Kas User <kas@example.com>
-Date: Mon, 13 Sep 2021 21:26:45 +0000
-Subject: [PATCH] NAO patches (softbank + congatec)
+Date: Tue, 15 Nov 2022 19:32:11 +0000
+Subject: [PATCH] NAO adjustments (in part by SoftBank and Congatec)
 
 ---
  arch/x86/mm/ioremap.c                         |    3 +-
@@ -22,9 +22,9 @@ Subject: [PATCH] NAO patches (softbank + congatec)
  drivers/cgosdrv/CgosIoct.h                    |  148 +++
  drivers/cgosdrv/CgosPriv.h                    |  121 ++
  drivers/cgosdrv/DrvLx.c                       |  189 +++
- drivers/cgosdrv/DrvOsHdr.h                    |   42 +
+ drivers/cgosdrv/DrvOsHdr.h                    |   43 +
  drivers/cgosdrv/DrvOsa.h                      |   56 +
- drivers/cgosdrv/DrvOsaLx.c                    |   91 ++
+ drivers/cgosdrv/DrvOsaLx.c                    |  100 ++
  drivers/cgosdrv/DrvUla.h                      |   49 +
  drivers/cgosdrv/DrvVars.h                     |  139 +++
  drivers/cgosdrv/Kconfig                       |   25 +
@@ -45,12 +45,14 @@ Subject: [PATCH] NAO patches (softbank + congatec)
  drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h |   53 +
  include/cgos/Cgos.h                           |  532 ++++++++
  include/cgos/CgosIobd.h                       |   38 +
+ include/linux/vmalloc.h                       |    1 +
+ mm/vmalloc.c                                  |   15 +
  sound/pci/hda/Kconfig                         |   13 +
  sound/pci/hda/Makefile                        |    2 +
  sound/pci/hda/hda_generic.c                   |    3 +-
  sound/pci/hda/hda_generic.h                   |    1 +
- sound/pci/hda/patch_wolfson.c                 |  608 +++++++++
- 46 files changed, 7133 insertions(+), 3 deletions(-)
+ sound/pci/hda/patch_wolfson.c                 |  579 +++++++++
+ 48 files changed, 7130 insertions(+), 3 deletions(-)
  create mode 100644 drivers/cgosdrv/COPYING_BSD2
  create mode 100644 drivers/cgosdrv/COPYING_GPL2
  create mode 100644 drivers/cgosdrv/Cgeb.c
@@ -87,10 +89,10 @@ Subject: [PATCH] NAO patches (softbank + congatec)
  create mode 100644 sound/pci/hda/patch_wolfson.c
 
 diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index a353f88d299d..d441244991af 100644
+index 1702239e7e42..b4218ec096c2 100644
 --- a/arch/x86/mm/ioremap.c
 +++ b/arch/x86/mm/ioremap.c
-@@ -289,7 +289,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
+@@ -291,7 +291,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
  	 * Check if the request spans more than any BAR in the iomem resource
  	 * tree.
  	 */
@@ -101,10 +103,10 @@ index a353f88d299d..d441244991af 100644
  
  	return ret_addr;
 diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 8befa53f43be..0bc19bc7dbf3 100644
+index 253f498284ee..6a0f3d1e85cc 100644
 --- a/drivers/Kconfig
 +++ b/drivers/Kconfig
-@@ -24,6 +24,8 @@ source "drivers/of/Kconfig"
+@@ -27,6 +27,8 @@ source "drivers/of/Kconfig"
  
  source "drivers/parport/Kconfig"
  
@@ -114,7 +116,7 @@ index 8befa53f43be..0bc19bc7dbf3 100644
  
  source "drivers/block/Kconfig"
 diff --git a/drivers/Makefile b/drivers/Makefile
-index aaef17cc6512..cff2ecf81d62 100644
+index a8485501cde6..6c76dccf8761 100644
 --- a/drivers/Makefile
 +++ b/drivers/Makefile
 @@ -178,6 +178,7 @@ obj-$(CONFIG_STM)		+= hwtracing/stm/
@@ -503,13 +505,13 @@ index 000000000000..d159169d1050
 +Public License instead of this License.
 diff --git a/drivers/cgosdrv/Cgeb.c b/drivers/cgosdrv/Cgeb.c
 new file mode 100644
-index 000000000000..d55e5210c95b
+index 000000000000..74970e4a44f9
 --- /dev/null
 +++ b/drivers/cgosdrv/Cgeb.c
 @@ -0,0 +1,545 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -1449,13 +1451,13 @@ index 000000000000..c06c132d6516
 +#endif
 diff --git a/drivers/cgosdrv/CgebFct.h b/drivers/cgosdrv/CgebFct.h
 new file mode 100644
-index 000000000000..c9ec4d3e6dbc
+index 000000000000..85d291e32e10
 --- /dev/null
 +++ b/drivers/cgosdrv/CgebFct.h
 @@ -0,0 +1,56 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -1511,13 +1513,13 @@ index 000000000000..c9ec4d3e6dbc
 +#endif
 diff --git a/drivers/cgosdrv/CgebSda.h b/drivers/cgosdrv/CgebSda.h
 new file mode 100644
-index 000000000000..639f95d5323e
+index 000000000000..d57ba3aa9d64
 --- /dev/null
 +++ b/drivers/cgosdrv/CgebSda.h
 @@ -0,0 +1,59 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -2183,13 +2185,13 @@ index 000000000000..8c22e7b732c2
 +#endif
 diff --git a/drivers/cgosdrv/CgosDrv.c b/drivers/cgosdrv/CgosDrv.c
 new file mode 100644
-index 000000000000..eeb074d848f2
+index 000000000000..6fb4b4e00f78
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosDrv.c
 @@ -0,0 +1,1094 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -3283,13 +3285,13 @@ index 000000000000..eeb074d848f2
 +//***************************************************************************
 diff --git a/drivers/cgosdrv/CgosDrv.h b/drivers/cgosdrv/CgosDrv.h
 new file mode 100644
-index 000000000000..a2467fc359fa
+index 000000000000..4d1c4ba4fbe8
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosDrv.h
 @@ -0,0 +1,47 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -3661,13 +3663,13 @@ index 000000000000..8c5f066b9f9d
 +
 diff --git a/drivers/cgosdrv/DrvLx.c b/drivers/cgosdrv/DrvLx.c
 new file mode 100644
-index 000000000000..740ab859cfb6
+index 000000000000..08d16cfc0e0d
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvLx.c
 @@ -0,0 +1,189 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -3856,13 +3858,13 @@ index 000000000000..740ab859cfb6
 +
 diff --git a/drivers/cgosdrv/DrvOsHdr.h b/drivers/cgosdrv/DrvOsHdr.h
 new file mode 100644
-index 000000000000..24c3a460d13d
+index 000000000000..2b0cace6e1eb
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsHdr.h
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,43 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2022, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -3894,7 +3896,8 @@ index 000000000000..24c3a460d13d
 +#define AMD64
 +#endif
 +
-+#include <stddef.h>
++//#include <stddef.h> 
++typedef int wchar_t;
 +
 +unsigned int cgos_issue_request(unsigned int command, void* ibuf, unsigned int isize,
 +    void* obuf, unsigned int osize, unsigned int* olen);
@@ -3904,13 +3907,13 @@ index 000000000000..24c3a460d13d
 +#endif
 diff --git a/drivers/cgosdrv/DrvOsa.h b/drivers/cgosdrv/DrvOsa.h
 new file mode 100644
-index 000000000000..342f741379a6
+index 000000000000..8e35be62d66a
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsa.h
 @@ -0,0 +1,56 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -3966,13 +3969,13 @@ index 000000000000..342f741379a6
 +
 diff --git a/drivers/cgosdrv/DrvOsaLx.c b/drivers/cgosdrv/DrvOsaLx.c
 new file mode 100644
-index 000000000000..8ab37e702ef5
+index 000000000000..b9eb594ef053
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsaLx.c
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,100 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -4021,7 +4024,11 @@ index 000000000000..8ab37e702ef5
 +
 +cgos_cdecl void OsaSleepms(void *ctx, unsigned int ms)
 +  {
++  #if LINUX_VERSION_CODE < KERNEL_VERSION(5,14,9)
 +  current->state=TASK_INTERRUPTIBLE;
++  #else
++  set_current_state(TASK_INTERRUPTIBLE);
++  #endif
 +  schedule_timeout((ms*HZ+999)/1000);
 +  }
 +
@@ -4041,7 +4048,12 @@ index 000000000000..8ab37e702ef5
 +
 +cgos_cdecl void *OsaMemAlloc(unsigned int len)
 +  {
++  #if LINUX_VERSION_CODE < KERNEL_VERSION(5,8,0)
 +  return __vmalloc(len, GFP_KERNEL, PAGE_KERNEL_EXEC);
++  #else
++  //MODVMALLOC return __vmalloc(len, GFP_KERNEL);
++  return __vmalloc_prot(len, GFP_KERNEL, PAGE_KERNEL_EXEC); //MODVMALLOC
++  #endif
 +  }
 +
 +cgos_cdecl void OsaMemFree(void *p)
@@ -4063,13 +4075,13 @@ index 000000000000..8ab37e702ef5
 +
 diff --git a/drivers/cgosdrv/DrvUla.h b/drivers/cgosdrv/DrvUla.h
 new file mode 100644
-index 000000000000..bfa89155aed5
+index 000000000000..04e8c0fed1ae
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvUla.h
 @@ -0,0 +1,49 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -4118,13 +4130,13 @@ index 000000000000..bfa89155aed5
 +#endif
 diff --git a/drivers/cgosdrv/DrvVars.h b/drivers/cgosdrv/DrvVars.h
 new file mode 100644
-index 000000000000..40a69510ea90
+index 000000000000..c6c23f5dc755
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvVars.h
 @@ -0,0 +1,139 @@
 +/*---------------------------------------------------------------------------
 + *
-+ * Copyright (c) 2015, congatec AG. All rights reserved.
++ * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as 
@@ -4561,10 +4573,10 @@ index 000000000000..3f7ddb45fb7b
 +MODULE_AUTHOR(DRIVER_AUTHOR);
 +MODULE_DESCRIPTION(DRIVER_DESC);
 diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 2d08a8719506..d7d121e49c0d 100644
+index fea403431f22..59fc274092c2 100644
 --- a/drivers/i2c/busses/Kconfig
 +++ b/drivers/i2c/busses/Kconfig
-@@ -1278,6 +1278,17 @@ config I2C_TINY_USB
+@@ -1261,6 +1261,17 @@ config I2C_TINY_USB
  	  This driver can also be built as a module.  If so, the module
  	  will be called i2c-tiny-usb.
  
@@ -4583,10 +4595,10 @@ index 2d08a8719506..d7d121e49c0d 100644
  	tristate "Viperboard I2C master support"
  	depends on MFD_VIPERBOARD && USB
 diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 3ab8aebc39c9..603f5bdf6484 100644
+index 1336b04f40e2..a7eca8f86cee 100644
 --- a/drivers/i2c/busses/Makefile
 +++ b/drivers/i2c/busses/Makefile
-@@ -133,6 +133,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
+@@ -129,6 +129,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
  obj-$(CONFIG_I2C_TAOS_EVM)	+= i2c-taos-evm.o
  obj-$(CONFIG_I2C_TINY_USB)	+= i2c-tiny-usb.o
  obj-$(CONFIG_I2C_VIPERBOARD)	+= i2c-viperboard.o
@@ -5039,10 +5051,10 @@ index 000000000000..8c297d3fc3ee
 +MODULE_DESCRIPTION("sbre-usb-i2c driver v2.0");
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index a9151bd27211..9470794d0b20 100644
+index c2b26ada104d..e6500a3d57fe 100644
 --- a/drivers/mmc/host/sdhci-pci-core.c
 +++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1223,7 +1223,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+@@ -1230,7 +1230,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
  			  SDHCI_QUIRK_NO_LED,
  	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
  			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
@@ -5053,23 +5065,23 @@ index a9151bd27211..9470794d0b20 100644
  	.priv_size	= sizeof(struct intel_host),
  };
 diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index 9bce583aada3..20bb3d1c8dea 100644
+index 8f1144359012..33b727355717 100644
 --- a/drivers/usb/misc/Kconfig
 +++ b/drivers/usb/misc/Kconfig
-@@ -265,3 +265,5 @@ config USB_CHAOSKEY
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called chaoskey.
+@@ -284,3 +284,5 @@ config BRCM_USB_PINMAP
+ 	  This option enables support for remapping some USB external
+ 	  signals, which are typically on dedicated pins on the chip,
+ 	  to any gpio.
 +
 +source "drivers/usb/misc/sbre-dfuse/Kconfig"
 diff --git a/drivers/usb/misc/Makefile b/drivers/usb/misc/Makefile
-index 0d416eb624bb..4f1fa99801f1 100644
+index 5f4e598573ab..9c54d0e8c540 100644
 --- a/drivers/usb/misc/Makefile
 +++ b/drivers/usb/misc/Makefile
-@@ -30,3 +30,5 @@ obj-$(CONFIG_USB_CHAOSKEY)		+= chaoskey.o
- 
+@@ -32,3 +32,5 @@ obj-$(CONFIG_USB_CHAOSKEY)		+= chaoskey.o
  obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
  obj-$(CONFIG_USB_LINK_LAYER_TEST)	+= lvstest.o
+ obj-$(CONFIG_BRCM_USB_PINMAP)		+= brcmstb-usb-pinmap.o
 +
 +obj-$(CONFIG_USB_SBRE_DFUSE)		+= sbre-dfuse/
 diff --git a/drivers/usb/misc/sbre-dfuse/Kconfig b/drivers/usb/misc/sbre-dfuse/Kconfig
@@ -6875,11 +6887,49 @@ index 000000000000..abc342f44f8e
 +
 +#endif
 +
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 5535be1012a2..bd5e158d8006 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -151,6 +151,7 @@ extern void *vzalloc_node(unsigned long size, int node);
+ extern void *vmalloc_32(unsigned long size);
+ extern void *vmalloc_32_user(unsigned long size);
+ extern void *__vmalloc(unsigned long size, gfp_t gfp_mask);
++extern void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot);
+ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			unsigned long start, unsigned long end, gfp_t gfp_mask,
+ 			pgprot_t prot, unsigned long vm_flags, int node,
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 2bedf85b2f41..3342a6529a19 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3093,6 +3093,21 @@ void *__vmalloc(unsigned long size, gfp_t gfp_mask)
+ }
+ EXPORT_SYMBOL(__vmalloc);
+ 
++static void *__vmalloc_node_prot(unsigned long size, unsigned long align,
++			    gfp_t gfp_mask, pgprot_t prot,
++			    int node, const void *caller)
++{
++	return __vmalloc_node_range(size, align, VMALLOC_START, VMALLOC_END,
++				gfp_mask, prot, 0, node, caller);
++}
++
++void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
++{
++	return __vmalloc_node_prot(size, 1, gfp_mask, prot, NUMA_NO_NODE,
++				__builtin_return_address(0));
++}
++EXPORT_SYMBOL(__vmalloc_prot);
++
+ /**
+  * vmalloc - allocate virtually contiguous memory
+  * @size:    allocation size
 diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index dae47a45b2b8..303d4c7b845d 100644
+index ab9d2746e804..1d7242beb590 100644
 --- a/sound/pci/hda/Kconfig
 +++ b/sound/pci/hda/Kconfig
-@@ -117,6 +117,19 @@ config SND_HDA_CODEC_ANALOG
+@@ -112,6 +112,19 @@ config SND_HDA_CODEC_ANALOG
  comment "Set to Y if you want auto-loading the codec driver"
  	depends on SND_HDA=y && SND_HDA_CODEC_ANALOG=m
  
@@ -6900,7 +6950,7 @@ index dae47a45b2b8..303d4c7b845d 100644
  	tristate "Build IDT/Sigmatel HD-audio codec support"
  	select SND_HDA_GENERIC
 diff --git a/sound/pci/hda/Makefile b/sound/pci/hda/Makefile
-index b57432f00056..052b9827e646 100644
+index b8fa682ce66a..a377f435dd01 100644
 --- a/sound/pci/hda/Makefile
 +++ b/sound/pci/hda/Makefile
 @@ -17,6 +17,7 @@ snd-hda-codec-generic-objs :=	hda_generic.o
@@ -6911,7 +6961,7 @@ index b57432f00056..052b9827e646 100644
  snd-hda-codec-idt-objs :=	patch_sigmatel.o
  snd-hda-codec-si3054-objs :=	patch_si3054.o
  snd-hda-codec-cirrus-objs :=	patch_cirrus.o
-@@ -34,6 +35,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
+@@ -35,6 +36,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
  obj-$(CONFIG_SND_HDA_CODEC_REALTEK) += snd-hda-codec-realtek.o
  obj-$(CONFIG_SND_HDA_CODEC_CMEDIA) += snd-hda-codec-cmedia.o
  obj-$(CONFIG_SND_HDA_CODEC_ANALOG) += snd-hda-codec-analog.o
@@ -6920,7 +6970,7 @@ index b57432f00056..052b9827e646 100644
  obj-$(CONFIG_SND_HDA_CODEC_SI3054) += snd-hda-codec-si3054.o
  obj-$(CONFIG_SND_HDA_CODEC_CIRRUS) += snd-hda-codec-cirrus.o
 diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
-index 7ac3f04ca8c0..686d4156197a 100644
+index fc114e522480..894908807a3a 100644
 --- a/sound/pci/hda/hda_generic.c
 +++ b/sound/pci/hda/hda_generic.c
 @@ -84,7 +84,7 @@ static void free_kctls(struct hda_gen_spec *spec)
@@ -6932,19 +6982,19 @@ index 7ac3f04ca8c0..686d4156197a 100644
  {
  	if (!spec)
  		return;
-@@ -92,6 +92,7 @@ static void snd_hda_gen_spec_free(struct hda_gen_spec *spec)
- 	snd_array_free(&spec->paths);
- 	snd_array_free(&spec->loopback_list);
+@@ -98,6 +98,7 @@ static void snd_hda_gen_spec_free(struct hda_gen_spec *spec)
+ 		led_classdev_unregister(spec->led_cdevs[LED_AUDIO_MICMUTE]);
+ #endif
  }
 +EXPORT_SYMBOL_GPL(snd_hda_gen_spec_free);
  
  /*
   * store user hints
 diff --git a/sound/pci/hda/hda_generic.h b/sound/pci/hda/hda_generic.h
-index e728df6145ad..e8adf2fca97d 100644
+index 362ddcaea15b..a8fa974b3576 100644
 --- a/sound/pci/hda/hda_generic.h
 +++ b/sound/pci/hda/hda_generic.h
-@@ -314,6 +314,7 @@ enum {
+@@ -307,6 +307,7 @@ enum {
  };
  
  int snd_hda_gen_spec_init(struct hda_gen_spec *spec);
@@ -6954,10 +7004,10 @@ index e728df6145ad..e8adf2fca97d 100644
  void snd_hda_gen_free(struct hda_codec *codec);
 diff --git a/sound/pci/hda/patch_wolfson.c b/sound/pci/hda/patch_wolfson.c
 new file mode 100644
-index 000000000000..6d4bcbcdefd0
+index 000000000000..5090d3f4c31c
 --- /dev/null
 +++ b/sound/pci/hda/patch_wolfson.c
-@@ -0,0 +1,608 @@
+@@ -0,0 +1,579 @@
 +/*
 + * HD audio interface patch for WM8860
 + *
@@ -7244,13 +7294,6 @@ index 000000000000..6d4bcbcdefd0
 +	return 0;
 +}
 +
-+static void wm8860_shutup(struct hda_codec *codec)
-+{
-+	snd_hda_shutup_pins(codec);
-+	snd_hda_codec_write(codec, NID_PARAMETER, 0, AC_VERB_SET_GPIO_DATA,
-+		GPIO_MUTE_ENABLE | GPIO_AMPLIFICATION_DISABLE);
-+}
-+
 +static void wm8860_free(struct hda_codec *codec)
 +{
 +	struct wm8860_spec *spec = codec->spec;
@@ -7268,28 +7311,6 @@ index 000000000000..6d4bcbcdefd0
 +	.build_pcms = wm8860_build_pcms,
 +	.init = wm8860_init,
 +	.free = wm8860_free,
-+};
-+
-+/*
-+ * Automatic parse of I/O pins from the BIOS configuration
-+ */
-+static int wm8860_auto_build_controls(struct hda_codec *codec)
-+{
-+	int err;
-+
-+	err = snd_hda_gen_build_controls(codec);
-+	if (err < 0)
-+		return err;
-+	return 0;
-+}
-+
-+static const struct hda_codec_ops wm8860_auto_patch_ops = {
-+	.build_controls = wm8860_auto_build_controls,
-+	.build_pcms = snd_hda_gen_build_pcms,
-+	.init = snd_hda_gen_init,
-+	.free = snd_hda_gen_free,
-+	.unsol_event = snd_hda_jack_unsol_event,
-+	.reboot_notify = wm8860_shutup,
 +};
 +
 +static hda_nid_t wm8860g_dac_nids[] = {
