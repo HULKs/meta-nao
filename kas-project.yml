@@ -7,12 +7,11 @@ target: nao-image
 local_conf_header:
     meta-nao: |
         PACKAGE_CLASSES ?= "package_rpm"
-        CLANGSDK = "1"
 repos:
     meta-nao:
     poky:
         url: "https://git.yoctoproject.org/git/poky"
-        refspec: d53ac6e9561d782818d5491b7c4066f4a712d358
+        refspec: 79434a17eb4835e85fcd477baec08c8ce49a4c14
         layers:
             meta:
             meta-poky:
@@ -21,21 +20,18 @@ repos:
         url: "https://git.congatec.com/x86/meta-congatec-x86.git"
         refspec: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
         patches:
-            0001-congatec-kirkstone-support:
+            0001-congatec-langdale-support:
                 repo: "meta-nao"
-                path: "patches/0001-congatec-kirkstone-support.patch"
+                path: "patches/0001-congatec-langdale-support.patch"
             0002-congatec-new-override-syntax:
                 repo: "meta-nao"
                 path: "patches/0002-congatec-new-override-syntax.patch"
     meta-intel:
         url: "https://git.yoctoproject.org/git/meta-intel"
-        refspec: 33421d8a0f74f1d879f6228fcdedce39eb34420b
-    meta-clang:
-        url: "https://github.com/kraj/meta-clang.git"
-        refspec: 12a5f8be1201fa1fcb62aa004542279d5c9acae0
+        refspec: f70cf173dc40131e5ed3955a4a459fff3aa010ed
     meta-openembedded:
         url: "https://git.openembedded.org/meta-openembedded"
-        refspec: bb2b5b31a80eb164e47649036878773614e4dbdf
+        refspec: c5668905a6d8a78fb72c2cbf8b20e91e686ceb86
         layers:
             meta-oe:
             meta-multimedia:
