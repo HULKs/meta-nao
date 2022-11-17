@@ -7,6 +7,7 @@ target: nao-image
 local_conf_header:
     meta-nao: |
         PACKAGE_CLASSES ?= "package_rpm"
+        CLANGSDK = "1"
 repos:
     meta-nao:
     poky:
@@ -26,6 +27,9 @@ repos:
             0002-congatec-new-override-syntax:
                 repo: "meta-nao"
                 path: "patches/0002-congatec-new-override-syntax.patch"
+    meta-clang:
+        url: "https://github.com/kraj/meta-clang.git"
+        refspec: f71d12dc480550ebf88d7bc47a34d7b20ee0707f
     meta-intel:
         url: "https://git.yoctoproject.org/git/meta-intel"
         refspec: f70cf173dc40131e5ed3955a4a459fff3aa010ed

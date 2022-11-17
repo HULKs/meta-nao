@@ -60,7 +60,10 @@ IMAGE_INSTALL += "nao-wifi-conf"
 IMAGE_INSTALL += "aldebaran"
 
 # add cmake to the native sdk
-TOOLCHAIN_HOST_TASK += "nativesdk-cmake"
+TOOLCHAIN_HOST_TASK += " \
+    nativesdk-libclang \
+    nativesdk-cmake \
+    "
 
 inherit extrausers
 
