@@ -1,5 +1,5 @@
 header:
-    version: 10
+    version: 12
 
 machine: nao-v6
 distro: nao-core-minimal
