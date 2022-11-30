@@ -9,6 +9,7 @@ local_conf_header:
         SDK_TOOLCHAIN_LANGS ?= "rust"
         PACKAGE_CLASSES ?= "package_rpm"
         CLANGSDK = "1"
+        EXTRA_IMAGE_FEATURES += "allow-empty-password"
 repos:
     meta-nao:
     poky:

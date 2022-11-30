@@ -70,3 +70,11 @@ inherit extrausers
 EXTRA_USERS_PARAMS = "usermod -s /bin/bash -p '\$6\$qK8Ij5Gvqbh.I4Zj\$URC76o65il5XzPodMBfz83RBpcnbFJ0dsWqdeaiayhoNnB.PEpSxFlupSv24iXkHlRhZk7auLAT7X0wS04mxh1' root; \
                       usermod -aG tty,uucp,audio,video,plugdev,systemd-journal nao; \
                      "
+
+ROOTFS_POSTPROCESS_COMMAND += "set_empty_nao_password;"
+
+set_empty_nao_password () {
+  if [ -e ${IMAGE_ROOTFS}/etc/shadow ]; then
+    sed -i 's%^nao:!:%nao::%' ${IMAGE_ROOTFS}/etc/shadow
+  fi
+}

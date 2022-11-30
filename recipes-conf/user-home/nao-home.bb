@@ -33,7 +33,6 @@ USERADD_PARAM:${PN} = "--gid nao \
                        --create-home \
                        --home-dir /home/nao \
                        --groups hal,rt,wheel \
-                       -p '\$6\$BA6sX/h18zkV4QI\$.RRDKABOvIT2sZqRVbJGOTtxFS0mGjMU.As9vREHG38Z6KxzaojzjjFZ1LCw.xjBsTWxYQKnD.YNBncIq1xYT0' \
                        -s /bin/bash \
                        nao"
 
