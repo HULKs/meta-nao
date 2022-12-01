@@ -68,7 +68,9 @@ dd if=image_path.opn of=/dev/sdb bs=4M status=progress oflag=sync
 
 ### How can I log into the robot?
 
-The login credentials for user *root* and *nao* are defined in `meta-nao/recipes-core/images/nao-image.bb`. Per default the password is the same as the respective username (*root:root*, *nao:nao*).
+The login credentials for user *root* and *nao* are defined in `meta-nao/recipes-core/images/nao-image.bb`.
+Per default the nao user has an empty password.
+The password of the root user is *root*.
 
 ### How can I configure IP addresses?
 
