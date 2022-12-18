@@ -5,7 +5,8 @@ Requires=hal.service
 
 [Service]
 Type=simple
-LimitRTPRIO=36
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=20
 Restart=on-failure
 ExecStart=/opt/aldebaran/bin/lola
 TimeoutStartSec=30

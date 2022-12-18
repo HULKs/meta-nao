@@ -43,6 +43,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
                              polkit \
                              less \
                              iwd \
+                             procps \
                              "
 
 # enable ssh

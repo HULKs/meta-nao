@@ -4,7 +4,8 @@ After=syslog.target
 
 [Service]
 Type=notify
-LimitRTPRIO=36
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=30
 Restart=on-failure
 ExecStart=/opt/aldebaran/bin/hal
 TimeoutStartSec=30
