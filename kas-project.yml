@@ -7,7 +7,7 @@ target: nao-image
 local_conf_header:
     meta-nao: |
         SDK_TOOLCHAIN_LANGS ?= "rust"
-        PACKAGE_CLASSES ?= "package_rpm"
+        PACKAGE_CLASSES ?= "package_ipk"
         CLANGSDK = "1"
         EXTRA_IMAGE_FEATURES += "allow-empty-password"
 repos:
