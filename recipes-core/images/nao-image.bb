@@ -52,7 +52,7 @@ IMAGE_FEATURES += "ssh-server-openssh"
 # enable package management
 IMAGE_FEATURES += "package-management"
 
-# prepare the data skeleton and nao user
+# grow root filesystem and prepare the nao user directory
 IMAGE_INSTALL += "grow-root-filesystem nao-home"
 
 # configure wifi

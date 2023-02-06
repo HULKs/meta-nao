@@ -1,4 +1,4 @@
-SUMMARY = "SystemD services to prepare the partitions"
+SUMMARY = "Grows the root filesystem on first boot"
 LICENSE = "CLOSED"
 
 ALLOW_EMPTY:${PN} = "1"
