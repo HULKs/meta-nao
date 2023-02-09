@@ -2,7 +2,7 @@ LICENSE = "CLOSED"
 
 SRC_URI = "git://git@github.com/HULKs/opn-tools.git;branch=main;protocol=https"
 S = "${WORKDIR}/git"
-SRCREV = "dea926bcce6a02ab527532347c80539558562ead"
+SRCREV = "ac0ae1702bc43623aaf07ba467acf632c879d856"
 
 inherit setuptools3
 

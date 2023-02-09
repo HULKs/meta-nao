@@ -8,6 +8,7 @@ IMAGE_LINGUAS = " "
 
 inherit core-image
 
+IMAGE_OVERHEAD_FACTOR = "1.1"
 IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "" ,d)}"
 
@@ -51,8 +52,8 @@ IMAGE_FEATURES += "ssh-server-openssh"
 # enable package management
 IMAGE_FEATURES += "package-management"
 
-# prepare the data skeleton and nao user
-IMAGE_INSTALL += "data-partition nao-home"
+# grow root filesystem and prepare the nao user directory
+IMAGE_INSTALL += "grow-root-filesystem nao-home"
 
 # configure wifi
 IMAGE_INSTALL += "nao-wifi-conf"
