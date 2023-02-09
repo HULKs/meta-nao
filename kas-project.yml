@@ -6,6 +6,7 @@ distro: nao-core-minimal
 target: nao-image
 local_conf_header:
     meta-nao: |
+        CONF_VERSION = "2"
         SDK_TOOLCHAIN_LANGS ?= "rust"
         PACKAGE_CLASSES ?= "package_ipk"
         CLANGSDK = "1"
