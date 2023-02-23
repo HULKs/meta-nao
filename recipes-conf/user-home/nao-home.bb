@@ -6,19 +6,19 @@ SRC_URI = " \
            file://nao.rules \
           "
 
-DEPENDS = "polkit"
+RDEPENDS:${PN} += "polkit"
 
-do_install() {
+inherit useradd
+
+do_install:append() {
   # Enable robocupper mode
   install -o nao -g nao -d ${D}/home/nao/
   install -o nao -g nao -m 0644 ${WORKDIR}/robocup.conf ${D}/home/nao/
 
   # Install nao rules for polkit
-  install -d -m 700 -o polkitd -g root ${D}${datadir}/polkit-1/rules.d/
+  install -d ${D}${datadir}/polkit-1/rules.d/
   install ${WORKDIR}/nao.rules ${D}${datadir}/polkit-1/rules.d
 }
-
-inherit useradd
 
 USERADD_PACKAGES = "${PN}"
 
