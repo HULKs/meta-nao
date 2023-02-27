@@ -12,10 +12,12 @@ RPROVIDES:${KERNEL_PACKAGE_NAME} += "cgos-mod"
 
 do_install:append() {
   ln -s bzImage-${KERNEL_VERSION_NAME} ${D}/boot/vmlinuz.efi
+  ln -s vmlinuz.efi ${D}/boot/vmlinuz
   install -m 0644 ${WORKDIR}/cmdline ${D}/boot/cmdline
 }
 
 FILES:${KERNEL_PACKAGE_NAME} += "\
                                  /boot/vmlinuz.efi \
+                                 /boot/vmlinuz \
                                  /boot/cmdline \
                                 "
