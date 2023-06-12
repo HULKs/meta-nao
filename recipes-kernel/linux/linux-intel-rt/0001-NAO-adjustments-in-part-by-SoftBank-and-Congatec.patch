@@ -6892,9 +6892,9 @@ index 5535be1012a2..bd5e158d8006 100644
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
 @@ -151,6 +151,7 @@ extern void *vzalloc_node(unsigned long size, int node);
- extern void *vmalloc_32(unsigned long size);
- extern void *vmalloc_32_user(unsigned long size);
- extern void *__vmalloc(unsigned long size, gfp_t gfp_mask);
+ extern void *vmalloc_32(unsigned long size) __alloc_size(1);
+ extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
+ extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
 +extern void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot);
  extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
  			unsigned long start, unsigned long end, gfp_t gfp_mask,
