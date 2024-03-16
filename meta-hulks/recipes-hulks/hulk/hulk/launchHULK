@@ -13,6 +13,6 @@ mkdir -p ${EXTERNAL_LOG_PATH}
   ln -sf ${INTERNAL_LOG_PATH}/hulk-${CURRENT_DATE}.err hulk.err
 )
 
-/home/nao/hulk/bin/hulk \
+exec /home/nao/hulk/bin/hulk \
          > >(tee ${EXTERNAL_LOG_PATH}/hulk-${CURRENT_DATE}.out > ${INTERNAL_LOG_PATH}/hulk-${CURRENT_DATE}.out) \
         2> >(tee ${EXTERNAL_LOG_PATH}/hulk-${CURRENT_DATE}.err > ${INTERNAL_LOG_PATH}/hulk-${CURRENT_DATE}.err)
