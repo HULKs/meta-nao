@@ -10,6 +10,7 @@ CPUSchedulingPriority=20
 Restart=on-failure
 ExecStart=/opt/aldebaran/bin/lola
 TimeoutStartSec=30
+TimeoutStopSec=5
 User=nao
 Group=hal
 

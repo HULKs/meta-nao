@@ -11,6 +11,7 @@ CPUSchedulingPriority=30
 Restart=on-failure
 ExecStart=/opt/aldebaran/bin/hal
 TimeoutStartSec=30
+TimeoutStopSec=5
 User=nao
 Group=hal
 
