@@ -1,6 +1,8 @@
 [Unit]
 Description=Aldebaran HAL
+Requires=dev-chestboard.device
 After=syslog.target
+After=dev-chestboard.device
 
 [Service]
 Type=notify

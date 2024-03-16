@@ -1,5 +1,5 @@
 # Body
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="ffff", MODE="0660", GROUP="hal"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="ffff", MODE="0660", GROUP="hal", TAG+="systemd", SYMLINK+="chestboard"
 
 # Head NaoV6 - i2c bus
 KERNEL=="i2c-*", ATTRS{name}=="SBRE USB-I2C on port ?.*", TAG+="systemd", \
