@@ -1,0 +1,36 @@
+name: Yocto CI/CD
+on: push
+jobs:
+  cicd:
+    name: Yocto CI/CD
+    runs-on:
+      - self-hosted
+      - v3
+      - yocto
+    container:
+      image: ghcr.io/hulks/yocto_release
+      options: --user=1000:1000
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: meta-hulks
+      - name: Checkout Yocto layers
+        run: kas checkout meta-nao/kas-project.yml
+      - name: Populate aldebaran_binaries.tar.gz
+        run: mkdir -p meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/ && cp /aldebaran_binaries.tar.gz meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/
+      - name: Build image
+        run: kas build --target nao-image --cmd build meta-nao/kas-project.yml
+      - name: Build SDK
+        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas-project.yml
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: HULKs-OS ${{ github.ref_name }}
+          body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
+          files: |
+            build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
+            build/tmp/deploy/sdk/HULKs-OS-toolchain-${{ github.ref_name }}.sh
+          fail_on_unmatched_files: true

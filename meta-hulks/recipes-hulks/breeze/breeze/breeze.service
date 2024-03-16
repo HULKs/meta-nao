@@ -1,0 +1,11 @@
+[Unit]
+Description=Breeze Service
+
+[Service]
+# alfand is loading the cgosdrv when initializing the lib.
+# We do it manually here.
+ExecStartPre=modprobe cgosdrv
+ExecStart=/usr/bin/breeze
+
+[Install]
+WantedBy=default.target

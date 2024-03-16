@@ -2,7 +2,7 @@ header:
   version: 14
 
 machine: nao-v6
-distro: nao-core-minimal
+distro: HULKs-OS
 target: nao-image
 local_conf_header:
   meta-nao: |
@@ -13,6 +13,9 @@ local_conf_header:
     EXTRA_IMAGE_FEATURES += "allow-empty-password"
 repos:
   meta-nao:
+    layers:
+      meta:
+      meta-hulks:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
     commit: b5624ee5643d881afa004571a096a189ab5389b5
@@ -24,6 +27,9 @@ repos:
       0003-specify-custom-dynamic-linker:
         repo: "meta-nao"
         path: "patches/0003-bindgen-clang-sysroot.patch"
+      0004-compress-sdk-with-zstd:
+        repo: "meta-nao"
+        path: "patches/0004-compress-sdk-with-zstd.patch"
   meta-congatec-x86:
     url: "https://git.congatec.com/x86/meta-congatec-x86.git"
     commit: 1867244888ed0a5ad85f5b4ab789e1d0201deb02

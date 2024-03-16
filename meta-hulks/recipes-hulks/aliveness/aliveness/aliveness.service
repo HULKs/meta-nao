@@ -1,0 +1,14 @@
+[Unit]
+Description=Aliveness Service
+Requires=dbus.socket enp4s0-wait-online.service
+After=dbus.socket enp4s0-wait-online.service
+
+[Service]
+ExecStart=/usr/bin/aliveness-service
+TimeoutStopSec=10
+StandardOutput=journal
+User=nao
+Group=nao
+
+[Install]
+WantedBy=default.target

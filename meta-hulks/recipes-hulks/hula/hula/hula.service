@@ -1,0 +1,18 @@
+[Unit]
+Description=HULA Service
+Requires=dbus.socket lola.service
+After=dbus.socket lola.service
+
+[Service]
+ExecStart=/usr/bin/hula
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=10
+TimeoutStopSec=10
+StandardOutput=journal
+Type=notify
+NotifyAccess=main
+User=nao
+Group=nao
+
+[Install]
+WantedBy=default.target
