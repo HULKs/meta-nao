@@ -24,7 +24,7 @@ do_install() {
   install -m 0644 ${WORKDIR}/90-cgos.rules ${D}${sysconfdir}/udev/rules.d/
   install -m 0644 ${WORKDIR}/90-hal.rules ${D}${sysconfdir}/udev/rules.d/
 
-  install -d ${D}/lib/systemd/system-shutdown/
+  install -d ${D}/${nonarch_base_libdir}/systemd/system-shutdown/
   install -m 755 ${WORKDIR}/harakiri ${D}/${nonarch_base_libdir}/systemd/system-shutdown
 
   install -d ${D}${systemd_unitdir}/system

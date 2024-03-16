@@ -1,0 +1,34 @@
+From 93996a51f564b65d556896f4b3180122d03934c9 Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Tue, 12 Mar 2024 12:23:13 +0000
+Subject: [PATCH] Include cstdint
+
+---
+ src/FX3Device.hpp | 1 +
+ src/main.cpp      | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/FX3Device.hpp b/src/FX3Device.hpp
+index a6e0ae4..973605b 100644
+--- a/src/FX3Device.hpp
++++ b/src/FX3Device.hpp
+@@ -9,6 +9,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.*/
+ #include <libusb-1.0/libusb.h>
+ #include <ostream>
+ #include <vector>
++#include <cstdint>
+ 
+ class FX3Device {
+ 	public:
+diff --git a/src/main.cpp b/src/main.cpp
+index 6e95872..e71fed2 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -10,6 +10,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.*/
+ #include <memory>
+ #include <sstream>
+ #include <vector>
++#include <cstdint>
+ 
+ inline void
+ getUsage(const std::string& argv0) {

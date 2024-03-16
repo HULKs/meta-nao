@@ -1,50 +1,50 @@
 header:
-    version: 12
+  version: 14
 
 machine: nao-v6
 distro: nao-core-minimal
 target: nao-image
 local_conf_header:
-    meta-nao: |
-        CONF_VERSION = "2"
-        SDK_TOOLCHAIN_LANGS ?= "rust"
-        PACKAGE_CLASSES ?= "package_ipk"
-        CLANGSDK = "1"
-        EXTRA_IMAGE_FEATURES += "allow-empty-password"
+  meta-nao: |
+    CONF_VERSION = "2"
+    SDK_TOOLCHAIN_LANGS ?= "rust"
+    PACKAGE_CLASSES ?= "package_ipk"
+    CLANGSDK = "1"
+    EXTRA_IMAGE_FEATURES += "allow-empty-password"
 repos:
-    meta-nao:
-    poky:
-        url: "https://git.yoctoproject.org/git/poky"
-        refspec: 79434a17eb4835e85fcd477baec08c8ce49a4c14
-        layers:
-            meta:
-            meta-poky:
-            meta-yocto-bsp:
-        patches:
-            0003-specify-custom-dynamic-linker:
-                repo: "meta-nao"
-                path: "patches/0003-bindgen-clang-sysroot.patch"
-    meta-congatec-x86:
-        url: "https://git.congatec.com/x86/meta-congatec-x86.git"
-        refspec: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
-        patches:
-            0001-congatec-langdale-support:
-                repo: "meta-nao"
-                path: "patches/0001-congatec-langdale-support.patch"
-            0002-congatec-new-override-syntax:
-                repo: "meta-nao"
-                path: "patches/0002-congatec-new-override-syntax.patch"
-    meta-clang:
-        url: "https://github.com/kraj/meta-clang.git"
-        refspec: f71d12dc480550ebf88d7bc47a34d7b20ee0707f
-    meta-intel:
-        url: "https://git.yoctoproject.org/git/meta-intel"
-        refspec: f70cf173dc40131e5ed3955a4a459fff3aa010ed
-    meta-openembedded:
-        url: "https://git.openembedded.org/meta-openembedded"
-        refspec: c5668905a6d8a78fb72c2cbf8b20e91e686ceb86
-        layers:
-            meta-oe:
-            meta-multimedia:
-            meta-networking:
-            meta-python:
+  meta-nao:
+  poky:
+    url: "https://git.yoctoproject.org/git/poky"
+    commit: b5624ee5643d881afa004571a096a189ab5389b5
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+    patches:
+      0003-specify-custom-dynamic-linker:
+        repo: "meta-nao"
+        path: "patches/0003-bindgen-clang-sysroot.patch"
+  meta-congatec-x86:
+    url: "https://git.congatec.com/x86/meta-congatec-x86.git"
+    commit: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
+    patches:
+      0001-congatec-scarthgap-support:
+        repo: "meta-nao"
+        path: "patches/0001-congatec-scarthgap-support.patch"
+      0002-congatec-new-override-syntax:
+        repo: "meta-nao"
+        path: "patches/0002-congatec-new-override-syntax.patch"
+  meta-clang:
+    url: "https://github.com/kraj/meta-clang.git"
+    commit: eebe4ff2e539f3ffb01c5060cc4ca8b226ea8b52
+  meta-intel:
+    url: "https://git.yoctoproject.org/git/meta-intel"
+    commit: ec6e087a9fb582a3449d8bdf80db0e98dea9d19c
+  meta-openembedded:
+    url: "https://git.openembedded.org/meta-openembedded"
+    commit: 5eb1fa3418e69c6cdeeca08f7f630e2897e690f8
+    layers:
+      meta-oe:
+      meta-multimedia:
+      meta-networking:
+      meta-python:

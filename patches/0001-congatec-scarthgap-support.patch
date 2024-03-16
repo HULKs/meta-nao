@@ -1,7 +1,7 @@
 From 78ee96785053ecb3198963d0d781930a35935874 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
 Date: Wed, 9 Nov 2022 17:38:52 +0100
-Subject: [PATCH] congatec langdale support
+Subject: [PATCH] congatec scarthgap support
 
 ---
  conf/layer.conf | 2 +-
@@ -16,7 +16,7 @@ index 60cc30c..a7825ff 100644
  
  LAYERVERSION_congatec = "7"
 -LAYERSERIES_COMPAT_congatec = "dunfell"
-+LAYERSERIES_COMPAT_congatec = "langdale"
++LAYERSERIES_COMPAT_congatec = "scarthgap"
 -- 
 2.30.2
 

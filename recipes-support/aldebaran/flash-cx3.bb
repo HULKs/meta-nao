@@ -9,6 +9,7 @@ S = "${WORKDIR}/git/flash-cx3"
 
 SRC_URI = "git://gitlab.com/clemolgat-SBR/leopard-imaging.git;protocol=https;branch=master \
            file://0001-Use-libusb-context-instead-of-NULL.patch \
+           file://0002-Include-cstdint.patch \
            "
 
 DEPENDS = "libusb1"

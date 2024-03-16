@@ -1,6 +1,6 @@
-From 7415699737a4eb4ede750e132637b8334af81c0d Mon Sep 17 00:00:00 2001
-From: Kas User <kas@example.com>
-Date: Tue, 15 Nov 2022 19:32:11 +0000
+From 165a4bcc4c62e984fe0ae7213298140a55ef5b9b Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Tue, 12 Mar 2024 10:54:44 +0000
 Subject: [PATCH] NAO adjustments (in part by SoftBank and Congatec)
 
 ---
@@ -89,10 +89,10 @@ Subject: [PATCH] NAO adjustments (in part by SoftBank and Congatec)
  create mode 100644 sound/pci/hda/patch_wolfson.c
 
 diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 1702239e7e42..b4218ec096c2 100644
+index aa7d279321ea..6966746fc018 100644
 --- a/arch/x86/mm/ioremap.c
 +++ b/arch/x86/mm/ioremap.c
-@@ -291,7 +291,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
+@@ -308,7 +308,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
  	 * Check if the request spans more than any BAR in the iomem resource
  	 * tree.
  	 */
@@ -103,10 +103,10 @@ index 1702239e7e42..b4218ec096c2 100644
  
  	return ret_addr;
 diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 253f498284ee..6a0f3d1e85cc 100644
+index efb66e25fa2d..01d63a4f2118 100644
 --- a/drivers/Kconfig
 +++ b/drivers/Kconfig
-@@ -27,6 +27,8 @@ source "drivers/of/Kconfig"
+@@ -29,6 +29,8 @@ source "drivers/of/Kconfig"
  
  source "drivers/parport/Kconfig"
  
@@ -116,11 +116,11 @@ index 253f498284ee..6a0f3d1e85cc 100644
  
  source "drivers/block/Kconfig"
 diff --git a/drivers/Makefile b/drivers/Makefile
-index a8485501cde6..6c76dccf8761 100644
+index 1bec7819a837..216f48c03025 100644
 --- a/drivers/Makefile
 +++ b/drivers/Makefile
-@@ -178,6 +178,7 @@ obj-$(CONFIG_STM)		+= hwtracing/stm/
- obj-$(CONFIG_ANDROID)		+= android/
+@@ -185,6 +185,7 @@ obj-$(CONFIG_HISI_PTT)		+= hwtracing/ptt/
+ obj-y				+= android/
  obj-$(CONFIG_NVMEM)		+= nvmem/
  obj-$(CONFIG_FPGA)		+= fpga/
 +obj-$(CONFIG_CGOS)		+= cgosdrv/
@@ -129,7 +129,7 @@ index a8485501cde6..6c76dccf8761 100644
  obj-$(CONFIG_MULTIPLEXER)	+= mux/
 diff --git a/drivers/cgosdrv/COPYING_BSD2 b/drivers/cgosdrv/COPYING_BSD2
 new file mode 100644
-index 000000000000..41b64bc6b642
+index 000000000000..b91ae38405fc
 --- /dev/null
 +++ b/drivers/cgosdrv/COPYING_BSD2
 @@ -0,0 +1,25 @@
@@ -139,7 +139,7 @@ index 000000000000..41b64bc6b642
 +modification, are permitted provided that the following conditions are
 +met:
 +
-+1. Redistributions of source code must retain the above copyright 
++1. Redistributions of source code must retain the above copyright
 +   notice, this list of conditions and the following disclaimer.
 +
 +2. Redistributions in binary form must reproduce the above copyright
@@ -147,10 +147,10 @@ index 000000000000..41b64bc6b642
 +   documentation and/or other materials provided with the distribution.
 +
 +THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
++"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
 +INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
 +BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
 +LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
@@ -4573,10 +4573,10 @@ index 000000000000..3f7ddb45fb7b
 +MODULE_AUTHOR(DRIVER_AUTHOR);
 +MODULE_DESCRIPTION(DRIVER_DESC);
 diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index fea403431f22..59fc274092c2 100644
+index 97d27e01a6ee..d392bef4a2e9 100644
 --- a/drivers/i2c/busses/Kconfig
 +++ b/drivers/i2c/busses/Kconfig
-@@ -1261,6 +1261,17 @@ config I2C_TINY_USB
+@@ -1336,6 +1336,17 @@ config I2C_TINY_USB
  	  This driver can also be built as a module.  If so, the module
  	  will be called i2c-tiny-usb.
  
@@ -4595,10 +4595,10 @@ index fea403431f22..59fc274092c2 100644
  	tristate "Viperboard I2C master support"
  	depends on MFD_VIPERBOARD && USB
 diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 1336b04f40e2..a7eca8f86cee 100644
+index af56fe2c75c0..52419b43a5d6 100644
 --- a/drivers/i2c/busses/Makefile
 +++ b/drivers/i2c/busses/Makefile
-@@ -129,6 +129,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
+@@ -140,6 +140,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
  obj-$(CONFIG_I2C_TAOS_EVM)	+= i2c-taos-evm.o
  obj-$(CONFIG_I2C_TINY_USB)	+= i2c-tiny-usb.o
  obj-$(CONFIG_I2C_VIPERBOARD)	+= i2c-viperboard.o
@@ -5051,10 +5051,10 @@ index 000000000000..8c297d3fc3ee
 +MODULE_DESCRIPTION("sbre-usb-i2c driver v2.0");
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index c2b26ada104d..e6500a3d57fe 100644
+index 7c14feb5db77..65aa6777e5da 100644
 --- a/drivers/mmc/host/sdhci-pci-core.c
 +++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1230,7 +1230,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+@@ -1169,7 +1169,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
  			  SDHCI_QUIRK_NO_LED,
  	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
  			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
@@ -5065,23 +5065,23 @@ index c2b26ada104d..e6500a3d57fe 100644
  	.priv_size	= sizeof(struct intel_host),
  };
 diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index 8f1144359012..33b727355717 100644
+index 99b15b77dfd5..629f2c49856d 100644
 --- a/drivers/usb/misc/Kconfig
 +++ b/drivers/usb/misc/Kconfig
-@@ -284,3 +284,5 @@ config BRCM_USB_PINMAP
- 	  This option enables support for remapping some USB external
- 	  signals, which are typically on dedicated pins on the chip,
- 	  to any gpio.
+@@ -318,3 +318,5 @@ config USB_ONBOARD_HUB
+ 	  this config will enable the driver and it will automatically
+ 	  match the state of the USB subsystem. If this driver is a
+ 	  module it will be called onboard_usb_hub.
 +
 +source "drivers/usb/misc/sbre-dfuse/Kconfig"
 diff --git a/drivers/usb/misc/Makefile b/drivers/usb/misc/Makefile
-index 5f4e598573ab..9c54d0e8c540 100644
+index 1992cc284d8a..d75312261034 100644
 --- a/drivers/usb/misc/Makefile
 +++ b/drivers/usb/misc/Makefile
-@@ -32,3 +32,5 @@ obj-$(CONFIG_USB_CHAOSKEY)		+= chaoskey.o
- obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
+@@ -33,3 +33,5 @@ obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
  obj-$(CONFIG_USB_LINK_LAYER_TEST)	+= lvstest.o
  obj-$(CONFIG_BRCM_USB_PINMAP)		+= brcmstb-usb-pinmap.o
+ obj-$(CONFIG_USB_ONBOARD_HUB)		+= onboard_usb_hub.o
 +
 +obj-$(CONFIG_USB_SBRE_DFUSE)		+= sbre-dfuse/
 diff --git a/drivers/usb/misc/sbre-dfuse/Kconfig b/drivers/usb/misc/sbre-dfuse/Kconfig
@@ -6888,22 +6888,22 @@ index 000000000000..abc342f44f8e
 +#endif
 +
 diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 5535be1012a2..bd5e158d8006 100644
+index c720be70c8dd..75a9318c50d2 100644
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
-@@ -151,6 +151,7 @@ extern void *vzalloc_node(unsigned long size, int node);
- extern void *vmalloc_32(unsigned long size);
- extern void *vmalloc_32_user(unsigned long size);
- extern void *__vmalloc(unsigned long size, gfp_t gfp_mask);
-+extern void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot);
+@@ -145,6 +145,7 @@ extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
+ extern void *vmalloc_32(unsigned long size) __alloc_size(1);
+ extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
+ extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
++extern void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot) __alloc_size(1);
  extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
  			unsigned long start, unsigned long end, gfp_t gfp_mask,
  			pgprot_t prot, unsigned long vm_flags, int node,
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 2bedf85b2f41..3342a6529a19 100644
+index a3fedb3ee0db..9718f6995efd 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -3093,6 +3093,21 @@ void *__vmalloc(unsigned long size, gfp_t gfp_mask)
+@@ -3401,6 +3401,21 @@ void *__vmalloc(unsigned long size, gfp_t gfp_mask)
  }
  EXPORT_SYMBOL(__vmalloc);
  
@@ -6926,10 +6926,10 @@ index 2bedf85b2f41..3342a6529a19 100644
   * vmalloc - allocate virtually contiguous memory
   * @size:    allocation size
 diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index ab9d2746e804..1d7242beb590 100644
+index 0d7502d6e060..6d8aa850e0ce 100644
 --- a/sound/pci/hda/Kconfig
 +++ b/sound/pci/hda/Kconfig
-@@ -112,6 +112,19 @@ config SND_HDA_CODEC_ANALOG
+@@ -200,6 +200,19 @@ config SND_HDA_CODEC_ANALOG
  comment "Set to Y if you want auto-loading the codec driver"
  	depends on SND_HDA=y && SND_HDA_CODEC_ANALOG=m
  
@@ -6950,7 +6950,7 @@ index ab9d2746e804..1d7242beb590 100644
  	tristate "Build IDT/Sigmatel HD-audio codec support"
  	select SND_HDA_GENERIC
 diff --git a/sound/pci/hda/Makefile b/sound/pci/hda/Makefile
-index b8fa682ce66a..a377f435dd01 100644
+index f00fc9ed6096..f4e2587b01d2 100644
 --- a/sound/pci/hda/Makefile
 +++ b/sound/pci/hda/Makefile
 @@ -17,6 +17,7 @@ snd-hda-codec-generic-objs :=	hda_generic.o
@@ -6961,7 +6961,7 @@ index b8fa682ce66a..a377f435dd01 100644
  snd-hda-codec-idt-objs :=	patch_sigmatel.o
  snd-hda-codec-si3054-objs :=	patch_si3054.o
  snd-hda-codec-cirrus-objs :=	patch_cirrus.o
-@@ -35,6 +36,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
+@@ -45,6 +46,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
  obj-$(CONFIG_SND_HDA_CODEC_REALTEK) += snd-hda-codec-realtek.o
  obj-$(CONFIG_SND_HDA_CODEC_CMEDIA) += snd-hda-codec-cmedia.o
  obj-$(CONFIG_SND_HDA_CODEC_ANALOG) += snd-hda-codec-analog.o
@@ -6970,7 +6970,7 @@ index b8fa682ce66a..a377f435dd01 100644
  obj-$(CONFIG_SND_HDA_CODEC_SI3054) += snd-hda-codec-si3054.o
  obj-$(CONFIG_SND_HDA_CODEC_CIRRUS) += snd-hda-codec-cirrus.o
 diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
-index fc114e522480..894908807a3a 100644
+index bf685d01259d..53789c1e9254 100644
 --- a/sound/pci/hda/hda_generic.c
 +++ b/sound/pci/hda/hda_generic.c
 @@ -84,7 +84,7 @@ static void free_kctls(struct hda_gen_spec *spec)
@@ -6991,10 +6991,10 @@ index fc114e522480..894908807a3a 100644
  /*
   * store user hints
 diff --git a/sound/pci/hda/hda_generic.h b/sound/pci/hda/hda_generic.h
-index 362ddcaea15b..a8fa974b3576 100644
+index a8eea8367629..62e81b8f0488 100644
 --- a/sound/pci/hda/hda_generic.h
 +++ b/sound/pci/hda/hda_generic.h
-@@ -307,6 +307,7 @@ enum {
+@@ -310,6 +310,7 @@ enum {
  };
  
  int snd_hda_gen_spec_init(struct hda_gen_spec *spec);

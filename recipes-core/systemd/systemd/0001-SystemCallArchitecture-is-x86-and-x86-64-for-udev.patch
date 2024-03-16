@@ -1,19 +1,20 @@
-From 8adbfcd786a435f4f7fdc73972a9111c75ec3ea9 Mon Sep 17 00:00:00 2001
-From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
-Date: Sat, 11 Dec 2021 17:11:26 +0100
+From 3a27b0d71ca7e9555506f1bde61c137a9d7534ee Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Tue, 12 Mar 2024 10:23:06 +0000
 Subject: [PATCH] SystemCallArchitecture is x86 and x86-64 for udev
+Upstream-Status: Pending
 
 ---
  units/systemd-udevd.service.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/units/systemd-udevd.service.in b/units/systemd-udevd.service.in
-index c146b0f7f8..4a5d495f62 100644
+index b59fdef9b0..5cfc425946 100644
 --- a/units/systemd-udevd.service.in
 +++ b/units/systemd-udevd.service.in
-@@ -37,7 +37,7 @@ RestrictRealtime=yes
- RestrictSUIDSGID=yes
- SystemCallFilter=@system-service @module @raw-io
+@@ -37,7 +37,7 @@ RestrictSUIDSGID=yes
+ SystemCallFilter=@system-service @module @raw-io bpf
+ SystemCallFilter=~@clock
  SystemCallErrorNumber=EPERM
 -SystemCallArchitectures=native
 +SystemCallArchitectures=x86-64 x86

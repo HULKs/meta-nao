@@ -4,7 +4,7 @@
 SUMMARY = "Installs all binaries shipped by aldebaran"
 LICENSE = "CLOSED"
 
-SRC_URI = "file://aldebaran_binaries.tar.gz"
+SRC_URI = "file://aldebaran_binaries.tar.gz;sha256sum=02848f1b604c3afc7d52b4f01bc83434250709c720f86619eeb39d0bf6701c27"
 
 RDEPENDS:${PN} += "bash"
 
@@ -20,7 +20,7 @@ do_install() {
   install -m 0644 ${WORKDIR}/aldebaran_files/opt/aldebaran/share/firmware/CX3RDK_OV5640_USB2.img ${D}/opt/aldebaran/share/firmware/
   install -m 0644 ${WORKDIR}/aldebaran_files/opt/aldebaran/share/firmware/CX3RDK_OV5640_USB3.img ${D}/opt/aldebaran/share/firmware/
 
-  install -d ${D}/lib/firmware
+  install -d ${D}/${nonarch_base_libdir}/firmware
   install ${WORKDIR}/aldebaran_files/lib/firmware/sbre-usb-i2c.dfuse ${D}/${nonarch_base_libdir}/firmware
 
   install -d ${D}/opt/aldebaran/etc/
