@@ -4,6 +4,7 @@ LABEL org.opencontainers.image.source https://github.com/HULKs/meta-hulks
 
 ENV LANG en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
+ENV PATH="${PATH}:/root/.local/bin/"
 
 # https://docs.yoctoproject.org/3.2.3/ref-manual/ref-system-requirements.html#ubuntu-and-debian (without some packages, with NodeJS)
 RUN apt-get update && \
