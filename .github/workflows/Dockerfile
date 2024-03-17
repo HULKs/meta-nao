@@ -36,9 +36,10 @@ RUN apt-get update && \
         wget \
         xz-utils \
         zstd \
+        pipx \
     && apt-get clean && \
     rm --recursive --force /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir git+https://github.com/siemens/kas.git
+RUN pipx install git+https://github.com/siemens/kas.git
 
 COPY aldebaran_binaries.tar.gz /
