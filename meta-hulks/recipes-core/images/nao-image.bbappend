@@ -16,4 +16,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
                              nano \
                              network-config \
                              opusfile \
+                             python3 \
+                             python3-pip \
+                             openvino-inference-engine \
                             "
