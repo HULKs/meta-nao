@@ -12,6 +12,7 @@ User=nao
 Group=nao
 LimitCORE=infinity
 WorkingDirectory=/home/nao/hulk
+AmbientCapabilities=CAP_SYS_NICE
 
 [Install]
 WantedBy=default.target
