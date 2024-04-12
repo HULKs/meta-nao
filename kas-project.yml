@@ -18,7 +18,7 @@ repos:
       meta-hulks:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    commit: b5624ee5643d881afa004571a096a189ab5389b5
+    commit: ca93c215fdd2e0f3b0ab4a205ccf80e5077e5d06
     layers:
       meta:
       meta-poky:
@@ -42,13 +42,13 @@ repos:
         path: "patches/0002-congatec-new-override-syntax.patch"
   meta-clang:
     url: "https://github.com/kraj/meta-clang.git"
-    commit: eebe4ff2e539f3ffb01c5060cc4ca8b226ea8b52
+    commit: 989ff6a4e7db59f01d511727135610006124ead2
   meta-intel:
     url: "https://git.yoctoproject.org/git/meta-intel"
-    commit: ec6e087a9fb582a3449d8bdf80db0e98dea9d19c
+    commit: bdb3a52062a1290302674c05398e950f915d10f9
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    commit: 5eb1fa3418e69c6cdeeca08f7f630e2897e690f8
+    commit: cf942682b8ff5b30393f1f60a1a4d37571c0d1ba
     layers:
       meta-oe:
       meta-multimedia:
