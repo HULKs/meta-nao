@@ -46,6 +46,10 @@ repos:
   meta-intel:
     url: "https://git.yoctoproject.org/git/meta-intel"
     commit: bdb3a52062a1290302674c05398e950f915d10f9
+    patches:
+      0005-downgrade_openvino_to_2023.3.0:
+        repo: "meta-nao"
+        path: "patches/0005-downgrade_openvino_to_2023.3.0.patch"
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
     commit: cf942682b8ff5b30393f1f60a1a4d37571c0d1ba
