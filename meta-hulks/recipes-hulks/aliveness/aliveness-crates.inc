@@ -92,8 +92,8 @@ SRC_URI += "\
             crate://crates.io/polling/2.5.1 \
             crate://crates.io/ppv-lite86/0.2.17 \
             crate://crates.io/proc-macro-crate/1.2.1 \
-            crate://crates.io/proc-macro2/1.0.47 \
-            crate://crates.io/quote/1.0.21 \
+            crate://crates.io/proc-macro2/1.0.79 \
+            crate://crates.io/quote/1.0.35 \
             crate://crates.io/rand/0.8.5 \
             crate://crates.io/rand_chacha/0.3.1 \
             crate://crates.io/rand_core/0.6.4 \
@@ -106,9 +106,9 @@ SRC_URI += "\
             crate://crates.io/rustix/0.36.7 \
             crate://crates.io/ryu/1.0.11 \
             crate://crates.io/scopeguard/1.1.0 \
-            crate://crates.io/serde/1.0.149 \
-            crate://crates.io/serde_derive/1.0.149 \
-            crate://crates.io/serde_json/1.0.92 \
+            crate://crates.io/serde/1.0.197 \
+            crate://crates.io/serde_derive/1.0.197 \
+            crate://crates.io/serde_json/1.0.114 \
             crate://crates.io/serde_repr/0.1.10 \
             crate://crates.io/sha1/0.10.5 \
             crate://crates.io/sharded-slab/0.1.4 \
@@ -118,6 +118,7 @@ SRC_URI += "\
             crate://crates.io/socket2/0.4.7 \
             crate://crates.io/static_assertions/1.1.0 \
             crate://crates.io/syn/1.0.105 \
+            crate://crates.io/syn/2.0.53 \
             crate://crates.io/tempfile/3.3.0 \
             crate://crates.io/termcolor/1.2.0 \
             crate://crates.io/thiserror-impl/1.0.37 \
