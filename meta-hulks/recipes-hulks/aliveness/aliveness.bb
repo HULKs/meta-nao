@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/COPYING;md5=5b4473596678d62d9d83096273
 inherit cargo
 
 SRC_URI = "git://github.com/HULKs/hulk.git;branch=main;protocol=https"
-SRCREV = "8b319a5879526119098fc6505c136d10dda73991"
+SRCREV = "3c08a1595cbc0d4970f1963b5940e9eb63d9244d"
 S = "${WORKDIR}/git/tools/aliveness"
 
 SYSTEMD_SERVICE:${PN} = "aliveness.service enp4s0-wait-online.service"
