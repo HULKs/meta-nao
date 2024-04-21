@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CURRENT_DATE=$(date +%s)
+CURRENT_DATE=$(date +%F_%T)
 INTERNAL_LOG_PATH=/home/nao/hulk/logs/${CURRENT_DATE}
 EXTERNAL_LOG_PATH=$(grep -m1 '^/dev/sda1' /proc/mounts | cut -d ' ' -f 2)/logs
 
