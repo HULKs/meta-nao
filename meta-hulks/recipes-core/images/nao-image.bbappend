@@ -11,6 +11,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
                              iproute2 \
                              jq \
                              libxml2-utils \
+                             libcap-bin \
                              libogg \
                              libopus \
                              nano \

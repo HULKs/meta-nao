@@ -1,0 +1,12 @@
+header:
+  version: 14
+
+distro: HULKs-OS
+local_conf_header:
+  meta-hulks: |
+    SDK_TOOLCHAIN_LANGS ?= "rust"
+
+repos:
+  meta-nao:
+    layers:
+      meta-hulks:

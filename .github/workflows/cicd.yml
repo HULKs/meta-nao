@@ -1,8 +1,8 @@
-name: Yocto CI/CD
+name: CI/CD
 on: push
 jobs:
   cicd:
-    name: Yocto CI/CD
+    name: CI/CD
     runs-on:
       - self-hosted
       - v3
@@ -17,13 +17,15 @@ jobs:
           fetch-depth: 0
           path: meta-nao
       - name: Checkout Yocto layers
-        run: kas checkout meta-nao/kas-project.yml
+        run: kas checkout meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
       - name: Populate aldebaran_binaries.tar.gz
         run: mkdir -p meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/ && cp /aldebaran_binaries.tar.gz meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/
       - name: Build image
-        run: kas build --target nao-image --cmd build meta-nao/kas-project.yml
-      - name: Build SDK
-        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas-project.yml
+        run: kas build --target nao-image --cmd build meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
+      - name: Build SDK (x86_64)
+        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
+      - name: Build SDK (aarch64)
+        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
@@ -32,5 +34,6 @@ jobs:
           body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
           files: |
             build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
-            build/tmp/deploy/sdk/HULKs-OS-toolchain-${{ github.ref_name }}.sh
+            build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
+            build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
           fail_on_unmatched_files: true

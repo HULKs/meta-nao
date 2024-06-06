@@ -2,23 +2,23 @@ header:
   version: 14
 
 machine: nao-v6
-distro: HULKs-OS
+distro: nao-core-minimal
 target: nao-image
+
 local_conf_header:
   meta-nao: |
     CONF_VERSION = "2"
-    SDK_TOOLCHAIN_LANGS ?= "rust"
     PACKAGE_CLASSES ?= "package_ipk"
-    CLANGSDK = "1"
     EXTRA_IMAGE_FEATURES += "allow-empty-password"
+    CLANGSDK = "1"
+
 repos:
   meta-nao:
     layers:
       meta:
-      meta-hulks:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    commit: ca93c215fdd2e0f3b0ab4a205ccf80e5077e5d06
+    commit: ae6cebca5bac9521230c69fed23b375d0de7f5f6
     layers:
       meta:
       meta-poky:
@@ -42,17 +42,13 @@ repos:
         path: "patches/0002-congatec-new-override-syntax.patch"
   meta-clang:
     url: "https://github.com/kraj/meta-clang.git"
-    commit: 989ff6a4e7db59f01d511727135610006124ead2
+    commit: e7dceb1c92caf7f21ef1d7b49c85328c30cffd90
   meta-intel:
     url: "https://git.yoctoproject.org/git/meta-intel"
-    commit: bdb3a52062a1290302674c05398e950f915d10f9
-    patches:
-      0005-downgrade_openvino_to_2023.3.0:
-        repo: "meta-nao"
-        path: "patches/0005-downgrade_openvino_to_2023.3.0.patch"
+    commit: c8cd0317ec19332bce86697f3413a82b9828b329
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    commit: cf942682b8ff5b30393f1f60a1a4d37571c0d1ba
+    commit: 4a7bb77f7ebe0ac8be5bab5103d8bd993e17e18d
     layers:
       meta-oe:
       meta-multimedia:
