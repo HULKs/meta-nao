@@ -5,7 +5,7 @@ LICENSE = "GPL-3.0-only"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-3.0-only;md5=c79ff39f19dfec6d293b95dea7b07891"
 
 SRC_URI = "\
-           file://id_map.json \
+           file://id_map.json;sha256sum=16e109281e2e4b119619dd721531e48d6634d64f6787bc45be0cb8e17087fa70 \
            file://configure_network \
            file://network-config.service \
            file://SPL_HULKs.psk \
