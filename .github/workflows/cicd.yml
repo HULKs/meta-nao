@@ -27,7 +27,7 @@ jobs:
       - name: Build SDK (aarch64)
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           name: HULKs-OS ${{ github.ref_name }}
