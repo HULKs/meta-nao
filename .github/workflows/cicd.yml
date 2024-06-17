@@ -32,7 +32,7 @@ jobs:
         with:
           image: naosdk
           tags: latest ${{ github.sha }} ${{ github.ref_name }}
-          archs: amd64, arm64
+          archs: x86_64, aarch64
           containerfiles: ./Containerfile
           build-args: version=${{ github.ref_name }}
       - name: Push development image to ghcr.io
