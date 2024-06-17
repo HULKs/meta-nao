@@ -39,6 +39,8 @@ jobs:
           fail_on_unmatched_files: true
   devimage:
     name: Build and release development image
+    env:
+      version: 7.5.0
     needs: cicd
     runs-on:
       - self-hosted
@@ -50,9 +52,6 @@ jobs:
         with:
           fetch-depth: 0
           path: meta-nao
-      - name: Get latest tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
-        id: latest-tag
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Build development image
@@ -60,11 +59,11 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: naosdk
-          tags: latest ${{ github.sha }} ${{ steps.latest-tag.outputs.tag }}
+          tags: latest ${{ github.sha }} ${{ env.version }}
           archs: x86_64
           containerfiles: ./Containerfile
           build-args: |
-            version=${{ steps.latest-tag.outputs.tag }}
+            version=${{ env.version }}
             arch=x86_64
       - name: Push development image to ghcr.io
         uses: redhat-actions/push-to-registry@v2
