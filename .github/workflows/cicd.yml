@@ -8,7 +8,7 @@ jobs:
       - v3
       - yocto
     container:
-      image: ghcr.io/hulks/yocto_release
+      image: ghcr.io/hulks/meta-nao-cicd
       options: --user=1000:1000
     steps:
       - name: Checkout repository
