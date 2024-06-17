@@ -26,23 +26,6 @@ jobs:
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
       - name: Build SDK (aarch64)
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
-      - name: Build development image
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: naosdk
-          tags: latest ${{ github.sha }} ${{ github.ref_name }}
-          archs: x86_64, aarch64
-          containerfiles: ./Containerfile
-          build-args: version=${{ github.ref_name }}
-      - name: Push development image to ghcr.io
-        uses: redhat-actions/push-to-registry@v2
-        with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
-          registry: ghcr.io/${{ github.repository_owner }}
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -54,3 +37,39 @@ jobs:
             build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
             build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
           fail_on_unmatched_files: true
+  devimage:
+    name: Build and release development image
+    needs: cicd
+    runs-on:
+      - self-hosted
+      - v3
+    container:
+      image: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: meta-nao
+      - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: latest-tag
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Build development image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: naosdk
+          tags: latest ${{ github.sha }} ${{ latest-tag.outputs.tag }}
+          archs: x86_64, aarch64
+          containerfiles: ./Containerfile
+          build-args: version=${{ latest-tag.outputs.tag }}
+      - name: Push development image to ghcr.io
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ghcr.io/${{ github.repository_owner }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
