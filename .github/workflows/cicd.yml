@@ -53,7 +53,7 @@ jobs:
           fetch-depth: 0
           path: meta-nao
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
       - name: Build development image
         id: build-image
         uses: redhat-actions/buildah-build@v2
