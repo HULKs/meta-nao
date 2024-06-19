@@ -1,12 +1,15 @@
 FROM debian
 
+LABEL org.opencontainers.image.source https://github.com/hulks/meta-nao
+
 RUN apt-get update && apt-get install --no-install-recommends --yes \
   ca-certificates \
   curl \
   file \
   python3 \
   xz-utils \
-  zstd
+  zstd \
+  && rm --recursive --force /var/lib/apt/lists/*
 
 ARG version
 
