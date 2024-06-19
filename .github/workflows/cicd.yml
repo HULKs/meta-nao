@@ -42,10 +42,7 @@ jobs:
     env:
       version: 7.5.0
     needs: cicd
-    runs-on:
-      - self-hosted
-      - v3
-    container: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
