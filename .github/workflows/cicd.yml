@@ -48,7 +48,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          path: meta-nao
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Build development image
@@ -56,11 +55,10 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: naosdk
-          tags: latest ${{ github.sha }} ${{ env.version }}
+          tags: ${{ env.version }} ${{ github.sha }}
           archs: x86_64, aarch64
           containerfiles: ./Containerfile
-          build-args: |
-            version=${{ env.version }}
+          build-args: version=${{ env.version }}
       - name: Push development image to ghcr.io
         uses: redhat-actions/push-to-registry@v2
         with:
