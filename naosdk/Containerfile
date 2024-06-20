@@ -1,10 +1,8 @@
-FROM debian
+FROM debian AS build
 
 LABEL org.opencontainers.image.source https://github.com/hulks/meta-nao
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
-  ca-certificates \
-  curl \
   file \
   python3 \
   xz-utils \
@@ -12,8 +10,10 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
   && rm --recursive --force /var/lib/apt/lists/*
 
 ARG version
-
 COPY --chmod=744 sdk/HULKs-OS-*.sh /opt/
+RUN /opt/HULKs-OS-$(uname -m)-toolchain-${version}.sh -d /naosdk
 
-RUN /opt/HULKs-OS-$(uname -m)-toolchain-${version}.sh -d /naosdk -y && rm /opt/HULKs-OS-*.sh
+FROM busybox
+COPY --from=build /naosdk /naosdk
+RUN ln -s /naosdk/sysroots/x86_64-naosdk-linux/bin/bash /bin/bash
 RUN echo . /naosdk/environment-setup-corei7-64-aldebaran-linux >> /root/.bashrc
