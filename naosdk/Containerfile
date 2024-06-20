@@ -15,5 +15,5 @@ RUN /opt/HULKs-OS-$(uname -m)-toolchain-${version}.sh -d /naosdk
 
 FROM busybox
 COPY --from=build /naosdk /naosdk
-RUN ln -s /naosdk/sysroots/x86_64-naosdk-linux/bin/bash /bin/bash
+RUN ln -s /naosdk/sysroots/$(uname -m)-naosdk-linux/bin/bash /bin/bash
 RUN echo . /naosdk/environment-setup-corei7-64-aldebaran-linux >> /root/.bashrc
