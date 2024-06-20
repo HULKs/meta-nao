@@ -26,19 +26,17 @@ jobs:
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
       - name: Build SDK (aarch64)
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
-      - name: Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: HULKs-OS ${{ github.ref_name }}
-          body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
-          files: |
+          name: all
+          path: |
             build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
             build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
             build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
-          fail_on_unmatched_files: true
   devimage:
-    name: Build and release development image
+    name: Release
     if: startsWith(github.ref, 'refs/tags/')
     env:
       version: ${{ github.ref_name }}
@@ -47,6 +45,10 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: all
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -70,3 +72,12 @@ jobs:
           registry: ghcr.io/hulks
           username: ${{ github.actor }}
           password: ${{ github.token }}
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: HULKs-OS ${{ github.ref_name }}
+          body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
+          files: |
+            images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
+            sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
+            sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
+          fail_on_unmatched_files: true

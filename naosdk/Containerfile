@@ -13,8 +13,7 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
 
 ARG version
 
-RUN curl --fail --location --progress-bar --output /opt/toolchain.sh \
-  https://github.com/HULKs/meta-nao/releases/download/${version}/HULKs-OS-$(uname -m)-toolchain-${version}.sh
+COPY --chmod=744 sdk/HULKs-OS-*.sh /opt/
 
-RUN chmod +x /opt/toolchain.sh && /opt/toolchain.sh -d /naosdk -y && rm /opt/toolchain.sh
+RUN /opt/HULKs-OS-$(uname -m)-toolchain-${version}.sh -d /naosdk -y && rm /opt/HULKs-OS-*.sh
 RUN echo . /naosdk/environment-setup-corei7-64-aldebaran-linux >> /root/.bashrc
