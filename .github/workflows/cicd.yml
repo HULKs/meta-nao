@@ -60,7 +60,7 @@ jobs:
           image: naosdk
           tags: ${{ env.version }} ${{ github.sha }}
           archs: amd64, arm64
-          containerfiles: ./Containerfile
+          containerfiles: ./naosdk/Containerfile
           build-args: version=${{ env.version }}
       - name: Push development image to ghcr.io
         uses: redhat-actions/push-to-registry@v2
