@@ -15,14 +15,14 @@ As this is a very first attempt with the Yocto project and image construction fo
 3. *meta-nao* ships multiple `kas-project.yml` project description file. This file defines the project structure *kas* has to setup for the Yocto build phase.
 Clone the *meta-nao* repository into some directory used for the Yocto build e.g. `worktree/meta-nao`.
 
-```
+```sh
 git clone git@github.com:hulks/meta-nao worktree/meta-nao
 ```
 
 4. The Nao V6 uses *LoLA* and *HAL* for the communication with the chestboard. All these binaries and libraries necessary to operate the Nao properly are shipped with the `.opn` robocupper image and **not** included in this repository. To acquire the necessary binaries the `meta-nao/recipes-support/aldebaran/extract_binaries.sh` script is used. This script fetches all binaries from inside the robocupper image and collects them in an archive for the upcoming build phase. To generate the archive containing the aldebaran binaries run:
 
-```
-cd meta-nao/recipes-support/aldebaran/
+```sh
+cd meta/recipes-support/aldebaran/
 mkdir -p aldebaran-binaries
 ./extract_binaries.sh -o aldebaran-binaries/aldebaran_binaries.tar.gz nao-x86-firmware-249_20190503_203829_robocupper.opn
 ```
@@ -31,7 +31,7 @@ The script references the original robocupper image shipped by softbank. Contact
 
 5. Execute *kas* from inside the `worktree` directory referencing the project description files to enter the build environment
 
-```
+```sh
 ./kas-container shell meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
 ```
 
@@ -52,7 +52,7 @@ If your container shell does not work as expected, you might have to set your `T
 
 6. Build a nao image. The Yocto project uses *BitBake* for task execution. Call the following build command from inside the *kas* container shell:
 
-```
+```sh
 bitbake nao-image
 ```
 
@@ -60,7 +60,7 @@ This generates and executes all necessary tasks and targets to construct a prope
 
 7. Fetch and deploy the image. After *BitBake* ran all tasks up to `nao-opn` a new `.opn` file is generated in `worktree/build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-[VERSION].ext3.gz.opn`. To setup a flash stick run:
 
-```
+```sh
 dd if=image_path.opn of=/dev/sdb bs=4M status=progress oflag=sync
 ```
 
@@ -87,7 +87,7 @@ The Yocto project contains tasks to build a proper SDK to use for development. T
 
 1. Enter the build container
 
-```
+```sh
 ./kas-container -d shell meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
 ```
 

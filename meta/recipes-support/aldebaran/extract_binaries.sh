@@ -53,7 +53,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-for TOOL in "pigz" "guestmount"; do
+for TOOL in "pigz" "guestmount" "patchelf"; do
     hash "${TOOL}" 2>/dev/null || { echo >&2 "${TOOL} is not installed!"; exit 1; }
 done
 
