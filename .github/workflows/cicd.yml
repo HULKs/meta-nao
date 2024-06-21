@@ -44,6 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      contents: write
     steps:
       - name: Free up disk space
         run: sudo rm -rf /usr/local/lib/android
@@ -74,7 +75,8 @@ jobs:
           registry: ghcr.io/hulks
           username: ${{ github.actor }}
           password: ${{ github.token }}
-      - uses: softprops/action-gh-release@v2
+      - name: Release NAO image and SDK
+        uses: softprops/action-gh-release@v2
         with:
           name: HULKs-OS ${{ github.ref_name }}
           body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
