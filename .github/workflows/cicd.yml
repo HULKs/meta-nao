@@ -45,6 +45,8 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Free up disk space
+        run: sudo rm -rf /usr/local/lib/android
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
