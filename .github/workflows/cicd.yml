@@ -1,8 +1,8 @@
 name: CI/CD
 on: push
 jobs:
-  cicd:
-    name: CI/CD
+  build:
+    name: Build
     runs-on:
       - self-hosted
       - v3
@@ -35,12 +35,12 @@ jobs:
             build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
             build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
             build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
-  devimage:
+  release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
     env:
       version: ${{ github.ref_name }}
-    needs: cicd
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       packages: write
