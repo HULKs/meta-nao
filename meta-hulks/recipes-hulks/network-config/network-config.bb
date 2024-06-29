@@ -5,15 +5,12 @@ LICENSE = "GPL-3.0-only"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-3.0-only;md5=c79ff39f19dfec6d293b95dea7b07891"
 
 SRC_URI = "\
-           file://id_map.json;sha256sum=16e109281e2e4b119619dd721531e48d6634d64f6787bc45be0cb8e17087fa70 \
            file://configure_network \
            file://network-config.service \
            file://SPL_HULKs.psk \
           "
 
 do_install() {
-    install -d ${D}${sysconfdir}/
-    install -m 0644 ${WORKDIR}/id_map.json ${D}${sysconfdir}/
     install -d ${D}${sbindir}/
     install -m 0755 ${WORKDIR}/configure_network ${D}${sbindir}/
     install -d ${D}${systemd_unitdir}/system/
@@ -23,7 +20,6 @@ do_install() {
 }
 
 FILES:${PN} = " \
-                ${sysconfdir}/id_map.json \
                 ${sbindir}/configure_network \
                 /var/lib/iwd/ \
               "
