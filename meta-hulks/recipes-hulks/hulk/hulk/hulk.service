@@ -5,6 +5,7 @@ After=lola.service hula.service
 
 [Service]
 ExecStart=/usr/bin/launchHULK
+Environment="RUST_BACKTRACE=1"
 TimeoutStopSec=10
 StandardOutput=journal
 Type=notify
