@@ -140,10 +140,9 @@ if __name__ == "__main__":
     head_id = query_head_id()
     nao = find_nao_with_head_id(configuration, head_id)
 
-    hostname = f"{configuration["hostname_prefix"]}{nao["number"]}"
     wlan_configuration = compose_wlan_network(nao, configuration["team_number"])
     wired_configuration = compose_wired_network(nao, configuration["team_number"])
 
     write_to_file(WLAN_NETWORK_PATH, wlan_configuration)
     write_to_file(WIRED_NETWORK_PATH, wired_configuration)
-    set_hostname(hostname)
+    set_hostname(nao["hostname"])
