@@ -135,7 +135,7 @@ def set_hostname(hostname: str) -> None:
         hostname: The hostname.
 
     """
-    check_call(["/usr/bin/echo", "set-hostname", hostname])
+    check_call(["/usr/bin/hostnamectl", "set-hostname", hostname])
 
 
 if __name__ == "__main__":
