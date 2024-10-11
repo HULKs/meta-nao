@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 """Configure the network of the NAO.
 
 This script configures the network of the NAO based on the hardware IDs and the
@@ -43,7 +43,8 @@ def query_head_id() -> str:
 
     """
     command = HEAD_ID_SCRIPT.split()
-    return check_output(command, encoding="UTF-8")
+    output = check_output(command, encoding="UTF-8")
+    return output.strip()
 
 
 def find_nao_with_head_id(
@@ -86,7 +87,8 @@ Name=wlan*
 Address=10.0.{team_number}.{nao["number"]}/16
 
 [Route]
-Gateway=0.0.0.0"""
+Gateway=0.0.0.0
+"""
 
 
 def compose_wired_network(nao: dict[str, Any], team_number: int) -> str:
@@ -109,7 +111,8 @@ Address=10.1.{team_number}.{nao["number"]}/16
 
 [Route]
 Gateway=10.1.24.1
-Destination=10.2.24.0/24"""
+Destination=10.2.24.0/24
+"""
 
 
 def write_to_file(path: str | Path, content: str) -> None:

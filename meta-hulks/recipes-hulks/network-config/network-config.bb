@@ -1,10 +1,6 @@
 DEPENDS += "\
             nao-wifi-conf\
            "
-RDEPENDS:${PN} += "\
-                   env \
-                  "
-
 
 SUMMARY = "Add systemd services to initially set ip address config"
 LICENSE = "GPL-3.0-only"
