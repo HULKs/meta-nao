@@ -1,36 +1,149 @@
-#!/bin/sh
+#!/bin/env python
+"""Configure the network of the NAO.
 
-set -e
+This script configures the network of the NAO based on the hardware IDs and the
+team number. It then composes the configuration for the WLAN and wired network
+based on the team number and the number of the NAO, and sets the hostname.
+"""
 
-HEAD_ID="$(/opt/aldebaran/bin/head_id)"
-QUERY_STRING="to_entries | map(select(.value.head_id == \"${HEAD_ID}\")) | .[0].key"
-NAO_NUMBER="$(jq -r "${QUERY_STRING}" /media/internal/hardware_ids.json)"
+from __future__ import annotations
 
-if [ -z "${NAO_NUMBER}" ]; then
-  exit
-fi
+from pathlib import Path
+from subprocess import check_call, check_output
+from typing import Any
 
-HOSTNAME="tuhhnao${NAO_NUMBER}"
+import tomllib
 
-echo "[Match]
+TEAM_TOML = "/media/internal/team.toml"
+HEAD_ID_SCRIPT = "/opt/aldebaran/bin/head_id"
+WLAN_NETWORK_PATH = "/etc/systemd/network/80-wlan.network"
+WIRED_NETWORK_PATH = "/etc/systemd/network/80-wired.network"
+
+
+def load_configuration(path: Path | str) -> dict[str, Any]:
+    """Load the configuration from the given path.
+
+    Args:
+        path: Path to the configuration file.
+
+    Returns:
+        The configuration
+
+    """
+    path = Path(path)
+    with path.open("rb") as file:
+        return tomllib.load(file)
+
+
+def query_head_id() -> str:
+    """Query the head ID of the NAO.
+
+    Returns:
+        The head ID of the NAO.
+
+    """
+    command = HEAD_ID_SCRIPT.split()
+    return check_output(command, encoding="UTF-8")
+
+
+def find_nao_with_head_id(
+    configuration: dict[str, Any],
+    head_id: str,
+) -> dict[str, Any]:
+    """Find the NAO with the given head ID in the configuration.
+
+    Args:
+        configuration: The configuration.
+        head_id: The head ID of the NAO.
+
+    Returns:
+        The NAO with the given head ID.
+
+    """
+    try:
+        return next(x for x in configuration["naos"] if x["head_id"] == head_id)
+    except StopIteration as error:
+        msg = f"Could not find NAO with head_id {head_id}"
+        raise ValueError(msg) from error
+
+
+def compose_wlan_network(nao: dict[str, Any], team_number: int) -> str:
+    """Compose the configuration for the WLAN network.
+
+    Args:
+        nao: The NAO.
+        team_number: The team number.
+
+    Returns:
+        The configuration for the WLAN network.
+
+    """
+    return f"""\
+[Match]
 Name=wlan*
 
 [Network]
-Address=10.0.24.${NAO_NUMBER}/16
+Address=10.0.{team_number}.{nao["number"]}/16
 
 [Route]
-Gateway=0.0.0.0
-" > /etc/systemd/network/80-wlan.network
+Gateway=0.0.0.0"""
 
-echo "[Match]
+
+def compose_wired_network(nao: dict[str, Any], team_number: int) -> str:
+    """Compose the configuration for the wired network.
+
+    Args:
+        nao: The NAO.
+        team_number: The team number.
+
+    Returns:
+        The configuration for the wired network.
+
+    """
+    return f"""\
+[Match]
 Name=en* eth*
 
 [Network]
-Address=10.1.24.${NAO_NUMBER}/16
+Address=10.1.{team_number}.{nao["number"]}/16
 
 [Route]
 Gateway=10.1.24.1
-Destination=10.2.24.0/24
-" > /etc/systemd/network/80-wired.network
+Destination=10.2.24.0/24"""
 
-hostnamectl set-hostname ${HOSTNAME}
+
+def write_to_file(path: str | Path, content: str) -> None:
+    """Write the content to the file at the given path.
+
+    Args:
+        path: Path to the file.
+        content: Content to write.
+
+    """
+    path = Path(path)
+    with path.open("w") as file:
+        file.write(content)
+
+
+def set_hostname(hostname: str) -> None:
+    """Set the hostname of the NAO.
+
+    Args:
+        hostname: The hostname.
+
+    """
+    check_call(["/usr/bin/echo", "set-hostname", hostname])
+
+
+if __name__ == "__main__":
+    configuration = load_configuration(TEAM_TOML)
+    head_id = query_head_id()
+    nao = find_nao_with_head_id(configuration, head_id)
+
+    hostname = f"{configuration["hostname_prefix"]}{nao["number"]}"
+    wlan_configuration = compose_wlan_network(nao, configuration["team_number"])
+    wired_configuration = compose_wired_network(nao, configuration["team_number"])
+
+    write_to_file(WLAN_NETWORK_PATH, wlan_configuration)
+    write_to_file(WIRED_NETWORK_PATH, wired_configuration)
+    set_hostname(hostname)
