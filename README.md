@@ -7,7 +7,7 @@ As this is a first attempt with the Yocto project and image construction for the
 
 ## Documentation
 
-Documentation is available as part of the official HULKs documentation at [hulks.de/hulk](hulks.de/hulk).
+Documentation is available as part of the official HULKs documentation at [hulks.de/hulk](https://hulks.de/hulk/setup/nao_image_and_sdk/).
 
 ## Links and Resources
 
