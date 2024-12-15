@@ -12,13 +12,16 @@ SRC_URI = "\
            file://SPL_HULKs.psk \
           "
 
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
+
 do_install() {
     install -d ${D}${sbindir}/
-    install -m 0755 ${WORKDIR}/configure_network ${D}${sbindir}/
+    install -m 0755 ${S}/configure_network ${D}${sbindir}/
     install -d ${D}${systemd_unitdir}/system/
-    install -m 0644 ${WORKDIR}/network-config.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${S}/network-config.service ${D}${systemd_unitdir}/system/
     install -d ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_HULKs.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_HULKs.psk ${D}/var/lib/iwd/
 }
 
 FILES:${PN} = " \

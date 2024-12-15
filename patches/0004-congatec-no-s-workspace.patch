@@ -1,0 +1,59 @@
+diff --git a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
+index 4e3bac9..562dcc4 100644
+--- a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
++++ b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
+@@ -23,4 +23,5 @@ do_install:append () {
+   install -m 0655 low-speed-spidev.conf ${D}/etc/modprobe.d/
+ }
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+diff --git a/recipes-kernel/spidev-test/spidev-test.bb b/recipes-kernel/spidev-test/spidev-test.bb
+index d7ef55c..4fc4536 100644
+--- a/recipes-kernel/spidev-test/spidev-test.bb
++++ b/recipes-kernel/spidev-test/spidev-test.bb
+@@ -7,7 +7,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425
+ PR = "r3"
+ PROVIDES = "spidev_test"
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+ SRC_URI += "file://spidev_test.c \
+             file://001-device-name.patch \
+ "
+diff --git a/recipes-network/lte-connect/lte-connect.bb b/recipes-network/lte-connect/lte-connect.bb
+index 3c3e2a2..1879524 100644
+--- a/recipes-network/lte-connect/lte-connect.bb
++++ b/recipes-network/lte-connect/lte-connect.bb
+@@ -10,12 +10,13 @@ SRC_URI = "file://lte-connect.sh"
+ 
+ inherit allarch
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+ 
+ do_compile() {
+ }
+ 
+ do_install() {
+   install -d ${D}${bindir}
+-  install -m 0755 ${WORKDIR}/lte-connect.sh ${D}${bindir}/lte-connect.sh
++  install -m 0755 ${S}/lte-connect.sh ${D}${bindir}/lte-connect.sh
+ }
+diff --git a/recipes-tools/cgspi-test/cgspi-test_0.2.bb b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
+index 6f986ef..97924ef 100644
+--- a/recipes-tools/cgspi-test/cgspi-test_0.2.bb
++++ b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
+@@ -8,7 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425
+ PR = "r1"
+ PROVIDES = "cgspi-test"
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+ SRC_URI += "file://SPI_V0.c"
+ 
+ FILES:${PN} += "${bindir}/cgspi_test"

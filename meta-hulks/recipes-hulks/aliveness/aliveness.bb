@@ -17,8 +17,8 @@ inherit systemd
 
 do_install:append () {
   install -d "${D}${systemd_unitdir}/system"
-  install -m 0644 "${WORKDIR}/aliveness.service" "${D}${systemd_unitdir}/system/"
-  install -m 0644 "${WORKDIR}/enp4s0-wait-online.service" "${D}${systemd_unitdir}/system/"
+  install -m 0644 "${UNPACKDIR}/aliveness.service" "${D}${systemd_unitdir}/system/"
+  install -m 0644 "${UNPACKDIR}/enp4s0-wait-online.service" "${D}${systemd_unitdir}/system/"
 }
 
 require aliveness-crates.inc
