@@ -2,6 +2,7 @@ From b9486eaaa3e4c66bfab7d383612babc9c63a6735 Mon Sep 17 00:00:00 2001
 From: Hendrik <git@h3ndrk.de>
 Date: Tue, 3 May 2022 16:55:10 +0200
 Subject: [PATCH] Use libusb context instead of NULL
+Upstream-Status: Pending
 
 ---
  src/FX3Device.cpp | 2 +-

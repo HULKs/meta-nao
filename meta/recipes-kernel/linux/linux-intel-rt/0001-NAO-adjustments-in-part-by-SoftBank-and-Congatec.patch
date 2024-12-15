@@ -2,6 +2,7 @@ From 165a4bcc4c62e984fe0ae7213298140a55ef5b9b Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian@schmidt.so>
 Date: Tue, 12 Mar 2024 10:54:44 +0000
 Subject: [PATCH] NAO adjustments (in part by SoftBank and Congatec)
+Upstream-Status: Pending
 
 ---
  arch/x86/mm/ioremap.c                         |    3 +-
