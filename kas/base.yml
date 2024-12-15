@@ -17,7 +17,7 @@ repos:
       meta:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    commit: ae6cebca5bac9521230c69fed23b375d0de7f5f6
+    commit: cc5e3503e4437358efa8c5675e02f5e19430c58f
     layers:
       meta:
       meta-poky:
@@ -26,28 +26,34 @@ repos:
       0003-specify-custom-dynamic-linker:
         repo: "meta-nao"
         path: "patches/0003-bindgen-clang-sysroot.patch"
-      0004-compress-sdk-with-zstd:
-        repo: "meta-nao"
-        path: "patches/0004-compress-sdk-with-zstd.patch"
   meta-congatec-x86:
     url: "https://git.congatec.com/x86/meta-congatec-x86.git"
     commit: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
     patches:
-      0001-congatec-scarthgap-support:
+      0001-congatec-walnascar-support:
         repo: "meta-nao"
-        path: "patches/0001-congatec-scarthgap-support.patch"
+        path: "patches/0001-congatec-walnascar-support.patch"
       0002-congatec-new-override-syntax:
         repo: "meta-nao"
         path: "patches/0002-congatec-new-override-syntax.patch"
+      0004-congatec-no-s-workspace.patch:
+        repo: "meta-nao"
+        path: "patches/0004-congatec-no-s-workspace.patch"
+      0005-congatec-upstream-status.patch:
+        repo: "meta-nao"
+        path: "patches/0005-congatec-upstream-status.patch"
   meta-clang:
     url: "https://github.com/kraj/meta-clang.git"
-    commit: e7dceb1c92caf7f21ef1d7b49c85328c30cffd90
+    commit: 147349b7334b8a25b96bb08c2361ae0ae95e7eb6
   meta-intel:
     url: "https://git.yoctoproject.org/git/meta-intel"
-    commit: c8cd0317ec19332bce86697f3413a82b9828b329
+    commit: d0150964ca7c6a83d38ba54cda3e19b34d274f80
+  meta-openvino:
+    url: "https://github.com/intel/meta-openvino"
+    commit: 65dfb4ff4a53b5164b1dfc396001767da00f27fd
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    commit: 4a7bb77f7ebe0ac8be5bab5103d8bd993e17e18d
+    commit: af28a667fb22d0023807e8c3319d0923bee39020
     layers:
       meta-oe:
       meta-multimedia:
