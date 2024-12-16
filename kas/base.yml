@@ -10,6 +10,7 @@ local_conf_header:
     CONF_VERSION = "2"
     EXTRA_IMAGE_FEATURES += "allow-empty-password"
     CLANGSDK = "1"
+    ROOT_HOME = "/root"
 
 repos:
   meta-nao:
