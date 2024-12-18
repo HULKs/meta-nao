@@ -2,6 +2,7 @@
 Description=Configure network initially
 Before=systemd-networkd.service
 After=media-internal.mount
+OnFailure=network-fallback-notification.timer
 
 [Service]
 Type=oneshot
