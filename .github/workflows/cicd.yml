@@ -15,6 +15,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: meta-nao
+      - name: Append commit hash to development versions
+        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+        run: sed -i 's/\(DISTRO_VERSION = "[^"]*\)/\1-${{ github.sha }}/' meta-nao/meta-hulks/conf/distro/HULKs-OS.conf
       - name: Extract the version
         run: echo "version=$(grep -P 'DISTRO_VERSION\s*=\s*".+"' meta-nao/meta-hulks/conf/distro/HULKs-OS.conf | cut -d\" -f2)" >> $GITHUB_ENV
       - name: Checkout Yocto layers
