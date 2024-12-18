@@ -27,14 +27,22 @@ jobs:
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
       - name: Build SDK (aarch64)
         run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
-      - name: Upload artifacts
+      - name: Upload image artifact
         uses: actions/upload-artifact@v4
         with:
-          name: all
-          path: |
-            build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ env.version }}.ext3.gz.opn
-            build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ env.version }}.sh
-            build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ env.version }}.sh
+          name: image
+          path: build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ env.version }}.ext3.gz.opn
+      - name: Upload x86_64 SDK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-x86_64
+          path: build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ env.version }}.sh
+      - name: Upload aarch64 SDK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-aarch64
+          path: build/tmp/deploy/sdk/HULKs-OS-aarch64-toolchain-${{ env.version }}.sh
+
   release:
     name: Release
     if: startsWith(github.ref, 'refs/tags/')
@@ -53,7 +61,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: all
+          merge-multiple: true
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Build development image
