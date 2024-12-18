@@ -14,7 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           path: meta-nao
       - name: Checkout Yocto layers
         run: kas checkout meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
@@ -50,8 +49,6 @@ jobs:
         run: sudo rm -rf /usr/local/lib/android
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
