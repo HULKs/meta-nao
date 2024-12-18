@@ -1,0 +1,6 @@
+[Unit]
+Description=Notify about network fallback
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/aplay /usr/share/network-config/fallback_notification.wav

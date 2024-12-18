@@ -16,8 +16,25 @@ import tomllib
 
 TEAM_TOML = "/media/internal/team.toml"
 HEAD_ID_SCRIPT = "/opt/aldebaran/bin/head_id"
-WLAN_NETWORK_PATH = "/etc/systemd/network/80-wlan.network"
-WIRED_NETWORK_PATH = "/etc/systemd/network/80-wired.network"
+WLAN_NETWORK_PATH = "/etc/systemd/network/20-wlan.network"
+WIRED_NETWORK_PATH = "/etc/systemd/network/20-wired.network"
+FALLBACK_NETWORK_PATH = "/etc/systemd/network/60-fallback.network"
+FALLBACK_CONFIGURATION = """\
+[Match]
+Type=ether
+Name=!veth*
+KernelCommandLine=!nfsroot
+KernelCommandLine=!ip
+
+[Network]
+DHCP=yes
+Address=172.28.28.28/24
+
+[DHCP]
+UseMTU=yes
+RouteMetric=10
+ClientIdentifier=mac
+"""
 
 
 def load_configuration(path: Path | str) -> dict[str, Any]:
@@ -141,7 +158,12 @@ def set_hostname(hostname: str) -> None:
 if __name__ == "__main__":
     configuration = load_configuration(TEAM_TOML)
     head_id = query_head_id()
-    nao = find_nao_with_head_id(configuration, head_id)
+    try:
+        nao = find_nao_with_head_id(configuration, head_id)
+    except ValueError as error:
+        print(error)
+        write_to_file(FALLBACK_NETWORK_PATH, FALLBACK_CONFIGURATION)
+        exit(1)
 
     wlan_configuration = compose_wlan_network(nao, configuration["team_number"])
     wired_configuration = compose_wired_network(nao, configuration["team_number"])
