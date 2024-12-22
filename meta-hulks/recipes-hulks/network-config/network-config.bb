@@ -12,7 +12,6 @@ SRC_URI = "\
            file://SPL_HULKs.psk \
            file://fallback_notification.wav \
            file://network-fallback-notification.service \
-           file://network-fallback-notification.timer \
           "
 
 do_install() {
@@ -21,7 +20,6 @@ do_install() {
     install -d ${D}${systemd_unitdir}/system/
     install -m 0644 ${WORKDIR}/network-config.service ${D}${systemd_unitdir}/system/
     install -m 0644 ${WORKDIR}/network-fallback-notification.service ${D}${systemd_unitdir}/system/
-    install -m 0644 ${WORKDIR}/network-fallback-notification.timer ${D}${systemd_unitdir}/system/
     install -d ${D}/var/lib/iwd/
     install -m 0600 ${WORKDIR}/SPL_HULKs.psk ${D}/var/lib/iwd/
     install -d ${D}/${datadir}/network-config/
@@ -37,7 +35,6 @@ FILES:${PN} = " \
 SYSTEMD_SERVICE:${PN} = " \
                           network-config.service \
                           network-fallback-notification.service \
-                          network-fallback-notification.timer \
                         "
 
 inherit systemd
