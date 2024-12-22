@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
   && rm --recursive --force /var/lib/apt/lists/*
 
 ARG version
-COPY --chmod=744 sdk/HULKs-OS-*.sh /opt/
+COPY --chmod=744 HULKs-OS-*.sh /opt/
 RUN /opt/HULKs-OS-$(uname -m)-toolchain-${version}.sh -d /naosdk
 
 FROM busybox
