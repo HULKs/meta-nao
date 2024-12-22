@@ -2,6 +2,7 @@ From a1611a185f96804da256a51dfe2dc6b9e9567252 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
 Date: Sun, 5 Dec 2021 18:41:44 +0100
 Subject: [PATCH 2/2] congatec new override syntax
+Upstream-Status: Pending
 
 ---
  README                                        |    6 +-
