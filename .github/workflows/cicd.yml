@@ -90,7 +90,7 @@ jobs:
           name: HULKs-OS ${{ github.ref_name }}
           body: Flashable image containing HULKs-OS ${{ github.ref_name }} and the corresponding SDK with the toolchain and other tools targeting HULKs-OS, for instructions see https://hulks.de/hulk/setup/overview/
           files: |
-            images/nao-v6/nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
-            sdk/HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
-            sdk/HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
+            nao-image-HULKs-OS-${{ github.ref_name }}.ext3.gz.opn
+            HULKs-OS-x86_64-toolchain-${{ github.ref_name }}.sh
+            HULKs-OS-aarch64-toolchain-${{ github.ref_name }}.sh
           fail_on_unmatched_files: true
