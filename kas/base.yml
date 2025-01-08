@@ -8,7 +8,6 @@ target: nao-image
 local_conf_header:
   meta-nao: |
     CONF_VERSION = "2"
-    PACKAGE_CLASSES ?= "package_ipk"
     EXTRA_IMAGE_FEATURES += "allow-empty-password"
     CLANGSDK = "1"
 

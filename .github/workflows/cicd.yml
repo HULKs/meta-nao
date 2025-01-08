@@ -26,20 +26,20 @@ jobs:
         run: mkdir -p meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/ && cp /aldebaran_binaries.tar.gz meta-nao/meta/recipes-support/aldebaran/aldebaran-binaries/
       - name: Build NAO image
         run: kas build --target nao-image --cmd build meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
-      - name: Build SDK (x86_64)
-        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
-      - name: Build SDK (aarch64)
-        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
       - name: Upload image artifact
         uses: actions/upload-artifact@v4
         with:
           name: image
           path: build/tmp/deploy/images/nao-v6/nao-image-HULKs-OS-${{ env.version }}.ext3.gz.opn
+      - name: Build SDK (x86_64)
+        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml
       - name: Upload x86_64 SDK artifact
         uses: actions/upload-artifact@v4
         with:
           name: sdk-x86_64
           path: build/tmp/deploy/sdk/HULKs-OS-x86_64-toolchain-${{ env.version }}.sh
+      - name: Build SDK (aarch64)
+        run: kas build --target nao-image --cmd populate_sdk meta-nao/kas/base.yml:meta-nao/kas/hulks.yml:meta-nao/kas/aarch64.yml
       - name: Upload aarch64 SDK artifact
         uses: actions/upload-artifact@v4
         with:
