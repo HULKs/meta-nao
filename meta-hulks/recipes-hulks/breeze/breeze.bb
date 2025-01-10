@@ -30,7 +30,7 @@ inherit systemd
 export BINDGEN_EXTRA_CLANG_ARGS="-I ${STAGING_INCDIR}"
 do_install:append() {
   install -d ${D}${systemd_unitdir}/system/
-  install -m 0644 ${WORKDIR}/breeze.service ${D}${systemd_unitdir}/system/
+  install -m 0644 ${UNPACKDIR}/breeze.service ${D}${systemd_unitdir}/system/
 }
 
 require breeze-crates.inc

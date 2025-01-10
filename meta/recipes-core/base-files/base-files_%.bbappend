@@ -7,5 +7,5 @@ do_install:append() {
   install -d ${D}/media/internal
 
   install -d ${D}${sysconfdir}/profile.d/
-  install -m 0644 ${WORKDIR}/sbin_path.sh ${D}${sysconfdir}/profile.d/
+  install -m 0644 ${UNPACKDIR}/sbin_path.sh ${D}${sysconfdir}/profile.d/
 }

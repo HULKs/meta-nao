@@ -2,6 +2,7 @@ From 2a7f46283db624091165a0383882c44f578d645b Mon Sep 17 00:00:00 2001
 From: Kas User <kas@example.com>
 Date: Tue, 15 Nov 2022 19:33:29 +0000
 Subject: [PATCH] CGOS 32-bit
+Upstream-Status: Pending
 
 ---
  drivers/cgosdrv/DrvLx.c | 63 ++++++++++++++++++++++++++++++++++-------

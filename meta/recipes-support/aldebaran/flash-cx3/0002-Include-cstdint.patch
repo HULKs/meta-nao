@@ -2,6 +2,7 @@ From 93996a51f564b65d556896f4b3180122d03934c9 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian@schmidt.so>
 Date: Tue, 12 Mar 2024 12:23:13 +0000
 Subject: [PATCH] Include cstdint
+Upstream-Status: Pending
 
 ---
  src/FX3Device.hpp | 1 +

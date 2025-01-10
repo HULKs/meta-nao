@@ -11,19 +11,23 @@ SRC_URI = "\
            file://SPL_E.psk \
            file://SPL_F.psk \
           "
+
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
+
 RDEPENDS:${PN} = "iwd"
 
 do_install() {
     install -d ${D}${sysconfdir}/iwd/
-    install -m 0644 ${WORKDIR}/main.conf ${D}${sysconfdir}/iwd/
+    install -m 0644 ${S}/main.conf ${D}${sysconfdir}/iwd/
 
     install -d ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_A.psk ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_B.psk ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_C.psk ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_D.psk ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_E.psk ${D}/var/lib/iwd/
-    install -m 0600 ${WORKDIR}/SPL_F.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_A.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_B.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_C.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_D.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_E.psk ${D}/var/lib/iwd/
+    install -m 0600 ${S}/SPL_F.psk ${D}/var/lib/iwd/
 }
 
 FILES:${PN} = "\
