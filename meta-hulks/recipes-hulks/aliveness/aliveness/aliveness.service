@@ -1,7 +1,7 @@
 [Unit]
 Description=Aliveness Service
-Requires=dbus.socket enp4s0-wait-online.service
-After=dbus.socket enp4s0-wait-online.service
+Requires=dbus.socket eth0-wait-online.service
+After=dbus.socket eth0-wait-online.service
 
 [Service]
 ExecStart=/usr/bin/aliveness-service

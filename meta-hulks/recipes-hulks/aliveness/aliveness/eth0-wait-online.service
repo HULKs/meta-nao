@@ -1,5 +1,5 @@
 [Unit]
-Description=Wait for Network Interface enp4s0 to be Configured
+Description=Wait for Network Interface eth0 to be Configured
 Documentation=man:systemd-networkd-wait-online.service(8)
 DefaultDependencies=no
 Conflicts=shutdown.target
@@ -9,5 +9,5 @@ Before=shutdown.target
 
 [Service]
 Type=oneshot
-ExecStart=/lib/systemd/systemd-networkd-wait-online -i enp4s0 --timeout=0
+ExecStart=/lib/systemd/systemd-networkd-wait-online -i eth0 --timeout=0
 RemainAfterExit=yes
