@@ -8,11 +8,11 @@ based on the team number and the number of the NAO, and sets the hostname.
 
 from __future__ import annotations
 
+import sys
+import tomllib
 from pathlib import Path
 from subprocess import check_call, check_output
 from typing import Any
-
-import tomllib
 
 TEAM_TOML = "/media/internal/team.toml"
 HEAD_ID_SCRIPT = "/opt/aldebaran/bin/head_id"
@@ -79,7 +79,9 @@ def find_nao_with_head_id(
 
     """
     try:
-        return next(x for x in configuration["naos"] if x["head_id"] == head_id)
+        return next(
+            x for x in configuration["naos"] if x["head_id"] == head_id
+        )
     except StopIteration as error:
         msg = f"Could not find NAO with head_id {head_id}"
         raise ValueError(msg) from error
@@ -129,6 +131,10 @@ Address=10.1.{team_number}.{nao["number"]}/16
 [Route]
 Gateway=10.1.24.1
 Destination=10.2.24.0/24
+
+[Route]
+Gateway=10.1.24.1
+Destination=10.4.24.0/24
 """
 
 
@@ -163,10 +169,16 @@ if __name__ == "__main__":
     except ValueError as error:
         print(error)
         write_to_file(FALLBACK_NETWORK_PATH, FALLBACK_CONFIGURATION)
-        exit(1)
+        sys.exit(1)
 
-    wlan_configuration = compose_wlan_network(nao, configuration["team_number"])
-    wired_configuration = compose_wired_network(nao, configuration["team_number"])
+    wlan_configuration = compose_wlan_network(
+        nao,
+        configuration["team_number"],
+    )
+    wired_configuration = compose_wired_network(
+        nao,
+        configuration["team_number"],
+    )
 
     write_to_file(WLAN_NETWORK_PATH, wlan_configuration)
     write_to_file(WIRED_NETWORK_PATH, wired_configuration)
