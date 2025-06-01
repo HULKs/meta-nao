@@ -18,46 +18,38 @@ repos:
       meta:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    commit: 65de362ce818438ad60893f400a3c6d3915619d8
+    commit: fd9b605507a20d850a9991316cd190c1d20dc4a6
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
     patches:
-      0003-specify-custom-dynamic-linker:
+      0001-hint-bindgen-to-SDK-sysroot-for-libclang:
         repo: "meta-nao"
-        path: "patches/0003-bindgen-clang-sysroot.patch"
-      0006-cargo-config-is-deprecated:
-        repo: "meta-nao"
-        path: "patches/0006-cargo-config-is-deprecated.patch"
+        path: "patches/poky/0001-hint-bindgen-to-SDK-sysroot-for-libclang.patch"
   meta-congatec-x86:
     url: "https://git.congatec.com/x86/meta-congatec-x86.git"
     commit: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
     patches:
-      0001-congatec-walnascar-support:
+      0001-walnascar-compatibility:
         repo: "meta-nao"
-        path: "patches/0001-congatec-walnascar-support.patch"
-      0002-congatec-new-override-syntax:
-        repo: "meta-nao"
-        path: "patches/0002-congatec-new-override-syntax.patch"
-      0004-congatec-no-s-workspace.patch:
-        repo: "meta-nao"
-        path: "patches/0004-congatec-no-s-workspace.patch"
-      0005-congatec-upstream-status.patch:
-        repo: "meta-nao"
-        path: "patches/0005-congatec-upstream-status.patch"
+        path: "patches/meta-congatec-x86/0001-walnascar-compatibility.patch"
   meta-clang:
     url: "https://github.com/kraj/meta-clang.git"
-    commit: 03f578578be34734aed9b03d33fa031add5c9bf5
+    commit: b3e5449f0156884d18c17efff99654cde8251411
   meta-intel:
     url: "https://git.yoctoproject.org/git/meta-intel"
-    commit: b0fe7e45ab711e2ffbe996f3737dd63b2e273676
+    commit: 5640f6592c984f4832ff5f2ed1a35a607e5d21c5
   meta-openvino:
     url: "https://github.com/intel/meta-openvino"
     commit: bd05014ef7f4a156f61f64ad40c9ffb282d32558
+    patches:
+      0001-layer.conf-mark-as-walnascar-compatible:
+        repo: "meta-nao"
+        path: "patches/meta-openvino/0001-layer.conf-mark-as-walnascar-compatible.patch"
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    commit: d29b3f2b102678926fb35d205889d0aee2304114
+    commit: 2169c9afcc0945045bea49f58011080942d4ddb4
     layers:
       meta-oe:
       meta-multimedia:

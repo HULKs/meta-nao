@@ -1,0 +1,26 @@
+From 0dea428d9db965c71c1b1ce35ac99e0b323805a4 Mon Sep 17 00:00:00 2001
+From: Yogesh Tyagi <yogesh.tyagi@intel.com>
+Date: Thu, 3 Apr 2025 15:16:29 +0530
+Subject: [PATCH] layer.conf: mark as walnascar compatible
+
+Signed-off-by: Yogesh Tyagi <yogesh.tyagi@intel.com>
+---
+ conf/layer.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 96f9db3..4f76310 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -14,7 +14,7 @@ LAYERDEPENDS_openvino = "core openembedded-layer meta-python"
+ # This should only be incremented on significant changes that will
+ # cause compatibility issues with other layers
+ LAYERVERSION_openvino = "5"
+-LAYERSERIES_COMPAT_openvino = "styhead"
++LAYERSERIES_COMPAT_openvino = "styhead walnascar"
+ 
+ require ${LAYERDIR}/conf/include/maintainers.inc
+ 
+-- 
+2.49.0
+

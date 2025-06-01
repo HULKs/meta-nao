@@ -1,0 +1,26 @@
+From d890df0d9a08b99b6e2b6c3a43cdb52c3d94bcc7 Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Sun, 1 Jun 2025 14:33:57 +0000
+Subject: [PATCH 1/2] hint bindgen to SDK sysroot for libclang
+
+---
+ meta/recipes-devtools/rust/cargo_1.84.1.bb | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/meta/recipes-devtools/rust/cargo_1.84.1.bb b/meta/recipes-devtools/rust/cargo_1.84.1.bb
+index db18ecfda9..670a95cd5d 100644
+--- a/meta/recipes-devtools/rust/cargo_1.84.1.bb
++++ b/meta/recipes-devtools/rust/cargo_1.84.1.bb
+@@ -60,6 +60,9 @@ do_install:append:class-nativesdk() {
+ 	export CARGO_HTTP_MULTIPLEXING=false
+ 	
+ 	export CARGO_HTTP_CAINFO="\$OECORE_NATIVE_SYSROOT/etc/ssl/certs/ca-certificates.crt"
++
++	export LIBCLANG_PATH="\$OECORE_NATIVE_SYSROOT/usr/lib"
++	export BINDGEN_EXTRA_CLANG_ARGS_${@d.getVar('RUST_TARGET_SYS').replace('-', '_')}="--sysroot=\$OECORE_TARGET_SYSROOT"
+ 	EOF
+ }
+ 
+-- 
+2.49.0
+
