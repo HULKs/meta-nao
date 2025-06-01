@@ -1,0 +1,26 @@
+From 211670d6d8a2926ce680a4289980960576c706d7 Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Sun, 1 Jun 2025 14:33:57 +0000
+Subject: [PATCH 2/2] use nativesdk file during sdk relocation
+
+https://bugs.astron.com/view.php?id=638 is fixed upstream, but not in all repositories yet: https://src.fedoraproject.org/rpms/file/pull-request/36
+---
+ meta/files/toolchain-shar-relocate.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meta/files/toolchain-shar-relocate.sh b/meta/files/toolchain-shar-relocate.sh
+index c7170349db..20f7353daa 100644
+--- a/meta/files/toolchain-shar-relocate.sh
++++ b/meta/files/toolchain-shar-relocate.sh
+@@ -59,7 +59,7 @@ fi
+ # replace the host perl with SDK perl.
+ for replace in "$target_sdk_dir -maxdepth 1" "$native_sysroot"; do
+ 	$SUDO_EXEC find $replace -type f
+-done | xargs -d '\n' -n100 file | \
++done | xargs -d '\n' -n100 $native_sysroot/usr/bin/file.file | \
+     awk -F': ' '{if (match($2, ".*(ASCII|script|source).*text")) {printf "\"%s\"\n", $1}}' | \
+     grep -Fv -e "$target_sdk_dir/environment-setup-" \
+              -e "$target_sdk_dir/relocate_sdk" \
+-- 
+2.49.0
+

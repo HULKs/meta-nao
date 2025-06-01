@@ -67,6 +67,7 @@ IMAGE_INSTALL += "aldebaran"
 TOOLCHAIN_HOST_TASK += "\
                         nativesdk-libclang \
                         nativesdk-cmake \
+                        nativesdk-file \
                        "
 
 inherit extrausers

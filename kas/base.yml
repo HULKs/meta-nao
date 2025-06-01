@@ -27,6 +27,9 @@ repos:
       0001-hint-bindgen-to-SDK-sysroot-for-libclang:
         repo: "meta-nao"
         path: "patches/poky/0001-hint-bindgen-to-SDK-sysroot-for-libclang.patch"
+      0002-use-nativesdk-file-during-sdk-relocation.patch:
+        repo: "meta-nao"
+        path: "patches/poky/0002-use-nativesdk-file-during-sdk-relocation.patch"
   meta-congatec-x86:
     url: "https://git.congatec.com/x86/meta-congatec-x86.git"
     commit: 1867244888ed0a5ad85f5b4ab789e1d0201deb02
