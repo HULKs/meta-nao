@@ -1,7 +1,7 @@
-From 211670d6d8a2926ce680a4289980960576c706d7 Mon Sep 17 00:00:00 2001
+From d4dcfd362030b8db819d8a0018b406e148daa510 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian@schmidt.so>
 Date: Sun, 1 Jun 2025 14:33:57 +0000
-Subject: [PATCH 2/2] use nativesdk file during sdk relocation
+Subject: [PATCH 3/3] use nativesdk file during sdk relocation
 
 https://bugs.astron.com/view.php?id=638 is fixed upstream, but not in all repositories yet: https://src.fedoraproject.org/rpms/file/pull-request/36
 ---
