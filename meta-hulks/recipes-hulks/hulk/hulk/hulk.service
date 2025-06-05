@@ -6,6 +6,8 @@ After=lola.service hula.service
 [Service]
 ExecStart=/usr/bin/launchHULK
 Environment="RUST_BACKTRACE=1"
+# openvino requires an executable stack
+Environment="GLIBC_TUNABLES=glibc.rtld.execstack=2"
 TimeoutStopSec=10
 StandardOutput=journal
 Type=notify
