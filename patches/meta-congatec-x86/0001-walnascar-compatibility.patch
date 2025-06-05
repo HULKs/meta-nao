@@ -1,28 +1,33 @@
-From a1611a185f96804da256a51dfe2dc6b9e9567252 Mon Sep 17 00:00:00 2001
-From: Maximilian Schmidt <maximilian.schmidt@tuhh.de>
-Date: Sun, 5 Dec 2021 18:41:44 +0100
-Subject: [PATCH 2/2] congatec new override syntax
-Upstream-Status: Pending
+From 45992615ebff07397e08afc3173cc0ee1a475b28 Mon Sep 17 00:00:00 2001
+From: Maximilian Schmidt <maximilian@schmidt.so>
+Date: Sun, 1 Jun 2025 14:37:28 +0000
+Subject: [PATCH] walnascar compatibility
 
+- mark layer as walnascar compatible
+- new override syntax
+- no S workspace
+- add Upstream-Status to cgos patch file
 ---
  README                                        |    6 +-
  README.SPI                                    |    2 +-
+ conf/layer.conf                               |    2 +-
  conf/machine/include/congatec-common-64.inc   |   12 +-
  local.conf.sample                             |   12 +-
  recipes-examples/cgos-demo-i2c/README         |    2 +-
  .../cgos-demo-i2c/cgos-demo-i2c_1.0.bb        |    2 +-
  recipes-kernel/linux/linux-intel_%.bbappend   |   28 +-
- .../low-speed-spidev/low-speed-spidev.bb      |    4 +-
- recipes-kernel/spidev-test/spidev-test.bb     |    2 +-
+ .../low-speed-spidev/low-speed-spidev.bb      |    7 +-
+ recipes-kernel/spidev-test/spidev-test.bb     |    5 +-
  .../linux-firmware/linux-firmware_%.bbappend  |    6 +-
- recipes-network/lte-connect/lte-connect.bb    |    2 +-
+ recipes-network/lte-connect/lte-connect.bb    |    7 +-
  recipes-tools/cg-approval/cg-approval.bb      |    6 +-
  recipes-tools/cgos/cgos-mod_1.03.025.bb       |    6 +-
  recipes-tools/cgos/cgos_1.03.025.bb           |   10 +-
- recipes-tools/cgspi-test/cgspi-test_0.2.bb    |    2 +-
+ .../cgos/files/cgoslx-x64-1.03.025.patch      |    2 +
+ recipes-tools/cgspi-test/cgspi-test_0.2.bb    |    5 +-
  recipes-tools/cgspi-test/files/SPI_V0.c       | 1436 ++++++++---------
  recipes-tools/cgutil/cgutil_1.5.6.bb          |    6 +-
- 17 files changed, 772 insertions(+), 772 deletions(-)
+ 19 files changed, 784 insertions(+), 778 deletions(-)
 
 diff --git a/README b/README
 index 890022a..2169b1f 100644
@@ -68,6 +73,16 @@ index d63ca84..139d7b6 100644
  
    [Note: Pay attention to the different naming conventions of cgspi-test versus cgspi_test and spidev-test versus spidev_test. This is caused by Yocto naming conventions. spidev-test and cgspi-test represents Yocto recipes but cgspi_test and spidev_test are resulting binaries.]
  
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 60cc30c..ab5a2c7 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -12,4 +12,4 @@ BBFILE_PRIORITY_congatec = "7"
+ LAYERDEPENDS_congatec = "intel"
+ 
+ LAYERVERSION_congatec = "7"
+-LAYERSERIES_COMPAT_congatec = "dunfell"
++LAYERSERIES_COMPAT_congatec = "walnascar"
 diff --git a/conf/machine/include/congatec-common-64.inc b/conf/machine/include/congatec-common-64.inc
 index 6a4ff39..83790a9 100644
 --- a/conf/machine/include/congatec-common-64.inc
@@ -208,10 +223,10 @@ index a4f8388..aa9bba7 100644
 -SRC_URI_append = " file://igc.cfg"
 +SRC_URI:append = " file://igc.cfg"
 diff --git a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
-index 4705683..4e3bac9 100644
+index 4705683..562dcc4 100644
 --- a/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
 +++ b/recipes-kernel/low-speed-spidev/low-speed-spidev.bb
-@@ -16,10 +16,10 @@ SRC_URI =   "file://low-speed-spidev.c \
+@@ -16,11 +16,12 @@ SRC_URI =   "file://low-speed-spidev.c \
              file://low-speed-spidev.conf \
              "
  
@@ -224,11 +239,21 @@ index 4705683..4e3bac9 100644
    install -m 0655 low-speed-spidev.conf ${D}/etc/modprobe.d/
  }
  
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
 diff --git a/recipes-kernel/spidev-test/spidev-test.bb b/recipes-kernel/spidev-test/spidev-test.bb
-index c697b82..d7ef55c 100644
+index c697b82..4fc4536 100644
 --- a/recipes-kernel/spidev-test/spidev-test.bb
 +++ b/recipes-kernel/spidev-test/spidev-test.bb
-@@ -12,7 +12,7 @@ SRC_URI += "file://spidev_test.c \
+@@ -7,12 +7,13 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425
+ PR = "r3"
+ PROVIDES = "spidev_test"
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+ SRC_URI += "file://spidev_test.c \
              file://001-device-name.patch \
  "
  
@@ -253,10 +278,10 @@ index d010cc0..bf23d06 100644
 -RDEPENDS_${PN}-iwlwifi-7260-17    = "${PN}-iwlwifi-license"
 +RDEPENDS:${PN}-iwlwifi-7260-17    = "${PN}-iwlwifi-license"
 diff --git a/recipes-network/lte-connect/lte-connect.bb b/recipes-network/lte-connect/lte-connect.bb
-index 3866a11..3c3e2a2 100644
+index 3866a11..1879524 100644
 --- a/recipes-network/lte-connect/lte-connect.bb
 +++ b/recipes-network/lte-connect/lte-connect.bb
-@@ -4,7 +4,7 @@ SECTION = "console/network"
+@@ -4,18 +4,19 @@ SECTION = "console/network"
  LICENSE = "MIT"
  LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
  PR = "r3"
@@ -265,6 +290,20 @@ index 3866a11..3c3e2a2 100644
  
  SRC_URI = "file://lte-connect.sh"
  
+ inherit allarch
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
+ 
+ do_compile() {
+ }
+ 
+ do_install() {
+   install -d ${D}${bindir}
+-  install -m 0755 ${WORKDIR}/lte-connect.sh ${D}${bindir}/lte-connect.sh
++  install -m 0755 ${S}/lte-connect.sh ${D}${bindir}/lte-connect.sh
+ }
 diff --git a/recipes-tools/cg-approval/cg-approval.bb b/recipes-tools/cg-approval/cg-approval.bb
 index d796477..862b012 100644
 --- a/recipes-tools/cg-approval/cg-approval.bb
@@ -357,12 +396,27 @@ index de21dec..91d1e9c 100644
  
 -INSANE_SKIP_${PN} = "ldflags"
 +INSANE_SKIP:${PN} = "ldflags"
+diff --git a/recipes-tools/cgos/files/cgoslx-x64-1.03.025.patch b/recipes-tools/cgos/files/cgoslx-x64-1.03.025.patch
+index b68a714..4b500e5 100644
+--- a/recipes-tools/cgos/files/cgoslx-x64-1.03.025.patch
++++ b/recipes-tools/cgos/files/cgoslx-x64-1.03.025.patch
+@@ -1,3 +1,5 @@
++Upstream-Status: Pending
++
+ diff --git a/CgosDrv/Lx/Makefile b/CgosDrv/Lx/Makefile
+ index 93933e7..ee205be 100644
+ --- a/CgosDrv/Lx/Makefile
 diff --git a/recipes-tools/cgspi-test/cgspi-test_0.2.bb b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
-index c3c9136..6f986ef 100644
+index c3c9136..97924ef 100644
 --- a/recipes-tools/cgspi-test/cgspi-test_0.2.bb
 +++ b/recipes-tools/cgspi-test/cgspi-test_0.2.bb
-@@ -11,7 +11,7 @@ PROVIDES = "cgspi-test"
- S = "${WORKDIR}"
+@@ -8,10 +8,11 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/GPL-2.0;md5=801f80980d171dd6425
+ PR = "r1"
+ PROVIDES = "cgspi-test"
+ 
+-S = "${WORKDIR}"
++S = "${WORKDIR}/sources"
++UNPACKDIR = "${S}"
  SRC_URI += "file://SPI_V0.c"
  
 -FILES_${PN} += "${bindir}/cgspi_test"
@@ -1840,5 +1894,5 @@ index 6410ea5..ee7c909 100644
 -INSANE_SKIP_${PN} = "ldflags"
 +INSANE_SKIP:${PN} = "ldflags"
 -- 
-2.30.2
+2.49.0
 

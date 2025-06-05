@@ -1,6 +1,6 @@
-From 165a4bcc4c62e984fe0ae7213298140a55ef5b9b Mon Sep 17 00:00:00 2001
+From 1ee39b73fec1f2fa989ab0f02ac6d131b4286411 Mon Sep 17 00:00:00 2001
 From: Maximilian Schmidt <maximilian@schmidt.so>
-Date: Tue, 12 Mar 2024 10:54:44 +0000
+Date: Sat, 31 May 2025 12:03:41 +0000
 Subject: [PATCH] NAO adjustments (in part by SoftBank and Congatec)
 Upstream-Status: Pending
 
@@ -14,18 +14,18 @@ Upstream-Status: Pending
  drivers/cgosdrv/Cgeb.h                        |  389 ++++++
  drivers/cgosdrv/CgebFct.h                     |   56 +
  drivers/cgosdrv/CgebSda.h                     |   59 +
- drivers/cgosdrv/Cgos.h                        |  532 ++++++++
+ drivers/cgosdrv/Cgos.h                        |  531 ++++++++
  drivers/cgosdrv/CgosBld.h                     |    3 +
  drivers/cgosdrv/CgosDef.h                     |   54 +
  drivers/cgosdrv/CgosDrv.c                     | 1094 +++++++++++++++++
  drivers/cgosdrv/CgosDrv.h                     |   47 +
- drivers/cgosdrv/CgosIobd.h                    |   38 +
- drivers/cgosdrv/CgosIoct.h                    |  148 +++
- drivers/cgosdrv/CgosPriv.h                    |  121 ++
- drivers/cgosdrv/DrvLx.c                       |  189 +++
+ drivers/cgosdrv/CgosIobd.h                    |   37 +
+ drivers/cgosdrv/CgosIoct.h                    |  147 +++
+ drivers/cgosdrv/CgosPriv.h                    |  120 ++
+ drivers/cgosdrv/DrvLx.c                       |  229 ++++
  drivers/cgosdrv/DrvOsHdr.h                    |   43 +
- drivers/cgosdrv/DrvOsa.h                      |   56 +
- drivers/cgosdrv/DrvOsaLx.c                    |  100 ++
+ drivers/cgosdrv/DrvOsa.h                      |   55 +
+ drivers/cgosdrv/DrvOsaLx.c                    |   99 ++
  drivers/cgosdrv/DrvUla.h                      |   49 +
  drivers/cgosdrv/DrvVars.h                     |  139 +++
  drivers/cgosdrv/Kconfig                       |   25 +
@@ -35,25 +35,25 @@ Upstream-Status: Pending
  drivers/i2c/busses/Makefile                   |    1 +
  drivers/i2c/busses/sbre-usb-i2c.c             |  438 +++++++
  drivers/mmc/host/sdhci-pci-core.c             |    3 +-
- drivers/usb/misc/Kconfig                      |    2 +
+ drivers/usb/misc/Kconfig                      |   13 +-
  drivers/usb/misc/Makefile                     |    2 +
- drivers/usb/misc/sbre-dfuse/Kconfig           |   10 +
- drivers/usb/misc/sbre-dfuse/Makefile          |    8 +
- drivers/usb/misc/sbre-dfuse/sbre_dfuse.c      |  703 +++++++++++
+ drivers/usb/misc/sbre-dfuse/Kconfig           |    9 +
+ drivers/usb/misc/sbre-dfuse/Makefile          |    7 +
+ drivers/usb/misc/sbre-dfuse/sbre_dfuse.c      |  702 +++++++++++
  drivers/usb/misc/sbre-dfuse/sbre_dfuse.h      |  107 ++
- .../usb/misc/sbre-dfuse/sbre_dfuse_driver.c   |  179 +++
- drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.c |  119 ++
- drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h |   53 +
- include/cgos/Cgos.h                           |  532 ++++++++
- include/cgos/CgosIobd.h                       |   38 +
- include/linux/vmalloc.h                       |    1 +
+ .../usb/misc/sbre-dfuse/sbre_dfuse_driver.c   |  178 +++
+ drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.c |  118 ++
+ drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h |   52 +
+ include/cgos/Cgos.h                           |  531 ++++++++
+ include/cgos/CgosIobd.h                       |   37 +
+ include/linux/vmalloc.h                       |    3 +
  mm/vmalloc.c                                  |   15 +
  sound/pci/hda/Kconfig                         |   13 +
  sound/pci/hda/Makefile                        |    2 +
  sound/pci/hda/hda_generic.c                   |    3 +-
  sound/pci/hda/hda_generic.h                   |    1 +
- sound/pci/hda/patch_wolfson.c                 |  579 +++++++++
- 48 files changed, 7130 insertions(+), 3 deletions(-)
+ sound/pci/hda/patch_wolfson.c                 |  577 +++++++++
+ 48 files changed, 7155 insertions(+), 15 deletions(-)
  create mode 100644 drivers/cgosdrv/COPYING_BSD2
  create mode 100644 drivers/cgosdrv/COPYING_GPL2
  create mode 100644 drivers/cgosdrv/Cgeb.c
@@ -90,10 +90,10 @@ Upstream-Status: Pending
  create mode 100644 sound/pci/hda/patch_wolfson.c
 
 diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index aa7d279321ea..6966746fc018 100644
+index 8d29163568a7..8870d15c86c1 100644
 --- a/arch/x86/mm/ioremap.c
 +++ b/arch/x86/mm/ioremap.c
-@@ -308,7 +308,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
+@@ -309,7 +309,8 @@ __ioremap_caller(resource_size_t phys_addr, unsigned long size,
  	 * Check if the request spans more than any BAR in the iomem resource
  	 * tree.
  	 */
@@ -104,7 +104,7 @@ index aa7d279321ea..6966746fc018 100644
  
  	return ret_addr;
 diff --git a/drivers/Kconfig b/drivers/Kconfig
-index efb66e25fa2d..01d63a4f2118 100644
+index 7bdad836fc62..9efb3b2ff177 100644
 --- a/drivers/Kconfig
 +++ b/drivers/Kconfig
 @@ -29,6 +29,8 @@ source "drivers/of/Kconfig"
@@ -117,10 +117,10 @@ index efb66e25fa2d..01d63a4f2118 100644
  
  source "drivers/block/Kconfig"
 diff --git a/drivers/Makefile b/drivers/Makefile
-index 1bec7819a837..216f48c03025 100644
+index 45d1c3e630f7..6c650a2ea2da 100644
 --- a/drivers/Makefile
 +++ b/drivers/Makefile
-@@ -185,6 +185,7 @@ obj-$(CONFIG_HISI_PTT)		+= hwtracing/ptt/
+@@ -180,6 +180,7 @@ obj-$(CONFIG_HISI_PTT)		+= hwtracing/ptt/
  obj-y				+= android/
  obj-$(CONFIG_NVMEM)		+= nvmem/
  obj-$(CONFIG_FPGA)		+= fpga/
@@ -130,7 +130,7 @@ index 1bec7819a837..216f48c03025 100644
  obj-$(CONFIG_MULTIPLEXER)	+= mux/
 diff --git a/drivers/cgosdrv/COPYING_BSD2 b/drivers/cgosdrv/COPYING_BSD2
 new file mode 100644
-index 000000000000..b91ae38405fc
+index 000000000000..4b2cb2da27fc
 --- /dev/null
 +++ b/drivers/cgosdrv/COPYING_BSD2
 @@ -0,0 +1,25 @@
@@ -152,10 +152,10 @@ index 000000000000..b91ae38405fc
 +LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 +FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
 +COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
++INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 +LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 +WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 +OF SUCH DAMAGE.
@@ -506,7 +506,7 @@ index 000000000000..d159169d1050
 +Public License instead of this License.
 diff --git a/drivers/cgosdrv/Cgeb.c b/drivers/cgosdrv/Cgeb.c
 new file mode 100644
-index 000000000000..74970e4a44f9
+index 000000000000..699bfedcf7bc
 --- /dev/null
 +++ b/drivers/cgosdrv/Cgeb.c
 @@ -0,0 +1,545 @@
@@ -515,24 +515,24 @@ index 000000000000..74970e4a44f9
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -1057,7 +1057,7 @@ index 000000000000..74970e4a44f9
 +//***************************************************************************
 diff --git a/drivers/cgosdrv/Cgeb.h b/drivers/cgosdrv/Cgeb.h
 new file mode 100644
-index 000000000000..c06c132d6516
+index 000000000000..6abba44dc8d0
 --- /dev/null
 +++ b/drivers/cgosdrv/Cgeb.h
 @@ -0,0 +1,389 @@
@@ -1066,24 +1066,24 @@ index 000000000000..c06c132d6516
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -1139,7 +1139,7 @@ index 000000000000..c06c132d6516
 +// CGEB High Descriptor located in 0xFFF00000-0xFFFFFFFF
 +//
 +
-+#if defined(AMD64) 
++#if defined(AMD64)
 +#define CGEB_HD_MAGIC "$CGEBQD$"
 +#else
 +#define CGEB_HD_MAGIC "$CGEBHD$"
@@ -1452,7 +1452,7 @@ index 000000000000..c06c132d6516
 +#endif
 diff --git a/drivers/cgosdrv/CgebFct.h b/drivers/cgosdrv/CgebFct.h
 new file mode 100644
-index 000000000000..85d291e32e10
+index 000000000000..bc0f62518d9e
 --- /dev/null
 +++ b/drivers/cgosdrv/CgebFct.h
 @@ -0,0 +1,56 @@
@@ -1461,24 +1461,24 @@ index 000000000000..85d291e32e10
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -1514,7 +1514,7 @@ index 000000000000..85d291e32e10
 +#endif
 diff --git a/drivers/cgosdrv/CgebSda.h b/drivers/cgosdrv/CgebSda.h
 new file mode 100644
-index 000000000000..d57ba3aa9d64
+index 000000000000..85d37e5f32a5
 --- /dev/null
 +++ b/drivers/cgosdrv/CgebSda.h
 @@ -0,0 +1,59 @@
@@ -1523,24 +1523,24 @@ index 000000000000..d57ba3aa9d64
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -1579,29 +1579,29 @@ index 000000000000..d57ba3aa9d64
 +#endif
 diff --git a/drivers/cgosdrv/Cgos.h b/drivers/cgosdrv/Cgos.h
 new file mode 100644
-index 000000000000..56958fe49b9c
+index 000000000000..993e24e7ad1a
 --- /dev/null
 +++ b/drivers/cgosdrv/Cgos.h
-@@ -0,0 +1,532 @@
+@@ -0,0 +1,531 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOS_H_
@@ -1933,11 +1933,11 @@ index 000000000000..56958fe49b9c
 +#define CGOS_VOLTAGE_VCOREB     0x000D0000
 +#define CGOS_VOLTAGE_12V_S0     0x000E0000
 +
-+// Due to missing CGOS current sensor definitions 
-+// the values of the existing current sensors are 
-+// returned in CGOSVOLTAGEINFO as voltage drop of the 
++// Due to missing CGOS current sensor definitions
++// the values of the existing current sensors are
++// returned in CGOSVOLTAGEINFO as voltage drop of the
 +// respective input current on a 1 Ohm resistor.
-+// This allows direct interpretation of this voltage 
++// This allows direct interpretation of this voltage
 +// as input current value in 1/1000th amperes.
 +#define CGOS_VCURRENT_DC       	0x80020000
 +#define CGOS_VCURRENT_5V_S0     0x80080000
@@ -2114,7 +2114,6 @@ index 000000000000..56958fe49b9c
 +#endif
 +
 +#endif // _CGOS_H_
-+
 diff --git a/drivers/cgosdrv/CgosBld.h b/drivers/cgosdrv/CgosBld.h
 new file mode 100644
 index 000000000000..29477d0d62c8
@@ -2126,7 +2125,7 @@ index 000000000000..29477d0d62c8
 +#endif
 diff --git a/drivers/cgosdrv/CgosDef.h b/drivers/cgosdrv/CgosDef.h
 new file mode 100644
-index 000000000000..8c22e7b732c2
+index 000000000000..a0ba4cb25cf0
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosDef.h
 @@ -0,0 +1,54 @@
@@ -2135,20 +2134,20 @@ index 000000000000..8c22e7b732c2
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOSDEF_H_
@@ -2186,7 +2185,7 @@ index 000000000000..8c22e7b732c2
 +#endif
 diff --git a/drivers/cgosdrv/CgosDrv.c b/drivers/cgosdrv/CgosDrv.c
 new file mode 100644
-index 000000000000..6fb4b4e00f78
+index 000000000000..2a2cb12476e7
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosDrv.c
 @@ -0,0 +1,1094 @@
@@ -2195,24 +2194,24 @@ index 000000000000..6fb4b4e00f78
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -3286,7 +3285,7 @@ index 000000000000..6fb4b4e00f78
 +//***************************************************************************
 diff --git a/drivers/cgosdrv/CgosDrv.h b/drivers/cgosdrv/CgosDrv.h
 new file mode 100644
-index 000000000000..4d1c4ba4fbe8
+index 000000000000..2e5026cf76fe
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosDrv.h
 @@ -0,0 +1,47 @@
@@ -3295,24 +3294,24 @@ index 000000000000..4d1c4ba4fbe8
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -3339,29 +3338,29 @@ index 000000000000..4d1c4ba4fbe8
 +#endif
 diff --git a/drivers/cgosdrv/CgosIobd.h b/drivers/cgosdrv/CgosIobd.h
 new file mode 100644
-index 000000000000..abc342f44f8e
+index 000000000000..8a6601ccfb9c
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosIobd.h
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,37 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOSIOBD_H_
@@ -3380,32 +3379,31 @@ index 000000000000..abc342f44f8e
 +//***************************************************************************
 +
 +#endif
-+
 diff --git a/drivers/cgosdrv/CgosIoct.h b/drivers/cgosdrv/CgosIoct.h
 new file mode 100644
-index 000000000000..b3fe3baf34a9
+index 000000000000..b331d3d0e55e
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosIoct.h
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,147 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+  
++
 +//***************************************************************************
 +
 +#ifndef _CGOSIOCT_H_
@@ -3534,32 +3532,31 @@ index 000000000000..b3fe3baf34a9
 +//***************************************************************************
 +
 +#endif
-+
 diff --git a/drivers/cgosdrv/CgosPriv.h b/drivers/cgosdrv/CgosPriv.h
 new file mode 100644
-index 000000000000..8c5f066b9f9d
+index 000000000000..a99c160ac868
 --- /dev/null
 +++ b/drivers/cgosdrv/CgosPriv.h
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,120 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOSPRIV_H_
@@ -3661,36 +3658,35 @@ index 000000000000..8c5f066b9f9d
 +#endif
 +
 +#endif // _CGOSPRIV_H_
-+
 diff --git a/drivers/cgosdrv/DrvLx.c b/drivers/cgosdrv/DrvLx.c
 new file mode 100644
-index 000000000000..08d16cfc0e0d
+index 000000000000..8bea21d32f8c
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvLx.c
-@@ -0,0 +1,189 @@
+@@ -0,0 +1,229 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -3707,6 +3703,10 @@ index 000000000000..08d16cfc0e0d
 +#include <linux/export.h>
 +#include <linux/kernel.h>
 +#include <linux/slab.h>
++
++#ifdef CONFIG_COMPAT
++#include <linux/compat.h>
++#endif
 +
 +#include <linux/uaccess.h>
 +#include <linux/miscdevice.h>
@@ -3759,6 +3759,36 @@ index 000000000000..08d16cfc0e0d
 +
 +#define return_ioctl(ret) { if (pbuf!=buf) kfree(pbuf); return ret; }
 +
++static long cgos_common_ioctl(struct file *f, unsigned int command, IOCTL_BUF_DESC *iobd);
++
++#ifdef CONFIG_COMPAT
++
++typedef struct {
++  compat_uptr_t pInBuffer;
++  unsigned int nInBufferSize;
++  compat_uptr_t pOutBuffer;
++  unsigned int nOutBufferSize;
++  compat_uptr_t pBytesReturned;
++  } IOCTL_BUF_DESC_COMPAT;
++
++long cgos_compat_ioctl(struct file *f, unsigned int command, unsigned long arg)
++  {
++  IOCTL_BUF_DESC_COMPAT iobdCompat;
++  IOCTL_BUF_DESC iobd;
++  if (copy_from_user(&iobdCompat,(IOCTL_BUF_DESC_COMPAT *)compat_ptr(arg),sizeof(iobdCompat)))
++    return -EFAULT;
++
++  iobd.pInBuffer=compat_ptr(iobdCompat.pInBuffer);
++  iobd.nInBufferSize=iobdCompat.nInBufferSize;
++  iobd.pOutBuffer=compat_ptr(iobdCompat.pOutBuffer);
++  iobd.nOutBufferSize=iobdCompat.nOutBufferSize;
++  iobd.pBytesReturned=compat_ptr(iobdCompat.pBytesReturned);
++
++  return cgos_common_ioctl(f, command, &iobd);
++  }
++
++#endif
++
 +#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
 +#define ioctl unlocked_ioctl
 +long cgos_ioctl(struct file *f, unsigned int command, unsigned long arg)
@@ -3767,34 +3797,38 @@ index 000000000000..08d16cfc0e0d
 +#endif
 +  {
 +  IOCTL_BUF_DESC iobd;
++  if (copy_from_user(&iobd,(IOCTL_BUF_DESC *)arg,sizeof(iobd)))
++    return -EFAULT;
++  return cgos_common_ioctl(f, command, &iobd);
++  }
++
++static long cgos_common_ioctl(struct file *f, unsigned int command, IOCTL_BUF_DESC *iobd)
++  {
 +  unsigned char buf[512];
 +  unsigned char *pbuf=buf;
 +  unsigned int ret, rlen=0, maxlen;
 +
-+  if (copy_from_user(&iobd,(IOCTL_BUF_DESC *)arg,sizeof(iobd)))
-+    return -EFAULT;
-+
-+  maxlen=iobd.nInBufferSize>iobd.nOutBufferSize?iobd.nInBufferSize:iobd.nOutBufferSize;
++  maxlen=iobd->nInBufferSize>iobd->nOutBufferSize?iobd->nInBufferSize:iobd->nOutBufferSize;
 +  if (maxlen>sizeof(buf))
 +    pbuf=kmalloc(maxlen,GFP_KERNEL);
 +  if (!pbuf) return -ENOMEM;
 +
-+  if (iobd.nInBufferSize) {
-+    if (!iobd.pInBuffer || copy_from_user(pbuf,iobd.pInBuffer,iobd.nInBufferSize))
++  if (iobd->nInBufferSize) {
++    if (!iobd->pInBuffer || copy_from_user(pbuf,iobd->pInBuffer,iobd->nInBufferSize))
 +      return_ioctl(-EFAULT);
 +    }
 +
-+  ret=cgos_issue_request(command,pbuf,iobd.nInBufferSize,
-+     pbuf,iobd.nOutBufferSize,&rlen);
++  ret=cgos_issue_request(command,pbuf,iobd->nInBufferSize,
++     pbuf,iobd->nOutBufferSize,&rlen);
 +  if (ret) return_ioctl(-EFAULT);
 +
 +  if (rlen) {
-+    if (!iobd.pOutBuffer || copy_to_user(iobd.pOutBuffer,pbuf,rlen))
++    if (!iobd->pOutBuffer || copy_to_user(iobd->pOutBuffer,pbuf,rlen))
 +      return_ioctl(-EFAULT);
 +    }
 +  if (pbuf!=buf) kfree(pbuf);
-+  if (iobd.pBytesReturned)
-+    if (copy_to_user(iobd.pBytesReturned,&rlen,sizeof(unsigned int)))
++  if (iobd->pBytesReturned)
++    if (copy_to_user(iobd->pBytesReturned,&rlen,sizeof(unsigned int)))
 +      return -EFAULT;
 +
 +  return 0;
@@ -3816,6 +3850,9 @@ index 000000000000..08d16cfc0e0d
 +static struct file_operations cgos_fops={
 +  owner: THIS_MODULE,
 +  ioctl: cgos_ioctl,
++#ifdef CONFIG_COMPAT
++  compat_ioctl: cgos_compat_ioctl,
++#endif
 +  open: cgos_open,
 +  release: cgos_release,
 +  };
@@ -3856,10 +3893,9 @@ index 000000000000..08d16cfc0e0d
 +MODULE_LICENSE("GPL");
 +
 +//***************************************************************************
-+
 diff --git a/drivers/cgosdrv/DrvOsHdr.h b/drivers/cgosdrv/DrvOsHdr.h
 new file mode 100644
-index 000000000000..2b0cace6e1eb
+index 000000000000..5e23871e4bcd
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsHdr.h
 @@ -0,0 +1,43 @@
@@ -3868,24 +3904,24 @@ index 000000000000..2b0cace6e1eb
 + * Copyright (c) 2022, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -3897,7 +3933,7 @@ index 000000000000..2b0cace6e1eb
 +#define AMD64
 +#endif
 +
-+//#include <stddef.h> 
++//#include <stddef.h>
 +typedef int wchar_t;
 +
 +unsigned int cgos_issue_request(unsigned int command, void* ibuf, unsigned int isize,
@@ -3908,33 +3944,33 @@ index 000000000000..2b0cace6e1eb
 +#endif
 diff --git a/drivers/cgosdrv/DrvOsa.h b/drivers/cgosdrv/DrvOsa.h
 new file mode 100644
-index 000000000000..8e35be62d66a
+index 000000000000..22d6e3408db4
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsa.h
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,55 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -3967,36 +4003,35 @@ index 000000000000..8e35be62d66a
 +//***************************************************************************
 +
 +#endif
-+
 diff --git a/drivers/cgosdrv/DrvOsaLx.c b/drivers/cgosdrv/DrvOsaLx.c
 new file mode 100644
-index 000000000000..b9eb594ef053
+index 000000000000..d831849f2d89
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvOsaLx.c
-@@ -0,0 +1,100 @@
+@@ -0,0 +1,99 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -4073,10 +4108,9 @@ index 000000000000..b9eb594ef053
 +  }
 +
 +//***************************************************************************
-+
 diff --git a/drivers/cgosdrv/DrvUla.h b/drivers/cgosdrv/DrvUla.h
 new file mode 100644
-index 000000000000..04e8c0fed1ae
+index 000000000000..9de338e76c6b
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvUla.h
 @@ -0,0 +1,49 @@
@@ -4085,24 +4119,24 @@ index 000000000000..04e8c0fed1ae
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -4131,7 +4165,7 @@ index 000000000000..04e8c0fed1ae
 +#endif
 diff --git a/drivers/cgosdrv/DrvVars.h b/drivers/cgosdrv/DrvVars.h
 new file mode 100644
-index 000000000000..c6c23f5dc755
+index 000000000000..25b151047ca4
 --- /dev/null
 +++ b/drivers/cgosdrv/DrvVars.h
 @@ -0,0 +1,139 @@
@@ -4140,24 +4174,24 @@ index 000000000000..c6c23f5dc755
 + * Copyright (c) 2021, congatec GmbH. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as 
-+ * published by the Free Software Foundation; either version 2 of 
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
 + * the License, or (at your option) any later version.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the GNU General Public License for more details.
 + *
 + * You should have received a copy of the GNU General Public License
-+ * along with this program; if not, write to the Free Software Foundation, 
++ * along with this program; if not, write to the Free Software Foundation,
 + * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 + *
-+ * The full text of the license may also be found at:        
++ * The full text of the license may also be found at:
 + * http://opensource.org/licenses/GPL-2.0
 + *
 + *---------------------------------------------------------------------------
-+ */ 
++ */
 +
 +//***************************************************************************
 +
@@ -4574,10 +4608,10 @@ index 000000000000..3f7ddb45fb7b
 +MODULE_AUTHOR(DRIVER_AUTHOR);
 +MODULE_DESCRIPTION(DRIVER_DESC);
 diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 97d27e01a6ee..d392bef4a2e9 100644
+index 2254abda5c46..770f93462903 100644
 --- a/drivers/i2c/busses/Kconfig
 +++ b/drivers/i2c/busses/Kconfig
-@@ -1336,6 +1336,17 @@ config I2C_TINY_USB
+@@ -1387,6 +1387,17 @@ config I2C_TINY_USB
  	  This driver can also be built as a module.  If so, the module
  	  will be called i2c-tiny-usb.
  
@@ -4596,10 +4630,10 @@ index 97d27e01a6ee..d392bef4a2e9 100644
  	tristate "Viperboard I2C master support"
  	depends on MFD_VIPERBOARD && USB
 diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index af56fe2c75c0..52419b43a5d6 100644
+index ecc07c50f2a0..54f84ae5739a 100644
 --- a/drivers/i2c/busses/Makefile
 +++ b/drivers/i2c/busses/Makefile
-@@ -140,6 +140,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
+@@ -141,6 +141,7 @@ obj-$(CONFIG_I2C_ROBOTFUZZ_OSIF)	+= i2c-robotfuzz-osif.o
  obj-$(CONFIG_I2C_TAOS_EVM)	+= i2c-taos-evm.o
  obj-$(CONFIG_I2C_TINY_USB)	+= i2c-tiny-usb.o
  obj-$(CONFIG_I2C_VIPERBOARD)	+= i2c-viperboard.o
@@ -5052,10 +5086,10 @@ index 000000000000..8c297d3fc3ee
 +MODULE_DESCRIPTION("sbre-usb-i2c driver v2.0");
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 7c14feb5db77..65aa6777e5da 100644
+index 2e2e15e2d8fb..4beb988574a4 100644
 --- a/drivers/mmc/host/sdhci-pci-core.c
 +++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1169,7 +1169,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+@@ -1171,7 +1171,8 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
  			  SDHCI_QUIRK_NO_LED,
  	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
  			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
@@ -5066,31 +5100,43 @@ index 7c14feb5db77..65aa6777e5da 100644
  	.priv_size	= sizeof(struct intel_host),
  };
 diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index 99b15b77dfd5..629f2c49856d 100644
+index 6497c4e81e95..c4180677bd1d 100644
 --- a/drivers/usb/misc/Kconfig
 +++ b/drivers/usb/misc/Kconfig
-@@ -318,3 +318,5 @@ config USB_ONBOARD_HUB
+@@ -330,16 +330,5 @@ config USB_ONBOARD_DEV
+ 	  builtin) must match the state of the USB subsystem. Enabling
  	  this config will enable the driver and it will automatically
  	  match the state of the USB subsystem. If this driver is a
- 	  module it will be called onboard_usb_hub.
-+
+-	  module it will be called onboard_usb_dev.
+ 
+-config USB_ONBOARD_DEV_USB5744
+-	bool "Onboard USB Microchip usb5744 hub with SMBus support"
+-	depends on (USB_ONBOARD_DEV && I2C=y) || (USB_ONBOARD_DEV=m && I2C=m)
+-	help
+-	  Say Y here if you want to support onboard USB Microchip usb5744
+-	  hub that requires SMBus initialization.
+-
+-	  This options enables usb5744 i2c default initialization sequence
+-	  during hub start-up configuration stage. It is must to enable this
+-	  option on AMD Kria KR260 Robotics Starter Kit as this hub is
+-	  connected to USB-SD converter which mounts the root filesystem.
 +source "drivers/usb/misc/sbre-dfuse/Kconfig"
 diff --git a/drivers/usb/misc/Makefile b/drivers/usb/misc/Makefile
-index 1992cc284d8a..d75312261034 100644
+index 0cd5bc8f52fe..a54d5d1ca299 100644
 --- a/drivers/usb/misc/Makefile
 +++ b/drivers/usb/misc/Makefile
-@@ -33,3 +33,5 @@ obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
+@@ -34,3 +34,5 @@ obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
  obj-$(CONFIG_USB_LINK_LAYER_TEST)	+= lvstest.o
  obj-$(CONFIG_BRCM_USB_PINMAP)		+= brcmstb-usb-pinmap.o
- obj-$(CONFIG_USB_ONBOARD_HUB)		+= onboard_usb_hub.o
+ obj-$(CONFIG_USB_ONBOARD_DEV)		+= onboard_usb_dev.o
 +
 +obj-$(CONFIG_USB_SBRE_DFUSE)		+= sbre-dfuse/
 diff --git a/drivers/usb/misc/sbre-dfuse/Kconfig b/drivers/usb/misc/sbre-dfuse/Kconfig
 new file mode 100644
-index 000000000000..b5c6b5b8973a
+index 000000000000..1c568f1bf0c4
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/Kconfig
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,9 @@
 +
 +config USB_SBRE_DFUSE
 +	tristate "STM32 DfuSe flasher"
@@ -5100,13 +5146,12 @@ index 000000000000..b5c6b5b8973a
 +	  selects the appropriate firmware for it. In case of
 +	  mismatch with actual firmware the device is flashed.
 +	  The end of the procedure jumps into device application.
-+
 diff --git a/drivers/usb/misc/sbre-dfuse/Makefile b/drivers/usb/misc/sbre-dfuse/Makefile
 new file mode 100644
-index 000000000000..5f9c64f52f46
+index 000000000000..2b26f0d24686
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/Makefile
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,7 @@
 +#
 +# Makefile for the sbre-dfuse driver
 +#
@@ -5114,13 +5159,12 @@ index 000000000000..5f9c64f52f46
 +obj-$(CONFIG_USB_SBRE_DFUSE) += sbre-dfuse.o
 +
 +sbre-dfuse-objs := sbre_dfuse_driver.o sbre_dfuse.o sbre_dfuse_file.o
-+
 diff --git a/drivers/usb/misc/sbre-dfuse/sbre_dfuse.c b/drivers/usb/misc/sbre-dfuse/sbre_dfuse.c
 new file mode 100644
-index 000000000000..d77360486d62
+index 000000000000..6b4d62f1cf22
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/sbre_dfuse.c
-@@ -0,0 +1,703 @@
+@@ -0,0 +1,702 @@
 +/*
 + * sbre_dfuse.c - SBRE DfuSe flasher - dfuse protocol
 + *
@@ -5823,7 +5867,6 @@ index 000000000000..d77360486d62
 +
 +	return 0;
 +}
-+
 diff --git a/drivers/usb/misc/sbre-dfuse/sbre_dfuse.h b/drivers/usb/misc/sbre-dfuse/sbre_dfuse.h
 new file mode 100644
 index 000000000000..327dafe403e9
@@ -5939,10 +5982,10 @@ index 000000000000..327dafe403e9
 +int sbre_dfuse_flash(struct sbre_dfuse *dev, struct sbre_dfuse_file_simple *file);
 diff --git a/drivers/usb/misc/sbre-dfuse/sbre_dfuse_driver.c b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_driver.c
 new file mode 100644
-index 000000000000..4b33c7688960
+index 000000000000..0650e9ca03ea
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_driver.c
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,178 @@
 +/*
 + * sbre_dfuse_driver.c - SBRE DfuSe flasher - usb driver
 + *
@@ -6121,13 +6164,12 @@ index 000000000000..4b33c7688960
 +module_usb_driver(sbre_dfuse_driver);
 +
 +MODULE_LICENSE("GPL");
-+
 diff --git a/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.c b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.c
 new file mode 100644
-index 000000000000..b4d3a7f75ef6
+index 000000000000..199829c94d67
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.c
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,118 @@
 +/*
 + * sbre_dfuse_file.c - SBRE DfuSe flasher - dfuse file handling
 + *
@@ -6246,13 +6288,12 @@ index 000000000000..b4d3a7f75ef6
 +
 +	return 0;
 +}
-+
 diff --git a/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h
 new file mode 100644
-index 000000000000..a61b8b58372a
+index 000000000000..4f5dce6a6c1f
 --- /dev/null
 +++ b/drivers/usb/misc/sbre-dfuse/sbre_dfuse_file.h
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,52 @@
 +/*
 + * sbre_dfuse_file.h - SBRE DfuSe flasher - dfuse file handling
 + *
@@ -6305,32 +6346,31 @@ index 000000000000..a61b8b58372a
 + */
 +int sbre_dfuse_file_simple_parse(const uint8_t *buf, uint32_t len,
 +                                struct sbre_dfuse_file_simple *file);
-+
 diff --git a/include/cgos/Cgos.h b/include/cgos/Cgos.h
 new file mode 100644
-index 000000000000..56958fe49b9c
+index 000000000000..993e24e7ad1a
 --- /dev/null
 +++ b/include/cgos/Cgos.h
-@@ -0,0 +1,532 @@
+@@ -0,0 +1,531 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOS_H_
@@ -6662,11 +6702,11 @@ index 000000000000..56958fe49b9c
 +#define CGOS_VOLTAGE_VCOREB     0x000D0000
 +#define CGOS_VOLTAGE_12V_S0     0x000E0000
 +
-+// Due to missing CGOS current sensor definitions 
-+// the values of the existing current sensors are 
-+// returned in CGOSVOLTAGEINFO as voltage drop of the 
++// Due to missing CGOS current sensor definitions
++// the values of the existing current sensors are
++// returned in CGOSVOLTAGEINFO as voltage drop of the
 +// respective input current on a 1 Ohm resistor.
-+// This allows direct interpretation of this voltage 
++// This allows direct interpretation of this voltage
 +// as input current value in 1/1000th amperes.
 +#define CGOS_VCURRENT_DC       	0x80020000
 +#define CGOS_VCURRENT_5V_S0     0x80080000
@@ -6843,32 +6883,31 @@ index 000000000000..56958fe49b9c
 +#endif
 +
 +#endif // _CGOS_H_
-+
 diff --git a/include/cgos/CgosIobd.h b/include/cgos/CgosIobd.h
 new file mode 100644
-index 000000000000..abc342f44f8e
+index 000000000000..8a6601ccfb9c
 --- /dev/null
 +++ b/include/cgos/CgosIobd.h
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,37 @@
 +/*---------------------------------------------------------------------------
 + *
 + * Copyright (c) 2015, congatec AG. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the BSD 2-clause license which 
-+ * accompanies this distribution. 
++ * modify it under the terms of the BSD 2-clause license which
++ * accompanies this distribution.
 + *
-+ * This program is distributed in the hope that it will be useful, 
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 + * See the BSD 2-clause license for more details.
 + *
-+ * The full text of the license may be found at:        
-+ * http://opensource.org/licenses/BSD-2-Clause   
++ * The full text of the license may be found at:
++ * http://opensource.org/licenses/BSD-2-Clause
 + *
 + *---------------------------------------------------------------------------
 + */
-+ 
++
 +//***************************************************************************
 +
 +#ifndef _CGOSIOBD_H_
@@ -6887,26 +6926,27 @@ index 000000000000..abc342f44f8e
 +//***************************************************************************
 +
 +#endif
-+
 diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index c720be70c8dd..75a9318c50d2 100644
+index ad2ce7a6ab7a..82dc265ddbbe 100644
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
-@@ -145,6 +145,7 @@ extern void *vzalloc_node(unsigned long size, int node) __alloc_size(1);
- extern void *vmalloc_32(unsigned long size) __alloc_size(1);
- extern void *vmalloc_32_user(unsigned long size) __alloc_size(1);
- extern void *__vmalloc(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
-+extern void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot) __alloc_size(1);
- extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
+@@ -164,6 +164,9 @@ extern void *vmalloc_32_user_noprof(unsigned long size) __alloc_size(1);
+ extern void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask) __alloc_size(1);
+ #define __vmalloc(...)		alloc_hooks(__vmalloc_noprof(__VA_ARGS__))
+ 
++extern void *__vmalloc_prot_noprof(unsigned long size, gfp_t gfp_mask, pgprot_t prot) __alloc_size(1);
++#define __vmalloc_prot(...)		alloc_hooks(__vmalloc_prot_noprof(__VA_ARGS__))
++
+ extern void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
  			unsigned long start, unsigned long end, gfp_t gfp_mask,
  			pgprot_t prot, unsigned long vm_flags, int node,
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index a3fedb3ee0db..9718f6995efd 100644
+index fd70a7cd1c8f..ead56c7a7b69 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -3401,6 +3401,21 @@ void *__vmalloc(unsigned long size, gfp_t gfp_mask)
+@@ -3927,6 +3927,21 @@ void *__vmalloc_noprof(unsigned long size, gfp_t gfp_mask)
  }
- EXPORT_SYMBOL(__vmalloc);
+ EXPORT_SYMBOL(__vmalloc_noprof);
  
 +static void *__vmalloc_node_prot(unsigned long size, unsigned long align,
 +			    gfp_t gfp_mask, pgprot_t prot,
@@ -6916,21 +6956,21 @@ index a3fedb3ee0db..9718f6995efd 100644
 +				gfp_mask, prot, 0, node, caller);
 +}
 +
-+void *__vmalloc_prot(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
++void *__vmalloc_prot_noprof(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
 +{
 +	return __vmalloc_node_prot(size, 1, gfp_mask, prot, NUMA_NO_NODE,
 +				__builtin_return_address(0));
 +}
-+EXPORT_SYMBOL(__vmalloc_prot);
++EXPORT_SYMBOL(__vmalloc_prot_noprof);
 +
  /**
   * vmalloc - allocate virtually contiguous memory
   * @size:    allocation size
 diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index 0d7502d6e060..6d8aa850e0ce 100644
+index fd9391e61b3d..ae541a2a29f0 100644
 --- a/sound/pci/hda/Kconfig
 +++ b/sound/pci/hda/Kconfig
-@@ -200,6 +200,19 @@ config SND_HDA_CODEC_ANALOG
+@@ -227,6 +227,19 @@ config SND_HDA_CODEC_ANALOG
  comment "Set to Y if you want auto-loading the codec driver"
  	depends on SND_HDA=y && SND_HDA_CODEC_ANALOG=m
  
@@ -6951,18 +6991,18 @@ index 0d7502d6e060..6d8aa850e0ce 100644
  	tristate "Build IDT/Sigmatel HD-audio codec support"
  	select SND_HDA_GENERIC
 diff --git a/sound/pci/hda/Makefile b/sound/pci/hda/Makefile
-index f00fc9ed6096..f4e2587b01d2 100644
+index 80210f845df2..133777bc1e36 100644
 --- a/sound/pci/hda/Makefile
 +++ b/sound/pci/hda/Makefile
-@@ -17,6 +17,7 @@ snd-hda-codec-generic-objs :=	hda_generic.o
- snd-hda-codec-realtek-objs :=	patch_realtek.o
- snd-hda-codec-cmedia-objs :=	patch_cmedia.o
- snd-hda-codec-analog-objs :=	patch_analog.o
-+snd-hda-codec-wolfson-objs :=	patch_wolfson.o
- snd-hda-codec-idt-objs :=	patch_sigmatel.o
- snd-hda-codec-si3054-objs :=	patch_si3054.o
- snd-hda-codec-cirrus-objs :=	patch_cirrus.o
-@@ -45,6 +46,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
+@@ -17,6 +17,7 @@ snd-hda-codec-generic-y :=	hda_generic.o
+ snd-hda-codec-realtek-y :=	patch_realtek.o
+ snd-hda-codec-cmedia-y :=	patch_cmedia.o
+ snd-hda-codec-analog-y :=	patch_analog.o
++snd-hda-codec-wolfson-y :=	patch_wolfson.o
+ snd-hda-codec-idt-y :=		patch_sigmatel.o
+ snd-hda-codec-si3054-y :=	patch_si3054.o
+ snd-hda-codec-cirrus-y :=	patch_cirrus.o
+@@ -49,6 +50,7 @@ obj-$(CONFIG_SND_HDA_GENERIC) += snd-hda-codec-generic.o
  obj-$(CONFIG_SND_HDA_CODEC_REALTEK) += snd-hda-codec-realtek.o
  obj-$(CONFIG_SND_HDA_CODEC_CMEDIA) += snd-hda-codec-cmedia.o
  obj-$(CONFIG_SND_HDA_CODEC_ANALOG) += snd-hda-codec-analog.o
@@ -6971,7 +7011,7 @@ index f00fc9ed6096..f4e2587b01d2 100644
  obj-$(CONFIG_SND_HDA_CODEC_SI3054) += snd-hda-codec-si3054.o
  obj-$(CONFIG_SND_HDA_CODEC_CIRRUS) += snd-hda-codec-cirrus.o
 diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
-index bf685d01259d..53789c1e9254 100644
+index b34d84fedcc8..ba596958920b 100644
 --- a/sound/pci/hda/hda_generic.c
 +++ b/sound/pci/hda/hda_generic.c
 @@ -84,7 +84,7 @@ static void free_kctls(struct hda_gen_spec *spec)
@@ -6992,10 +7032,10 @@ index bf685d01259d..53789c1e9254 100644
  /*
   * store user hints
 diff --git a/sound/pci/hda/hda_generic.h b/sound/pci/hda/hda_generic.h
-index a8eea8367629..62e81b8f0488 100644
+index 9612afaa61c2..c4b71a1e5edb 100644
 --- a/sound/pci/hda/hda_generic.h
 +++ b/sound/pci/hda/hda_generic.h
-@@ -310,6 +310,7 @@ enum {
+@@ -309,6 +309,7 @@ enum {
  };
  
  int snd_hda_gen_spec_init(struct hda_gen_spec *spec);
@@ -7005,10 +7045,10 @@ index a8eea8367629..62e81b8f0488 100644
  void snd_hda_gen_free(struct hda_codec *codec);
 diff --git a/sound/pci/hda/patch_wolfson.c b/sound/pci/hda/patch_wolfson.c
 new file mode 100644
-index 000000000000..5090d3f4c31c
+index 000000000000..dca9232c9460
 --- /dev/null
 +++ b/sound/pci/hda/patch_wolfson.c
-@@ -0,0 +1,579 @@
+@@ -0,0 +1,577 @@
 +/*
 + * HD audio interface patch for WM8860
 + *
@@ -7197,8 +7237,7 @@ index 000000000000..5090d3f4c31c
 +				AC_VERB_SET_CONNECT_SEL, 0x01);
 +		return 0;
 +	}
-+	snd_printk(KERN_WARNING
-+		"Try to open a channel already open in Numeric/Analogic\n");
++	pr_warn("Try to open a channel already open in Numeric/Analogic\n");
 +	return -EBUSY;
 +
 +}
@@ -7215,8 +7254,7 @@ index 000000000000..5090d3f4c31c
 +		spec->mic_1_selection = -1;
 +		return 0;
 +	}
-+	snd_printk(KERN_WARNING
-+		"Try to close a stream with Numeric/Analogic error\n");
++	pr_warn("Try to close a stream with Numeric/Analogic error\n");
 +	return -EFAULT;
 +}
 +
@@ -7588,3 +7626,6 @@ index 000000000000..5090d3f4c31c
 +};
 +
 +module_hda_codec_driver(wolfson_driver);
+-- 
+2.49.0
+
