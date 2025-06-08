@@ -7,20 +7,21 @@ Subject: [PATCH 2/3] hint bindgen to SDK sysroot for libclang
  meta/recipes-devtools/rust/cargo_1.84.1.bb | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/meta/recipes-devtools/rust/cargo_1.84.1.bb b/meta/recipes-devtools/rust/cargo_1.84.1.bb
-index 9c4e4a0dd2..b54ade890d 100644
---- a/meta/recipes-devtools/rust/cargo_1.84.1.bb
-+++ b/meta/recipes-devtools/rust/cargo_1.84.1.bb
-@@ -62,6 +62,9 @@ do_install:append:class-nativesdk() {
- 	export CARGO_HTTP_CAINFO="\$OECORE_NATIVE_SYSROOT/etc/ssl/certs/ca-certificates.crt"
- 
- 	export CARGO_BUILD_TARGET="\$TARGET_PREFIX"gnu
+diff --git a/meta/recipes-devtools/rust/rust-cross-canadian.inc b/meta/recipes-devtools/rust/rust-cross-canadian.inc
+index 09e1b911a2..10c7ced6b3 100644
+--- a/meta/recipes-devtools/rust/rust-cross-canadian.inc
++++ b/meta/recipes-devtools/rust/rust-cross-canadian.inc
+@@ -61,6 +61,9 @@ do_install () {
+     cat <<- EOF > "${RUST_ENV_SETUP_SH}"
+ 	export CARGO_TARGET_${RUST_TARGET_TRIPLE}_RUSTFLAGS="--sysroot=\$OECORE_TARGET_SYSROOT/usr -C link-arg=--sysroot=\$OECORE_TARGET_SYSROOT"
+ 	export RUST_TARGET_PATH="\$OECORE_NATIVE_SYSROOT/usr/lib/${TARGET_SYS}/rustlib"
 +
 +	export LIBCLANG_PATH="\$OECORE_NATIVE_SYSROOT/usr/lib"
 +	export BINDGEN_EXTRA_CLANG_ARGS_${@d.getVar('RUST_TARGET_SYS').replace('-', '_')}="--sysroot=\$OECORE_TARGET_SYSROOT"
  	EOF
- }
- 
--- 
+
+     chown -R root.root ${D}
+
+--
 2.49.0
 
